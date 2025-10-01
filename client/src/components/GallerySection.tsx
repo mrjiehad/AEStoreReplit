@@ -13,7 +13,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
     <section id="gallery" className="py-20 bg-card">
       <div className="container mx-auto px-4">
         <h2
-          className="text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center mb-12 md:mb-16 tracking-tight uppercase text-neon-yellow px-4"
+          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
           data-testid="text-gallery-title"
         >
           GTA GALLERY
@@ -23,10 +23,10 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
           {images.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-sm overflow-hidden cursor-pointer transition-all duration-300"
+              className="relative aspect-square rounded-sm overflow-hidden cursor-pointer transition-all duration-500 group"
               style={{
-                border: hoveredIndex === index ? "1px solid #FFD700" : "1px solid transparent",
-                boxShadow: hoveredIndex === index ? "0 0 15px rgba(255, 215, 0, 0.4)" : "none",
+                border: hoveredIndex === index ? "2px solid #FFD700" : "2px solid transparent",
+                boxShadow: hoveredIndex === index ? "0 0 20px rgba(255, 215, 0, 0.5)" : "none",
               }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -35,8 +35,9 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
               <img
                 src={image}
                 alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-1"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>
@@ -44,7 +45,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
         <div className="text-center">
           <Button
             onClick={onCtaClick}
-            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-sm px-10 h-10 transition-all uppercase mx-4 rounded-sm"
+            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow hover:scale-105 text-black font-bold text-sm px-10 h-10 transition-transform uppercase mx-4 rounded-sm font-rajdhani tracking-wide"
             data-testid="button-get-aecoin"
           >
             GET YOUR AECOIN NOW

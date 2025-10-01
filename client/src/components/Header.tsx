@@ -35,7 +35,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div
-            className="text-2xl font-montserrat font-black tracking-tight cursor-pointer text-neon-yellow uppercase"
+            className="text-3xl font-bebas tracking-wider cursor-pointer text-neon-yellow uppercase"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             data-testid="logo-aecoin-store"
           >
@@ -45,28 +45,28 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
           <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-foreground hover:text-neon-yellow transition-colors font-semibold uppercase text-sm"
+              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
               data-testid="link-home"
             >
               Home
             </button>
             <button
               onClick={() => scrollToSection("packages")}
-              className="text-foreground hover:text-neon-yellow transition-colors font-semibold uppercase text-sm"
+              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
               data-testid="link-packages"
             >
               Packages
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className="text-foreground hover:text-neon-yellow transition-colors font-semibold uppercase text-sm"
+              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
               data-testid="link-gallery"
             >
               Gallery
             </button>
             <button
               onClick={() => scrollToSection("faq")}
-              className="text-foreground hover:text-neon-yellow transition-colors font-semibold uppercase text-sm"
+              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
               data-testid="link-faq"
             >
               FAQ

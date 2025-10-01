@@ -91,9 +91,9 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
-        orbitron: ["Orbitron", "sans-serif"],
-        bungee: ["Bungee", "sans-serif"],
-        montserrat: ["Montserrat", "sans-serif"],
+        bebas: ["Bebas Neue", "sans-serif"],
+        rajdhani: ["Rajdhani", "sans-serif"],
+        teko: ["Teko", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

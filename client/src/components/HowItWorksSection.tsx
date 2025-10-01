@@ -47,7 +47,7 @@ export function HowItWorksSection() {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <h2
-          className="text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center mb-12 md:mb-16 tracking-tight uppercase text-neon-yellow px-4"
+          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
           data-testid="text-how-it-works-title"
         >
           HOW IT WORKS
@@ -64,7 +64,7 @@ export function HowItWorksSection() {
               >
                 <step.icon className="w-10 h-10 text-neon-yellow" />
               </div>
-              <h3 className="text-lg md:text-xl font-montserrat font-bold mb-2 text-foreground uppercase">{step.title}</h3>
+              <h3 className="text-lg md:text-xl font-bebas mb-2 text-foreground uppercase tracking-wide">{step.title}</h3>
               <p className="text-muted-foreground">{step.description}</p>
             </div>
           ))}

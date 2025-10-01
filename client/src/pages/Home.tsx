@@ -10,6 +10,11 @@ import type { Package } from "@/components/PackageCard";
 import type { FAQItem } from "@/components/FAQSection";
 
 import coinImage from "@assets/stock_images/gold_coins_money_cas_b3778293.jpg";
+import cashImage1 from "@assets/stock_images/money_cash_dollar_bi_d659bb42.jpg";
+import cashImage2 from "@assets/stock_images/money_cash_dollar_bi_b379e39e.jpg";
+import cashImage3 from "@assets/stock_images/money_cash_dollar_bi_99dbf87d.jpg";
+import goldImage1 from "@assets/stock_images/treasure_gold_bars_v_9895e34c.jpg";
+import goldImage2 from "@assets/stock_images/treasure_gold_bars_v_0d8d4f59.jpg";
 import car1Image from "@assets/stock_images/gta_5_sports_car_mus_ecdea8c8.jpg";
 import car2Image from "@assets/stock_images/gta_5_sports_car_mus_07d7cbe9.jpg";
 import car3Image from "@assets/stock_images/gta_5_sports_car_mus_7250542e.jpg";
@@ -21,10 +26,10 @@ import cityImage from "@assets/stock_images/gta_5_los_santos_cit_cb9a6b5e.jpg";
 
 const packages: Package[] = [
   { id: "1", amount: 500, price: 60, originalPrice: 65, image: coinImage },
-  { id: "2", amount: 1000, price: 98, originalPrice: 110, image: coinImage, badge: "POPULAR" },
-  { id: "3", amount: 3000, price: 295, originalPrice: 310, image: coinImage },
-  { id: "4", amount: 5000, price: 490, originalPrice: 510, image: coinImage, badge: "BEST VALUE" },
-  { id: "5", amount: 10000, price: 980, originalPrice: 1000, image: coinImage },
+  { id: "2", amount: 1000, price: 98, originalPrice: 110, image: cashImage1, badge: "POPULAR" },
+  { id: "3", amount: 3000, price: 295, originalPrice: 310, image: cashImage2 },
+  { id: "4", amount: 5000, price: 490, originalPrice: 510, image: goldImage1, badge: "BEST VALUE" },
+  { id: "5", amount: 10000, price: 980, originalPrice: 1000, image: goldImage2 },
 ];
 
 const galleryImages = [

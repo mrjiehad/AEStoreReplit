@@ -14,14 +14,14 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
           className="text-center mb-6 md:mb-8 bg-gradient-to-r from-transparent via-neon-yellow/20 to-transparent py-2 rounded-sm border border-neon-yellow/30 mx-4"
           data-testid="banner-limited-offer"
         >
-          <div className="flex items-center justify-center gap-2 text-neon-yellow font-bold text-sm md:text-base">
-            <AlertCircle className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-            <span className="uppercase">LIMITED TIME OFFER – Save up to 11% instantly!</span>
+          <div className="flex items-center justify-center gap-2 text-neon-yellow font-bold text-sm md:text-base font-rajdhani">
+            <AlertCircle className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 animate-pulse" />
+            <span className="uppercase tracking-wide">LIMITED TIME OFFER – Save up to 11% instantly!</span>
           </div>
         </div>
 
         <h2
-          className="text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center mb-12 md:mb-16 tracking-tight uppercase text-neon-yellow px-4"
+          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
           data-testid="text-section-title"
         >
           CHOOSE YOUR AECOIN PACKAGE

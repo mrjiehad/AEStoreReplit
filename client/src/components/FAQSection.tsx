@@ -19,7 +19,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
     <section id="faq" className="py-20 bg-card">
       <div className="container mx-auto px-4 max-w-4xl">
         <h2
-          className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-black text-center mb-12 md:mb-16 tracking-tight uppercase text-neon-yellow px-4"
+          className="text-3xl md:text-4xl lg:text-5xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
           data-testid="text-faq-title"
         >
           FREQUENTLY ASKED QUESTIONS
@@ -34,7 +34,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger
-                className="text-left font-montserrat font-bold text-neon-yellow hover:no-underline text-sm md:text-base"
+                className="text-left font-rajdhani font-bold text-neon-yellow hover:no-underline text-base md:text-lg"
                 data-testid={`faq-question-${index}`}
               >
                 {faq.question}

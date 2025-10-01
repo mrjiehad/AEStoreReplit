@@ -44,16 +44,17 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
           {pkg.badge}
         </div>
       )}
-      <CardHeader className="pb-3 pt-3 px-3">
-        <div className="aspect-square rounded-sm overflow-hidden mb-3 bg-background/50">
+      <CardHeader className="pb-3 pt-3 px-3 relative">
+        <div className="absolute inset-0 opacity-20 blur-xl" style={{ backgroundImage: `url(${pkg.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+        <div className="aspect-square rounded-sm overflow-hidden mb-3 bg-background/30 backdrop-blur-sm relative z-10">
           <img
             src={pkg.image}
             alt={`${pkg.amount} AECOIN`}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
             data-testid={`img-package-${pkg.id}`}
           />
         </div>
-        <CardTitle className="text-lg font-montserrat font-black text-center uppercase" data-testid={`text-package-amount-${pkg.id}`}>
+        <CardTitle className="text-xl font-bebas text-center uppercase tracking-wider relative z-10" data-testid={`text-package-amount-${pkg.id}`}>
           <span className="text-neon-yellow">
             {pkg.amount.toLocaleString()}
           </span>{" "}
@@ -77,7 +78,7 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
       </CardContent>
       <CardFooter className="px-3 pb-3">
         <Button
-          className="w-full bg-neon-yellow hover:bg-neon-yellow text-black font-bold transition-all uppercase text-xs h-9 rounded-sm"
+          className="w-full bg-neon-yellow hover:bg-neon-yellow hover:scale-105 text-black font-bold transition-transform uppercase text-xs h-9 rounded-sm font-rajdhani tracking-wide"
           onClick={() => onAddToCart?.(pkg)}
           data-testid={`button-add-to-cart-${pkg.id}`}
         >

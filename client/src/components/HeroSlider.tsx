@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import heroImage1 from "@assets/stock_images/gta_5_los_santos_cit_75686f5c.jpg";
-import heroImage2 from "@assets/stock_images/gta_5_sports_car_mus_b25fc22c.jpg";
-import heroImage3 from "@assets/stock_images/gta_5_los_santos_cit_829ca4e8.jpg";
+import heroImage1 from "@assets/stock_images/gta_5_gameplay_scree_48aed34a.jpg";
+import heroImage2 from "@assets/stock_images/gta_5_in-game_screen_83a059fc.jpg";
+import heroImage3 from "@assets/stock_images/gta_5_screenshot_gam_23412439.jpg";
 
 interface Slide {
   image: string;
@@ -89,21 +89,21 @@ export function HeroSlider({ onShopClick, onGalleryClick }: HeroSliderProps) {
           <div className="relative z-20 h-full flex items-center justify-center">
             <div className="container mx-auto px-4 text-center">
               <h1
-                className="text-4xl md:text-6xl lg:text-7xl font-montserrat font-black mb-4 md:mb-6 tracking-tight uppercase text-neon-yellow"
+                className="text-5xl md:text-7xl lg:text-8xl font-bebas mb-4 md:mb-6 tracking-wider uppercase text-neon-yellow animate-in fade-in slide-in-from-bottom-4 duration-700"
                 data-testid={`text-slide-title-${index}`}
               >
                 {slide.title}
               </h1>
               <p
-                className="text-base md:text-xl lg:text-2xl text-foreground mb-8 md:mb-12 font-medium max-w-3xl mx-auto"
+                className="text-base md:text-xl lg:text-2xl text-foreground mb-8 md:mb-12 font-rajdhani font-semibold max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150"
                 data-testid={`text-slide-subtitle-${index}`}
               >
                 {slide.subtitle}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                 <Button
                   onClick={onShopClick}
-                  className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm"
+                  className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow hover:scale-105 text-black font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm transition-transform font-rajdhani tracking-wide"
                   data-testid={`button-cta1-${index}`}
                 >
                   {slide.cta1}
@@ -111,7 +111,7 @@ export function HeroSlider({ onShopClick, onGalleryClick }: HeroSliderProps) {
                 <Button
                   variant="outline"
                   onClick={onGalleryClick}
-                  className="w-full sm:w-auto bg-transparent hover:bg-neon-yellow/10 border border-neon-yellow text-neon-yellow font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm"
+                  className="w-full sm:w-auto bg-transparent hover:bg-neon-yellow/10 hover:scale-105 border border-neon-yellow text-neon-yellow font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm transition-transform font-rajdhani tracking-wide"
                   data-testid={`button-cta2-${index}`}
                 >
                   {slide.cta2}
