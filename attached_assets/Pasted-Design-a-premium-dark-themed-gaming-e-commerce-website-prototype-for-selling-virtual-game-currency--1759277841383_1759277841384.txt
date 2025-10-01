@@ -1,0 +1,81 @@
+Design a premium, dark-themed gaming e-commerce website prototype for selling virtual game currency (coins). 
+The style should combine cyberpunk neon vibes with modern minimalism, optimized for high conversion.
+
+🎨 Visual Style:
+- Background: Deep black (#0A0A0A) with subtle dark gradients and textures (cyberpunk / arcade style).
+- Accent Color: Neon yellow (#FFD700 / #FFCC00) with glowing hover states.
+- Secondary Accent: Electric cyan (#00E0FF) for highlights.
+- Typography: Bold futuristic fonts (Orbitron, Bungee, Montserrat Black) for headers. Clean sans-serif for body text.
+- Visuals: Neon-lit controllers, arcade machines, GTA-style cityscapes, gaming desk setups.
+- Effects: Soft glowing shadows, hover animations, parallax backgrounds, neon button glow.
+
+📌 Sections:
+
+1. **Header / Navbar**
+   - Left: Logo text “AECOIN STORE” in neon yellow with glow.
+   - Navigation links: Home, Packages, Gallery, My Orders, FAQ (white → yellow hover).
+   - Right: Shopping cart icon with yellow badge counter.
+   - Sticky on scroll with subtle shadow.
+
+2. **Hero Section**
+   - Full-width cinematic background (GTA-like city, arcade, neon).
+   - Dark overlay gradient for readability.
+   - Centered title: “AECOIN STORE” in bold neon yellow glowing text.
+   - Subtitle: “Your #1 Source for GTA Online Currency”.
+   - Two large buttons with neon glow:
+     - Solid yellow: “SHOP NOW”
+     - Outlined yellow: “VIEW GALLERY”
+   - Add floating coin animation / neon particles for motion.
+
+3. **Packages Section**
+   - Title: “CHOOSE YOUR AECOIN PACKAGE” in bold neon.
+   - 5 Package Cards in grid, each with unique gaming visuals:
+     - 500 AECOIN – RM60 (strike RM65)
+     - 1000 AECOIN – RM98 (strike RM110)
+     - 3000 AECOIN – RM295 (strike RM310)
+     - 5000 AECOIN – RM490 (strike RM510)
+     - 10000 AECOIN – RM980 (strike RM1000)
+   - Each card: Dark background, yellow border glow, product image, price highlight in neon.
+   - CTA: “Add to Cart” big yellow button with hover glow.
+   - Highlight bar above cards: “🔥 LIMITED TIME OFFER – Save up to 11% instantly!”
+
+4. **Gallery Section**
+   - Title: “GTA GALLERY”
+   - Masonry grid of neon-style images (controllers, gaming PCs, GTA scenes).
+   - On hover: images glow with yellow border.
+   - Below: full-width CTA button “GET YOUR AECOIN NOW” in neon yellow.
+
+5. **How It Works Section**
+   - 4 Step Icons (yellow circle glow + simple line icons):
+     1. Choose Package
+     2. Secure Payment
+     3. Instant Delivery
+     4. Redeem & Play
+   - Below icons: 3 highlight features with neon badges:
+     - ⚡ Instant Delivery
+     - 🛡️ 100% Secure
+     - 🎧 24/7 Support
+
+6. **FAQ Section**
+   - Title: “FREQUENTLY ASKED QUESTIONS”
+   - Accordion cards with black background, yellow headers.
+   - Example Q&As:
+     - “How fast will I receive my codes?” → “Instantly after payment confirmation.”
+     - “What payment methods do you accept?” → “FPX, ToyyibPay, Billplz, Visa/Mastercard.”
+     - “Can I get a refund?” → “Refunds only for unused codes within 24 hours.”
+     - “How do I redeem codes?” → “Enter in GTA Online redeem menu.”
+
+7. **Footer**
+   - Left: Company info (address, socials).
+   - Middle: Quick links (User Control Panel, Changelog, Creators).
+   - Right: Info links (Whitelist, Admin, Gangs).
+   - Bottom bar: “© 2024 AECOIN STORE – Fast, Secure, Reliable.”
+   - Status: “✅ All Systems Operational” in neon green.
+   - CTA button: “GET IN TOUCH” glowing yellow.
+
+✨ UX Enhancements:
+- Smooth scroll, micro-animations on hover.
+- Responsive for mobile-first (cards stack, hero text centered).
+- Always keep CTA buttons visible and glowing.
+- Parallax hero background + floating neon coin particles for extra depth.
+
