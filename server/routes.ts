@@ -4,6 +4,15 @@ import { storage } from "./storage";
 import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
 import "./types";
 import crypto from "crypto";
+import Stripe from "stripe";
+
+// Initialize Stripe (from blueprint:javascript_stripe)
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2024-11-20.acacia",
+});
 
 // Middleware to check if user is authenticated
 function requireAuth(req: Request, res: Response, next: Function) {
@@ -224,6 +233,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     res.json(coupon);
+  });
+
+  // Stripe payment intent endpoint - Server-side amount calculation (security fix)
+  app.post("/api/create-payment-intent", requireAuth, async (req, res) => {
+    try {
+      const { couponCode } = req.body;
+      const userId = req.session.userId!;
+
+      // Get cart items and calculate total SERVER-SIDE (security: never trust client amounts)
+      const cartItems = await storage.getCartItems(userId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      // Calculate subtotal from server-side cart data
+      let subtotal = 0;
+      for (const item of cartItems) {
+        const pkg = await storage.getPackage(item.packageId);
+        if (pkg) {
+          subtotal += parseFloat(pkg.price) * item.quantity;
+        }
+      }
+
+      // Apply coupon discount if provided
+      let discount = 0;
+      let validatedCoupon = null;
+      if (couponCode) {
+        const coupon = await storage.getCoupon(couponCode.toUpperCase());
+        
+        // Validate coupon server-side
+        if (coupon && coupon.isActive) {
+          const isExpired = coupon.expiresAt && new Date(coupon.expiresAt) < new Date();
+          const isOverUsed = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
+          const belowMinPurchase = coupon.minPurchase && parseFloat(coupon.minPurchase) > subtotal;
+
+          if (!isExpired && !isOverUsed && !belowMinPurchase) {
+            validatedCoupon = coupon;
+            if (coupon.discountType === 'percentage') {
+              discount = (subtotal * parseFloat(coupon.discountValue)) / 100;
+            } else {
+              discount = parseFloat(coupon.discountValue);
+            }
+          }
+        }
+      }
+
+      const total = Math.max(0, subtotal - discount);
+
+      if (total <= 0) {
+        return res.status(400).json({ message: "Invalid order total" });
+      }
+
+      // Create payment intent with server-calculated amount (from blueprint:javascript_stripe)
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(total * 100), // Convert to cents
+        currency: "myr",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          userId,
+          couponCode: validatedCoupon?.code || "",
+          subtotal: subtotal.toFixed(2),
+          discount: discount.toFixed(2),
+          total: total.toFixed(2),
+        },
+      });
+      
+      res.json({ 
+        clientSecret: paymentIntent.client_secret,
+        amount: total,
+      });
+    } catch (error: any) {
+      console.error("Stripe payment intent error:", error);
+      res.status(500).json({ 
+        message: "Error creating payment intent: " + error.message 
+      });
+    }
   });
 
   const httpServer = createServer(app);

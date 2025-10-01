@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +15,94 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { CartItem, Package, Coupon } from "@shared/schema";
 
+// Initialize Stripe (from blueprint:javascript_stripe)
+if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
+  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
+}
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
 interface CartItemWithPackage extends CartItem {
   package: Package;
+}
+
+// Stripe Checkout Form Component (from blueprint:javascript_stripe)
+function StripeCheckoutForm({ 
+  total, 
+  onSuccess 
+}: { 
+  total: number; 
+  onSuccess: () => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/orders`,
+        },
+        redirect: "if_required",
+      });
+
+      if (error) {
+        toast({
+          title: "Payment Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Payment Successful!",
+          description: "Your order has been placed successfully.",
+        });
+        onSuccess();
+      }
+    } catch (err: any) {
+      toast({
+        title: "Payment Error",
+        description: err.message || "An error occurred during payment.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement />
+      <Button
+        type="submit"
+        disabled={!stripe || isProcessing}
+        className="w-full bg-neon-yellow text-black hover:bg-neon-yellow/90 font-bold"
+        data-testid="button-submit-payment"
+      >
+        {isProcessing ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processing...
+          </>
+        ) : (
+          <>
+            <CreditCard className="mr-2 h-4 w-4" />
+            Pay RM{total.toFixed(2)}
+          </>
+        )}
+      </Button>
+    </form>
+  );
 }
 
 export default function Checkout() {
@@ -25,6 +113,7 @@ export default function Checkout() {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "toyyibpay">("stripe");
+  const [clientSecret, setClientSecret] = useState<string>("");
 
   // Fetch cart items (only if user is authenticated)
   const { data: cartItems = [], isLoading } = useQuery<CartItemWithPackage[]>({
@@ -92,6 +181,46 @@ export default function Checkout() {
     setCouponCode("");
   };
 
+  // Create payment intent when checkout with Stripe (from blueprint:javascript_stripe)
+  // Server calculates amount for security - never trust client input
+  // CRITICAL: Regenerate when total changes to prevent underpayment via stale intents
+  useEffect(() => {
+    if (paymentMethod === "stripe" && cartItems.length > 0) {
+      // Clear old client secret to force re-render
+      setClientSecret("");
+      
+      apiRequest("POST", "/api/create-payment-intent", { 
+        couponCode: appliedCoupon?.code || "",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setClientSecret(data.clientSecret);
+          // Server returns the calculated amount for display verification
+          if (data.amount && Math.abs(data.amount - total) > 0.01) {
+            toast({
+              title: "Price Mismatch",
+              description: "Cart total has changed. Please review your order.",
+              variant: "destructive",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Payment intent error:", error);
+          toast({
+            title: "Error",
+            description: "Failed to initialize payment. Please try again.",
+            variant: "destructive",
+          });
+        });
+    }
+  }, [paymentMethod, appliedCoupon, total, cartItems.length]);
+
+  const handlePaymentSuccess = () => {
+    // Clear cart and redirect to orders page
+    queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    navigate("/orders");
+  };
+
   const handleCheckout = () => {
     if (cartItems.length === 0) {
       toast({
@@ -102,11 +231,13 @@ export default function Checkout() {
       return;
     }
 
-    // TODO: Create order and initiate payment
-    toast({
-      title: "Processing",
-      description: "Payment integration coming soon!",
-    });
+    if (paymentMethod === "toyyibpay") {
+      // TODO: Implement ToyyibPay
+      toast({
+        title: "Coming Soon",
+        description: "ToyyibPay integration coming soon!",
+      });
+    }
   };
 
   if (!user) {
@@ -313,15 +444,30 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleCheckout}
-                  disabled={cartItems.length === 0}
-                  className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-base h-12 rounded-full font-rajdhani tracking-wide"
-                  data-testid="button-place-order"
-                >
-                  <CreditCard className="w-5 h-5 mr-2" />
-                  Place Order
-                </Button>
+                {/* Payment Form (from blueprint:javascript_stripe) */}
+                {paymentMethod === "stripe" && clientSecret ? (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <StripeCheckoutForm 
+                      total={total} 
+                      onSuccess={handlePaymentSuccess}
+                    />
+                  </Elements>
+                ) : paymentMethod === "stripe" && !clientSecret ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-neon-yellow animate-spin" />
+                    <span className="ml-2 text-white">Initializing payment...</span>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleCheckout}
+                    disabled={cartItems.length === 0}
+                    className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-base h-12 rounded-full font-rajdhani tracking-wide"
+                    data-testid="button-place-order"
+                  >
+                    <Wallet className="w-5 h-5 mr-2" />
+                    Continue to ToyyibPay
+                  </Button>
+                )}
 
                 <p className="text-xs text-gray-400 text-center">
                   By completing this purchase, you agree to our terms and conditions.
