@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Zap, Shield, Headphones } from "lucide-react";
+import { Zap, Shield, Headphones } from "lucide-react";
 import char1 from "@assets/1_1759280228659.png";
 import char2 from "@assets/2_1759280228660.png";
 import char3 from "@assets/3_1759280228660.png";
@@ -120,7 +120,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   };
 
   return (
-    <section className="relative h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden flex items-center">
+    <section className="relative h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden flex items-center pt-16">
       {/* Animated Background */}
       <div className="absolute inset-0 opacity-30">
         <div 
@@ -136,25 +136,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
           }}
         />
       </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        disabled={isAnimating}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50"
-        data-testid="button-prev-slide"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-
-      <button
-        onClick={nextSlide}
-        disabled={isAnimating}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50"
-        data-testid="button-next-slide"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

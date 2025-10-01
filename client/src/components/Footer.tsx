@@ -1,9 +1,21 @@
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import footerBg from "@assets/stock_images/gta_5_los_santos_cit_316848d5.jpg";
 
 export function Footer() {
   return (
-    <footer className="bg-[#060d1a] border-t border-white/10">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="relative bg-[#060d1a] border-t border-white/10 overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `url(${footerBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#060d1a] via-[#060d1a]/90 to-[#060d1a]/70" />
+      
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="text-xl font-rajdhani font-bold text-white uppercase tracking-wider mb-4">
