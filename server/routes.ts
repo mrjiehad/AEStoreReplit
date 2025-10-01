@@ -141,23 +141,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe webhook handler - Raw body middleware applied in index.ts
   app.post("/api/webhooks/stripe", async (req, res) => {
     const sig = req.headers['stripe-signature'];
-
-    if (!sig || typeof sig !== 'string') {
-      return res.status(400).send('No signature');
-    }
-
-    if (!STRIPE_WEBHOOK_SECRET) {
-      console.error('STRIPE_WEBHOOK_SECRET not configured - rejecting webhook');
-      return res.status(500).send('Webhook secret not configured');
-    }
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
     let event: Stripe.Event;
 
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
-    } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
+    // In production, ALWAYS verify webhook signatures
+    if (!isDevelopment) {
+      if (!sig || typeof sig !== 'string') {
+        return res.status(400).send('No signature');
+      }
+
+      if (!STRIPE_WEBHOOK_SECRET) {
+        console.error('STRIPE_WEBHOOK_SECRET not configured - rejecting webhook');
+        return res.status(500).send('Webhook secret not configured');
+      }
+
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+      } catch (err: any) {
+        console.error('Webhook signature verification failed:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+    } else {
+      // Development mode: Try to verify signature, but fallback to parsing body if verification fails
+      if (sig && STRIPE_WEBHOOK_SECRET) {
+        try {
+          event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+          console.log('✓ Webhook signature verified in development');
+        } catch (err: any) {
+          console.warn('⚠️  Development mode: Webhook signature verification failed, processing anyway');
+          console.warn('   For production, set up webhooks properly with Stripe CLI');
+          event = JSON.parse(req.body.toString());
+        }
+      } else {
+        console.warn('⚠️  Development mode: No signature verification (missing sig or secret)');
+        event = JSON.parse(req.body.toString());
+      }
     }
 
     try {
