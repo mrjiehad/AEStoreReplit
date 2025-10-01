@@ -1,5 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { motion, useMotionValue, useTransform, useReducedMotion } from "framer-motion";
+import { useState, useRef } from "react";
 
 export interface Package {
   id: string;
@@ -15,14 +17,9 @@ interface PackageCardProps {
   onAddToCart?: (pkg: Package) => void;
 }
 
-export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
-  const discount = Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100);
-
+function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: (pkg: Package) => void }) {
   return (
-    <Card
-      className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
-      data-testid={`card-package-${pkg.id}`}
-    >
+    <>
       {/* Image Background */}
       <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl">
         <img
@@ -78,6 +75,116 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
           BUY NOW
         </Button>
       </CardFooter>
-    </Card>
+    </>
+  );
+}
+
+export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
+  const shouldReduceMotion = useReducedMotion();
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const boundsRef = useRef<DOMRect | null>(null);
+  const rafRef = useRef<number>();
+  
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  // Calculate rotation based on mouse position (subtle tilt)
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [3, -3]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-3, 3]);
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion || !boundsRef.current) return;
+    
+    // Cancel any pending rAF
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+    
+    // Use requestAnimationFrame to throttle updates
+    rafRef.current = requestAnimationFrame(() => {
+      const bounds = boundsRef.current;
+      if (!bounds) return;
+      
+      const centerX = bounds.left + bounds.width / 2;
+      const centerY = bounds.top + bounds.height / 2;
+      
+      // Normalize mouse position to -0.5 to 0.5 range
+      const normalizedX = Math.max(-0.5, Math.min(0.5, (e.clientX - centerX) / bounds.width));
+      const normalizedY = Math.max(-0.5, Math.min(0.5, (e.clientY - centerY) / bounds.height));
+      
+      mouseX.set(normalizedX);
+      mouseY.set(normalizedY);
+    });
+  };
+  
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    // Cache bounds on enter for better performance
+    if (cardRef.current) {
+      boundsRef.current = cardRef.current.getBoundingClientRect();
+    }
+  };
+  
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    boundsRef.current = null;
+    mouseX.set(0);
+    mouseY.set(0);
+    // Clean up any pending rAF
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+  };
+
+  // If reduced motion, use regular Card without 3D effect
+  if (shouldReduceMotion) {
+    return (
+      <Card
+        className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+        style={{
+          boxShadow: isHovered
+            ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"
+            : "0 10px 30px rgba(0, 0, 0, 0.3)",
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        data-testid={`card-package-${pkg.id}`}
+      >
+        <PackageCardContent pkg={pkg} onAddToCart={onAddToCart} />
+      </Card>
+    );
+  }
+
+  // With 3D tilt effect
+  return (
+    <div style={{ perspective: "800px" }} className="rounded-3xl">
+      <motion.div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          transformStyle: "preserve-3d",
+          rotateX,
+          rotateY,
+          willChange: "transform",
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="rounded-3xl"
+      >
+        <Card
+          className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+          style={{
+            boxShadow: isHovered
+              ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"
+              : "0 10px 30px rgba(0, 0, 0, 0.3)",
+          }}
+          data-testid={`card-package-${pkg.id}`}
+        >
+          <PackageCardContent pkg={pkg} onAddToCart={onAddToCart} />
+        </Card>
+      </motion.div>
+    </div>
   );
 }
