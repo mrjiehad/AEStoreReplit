@@ -84,7 +84,7 @@ export async function createBill(params: {
         billDescription: params.billDescription,
         billPriceSetting: '1',
         billPayorInfo: '1',
-        billAmount: params.billAmount.toFixed(2),
+        billAmount: String(Math.round(params.billAmount * 100)),
         billReturnUrl: params.billReturnUrl,
         billCallbackUrl: params.billCallbackUrl,
         billExternalReferenceNo: params.billExternalReferenceNo,

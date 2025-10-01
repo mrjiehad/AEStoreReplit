@@ -594,16 +594,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { status_id, billcode, order_id } = req.query;
 
-      if (status_id === '1') {
-        const transactions = await getBillTransactions(billcode as string);
-        
-        if (transactions && transactions.length > 0) {
-          res.redirect(`/orders?payment=success&provider=toyyibpay`);
-          return;
+      if (status_id !== '1' || !billcode) {
+        res.redirect(`/checkout?error=payment_failed`);
+        return;
+      }
+
+      const transactions = await getBillTransactions(billcode as string);
+      
+      if (!transactions || transactions.length === 0 || transactions[0].billpaymentStatus !== '1') {
+        res.redirect(`/checkout?error=payment_failed`);
+        return;
+      }
+
+      if (!req.session.userId) {
+        res.redirect(`/?error=session_expired`);
+        return;
+      }
+
+      const userId = req.session.userId;
+      const transaction = transactions[0];
+
+      const cartItems = await storage.getCartItems(userId);
+      
+      if (cartItems.length === 0) {
+        res.redirect(`/orders?payment=success&provider=toyyibpay`);
+        return;
+      }
+
+      let subtotal = 0;
+      for (const item of cartItems) {
+        const pkg = await storage.getPackage(item.packageId);
+        if (pkg) {
+          subtotal += parseFloat(pkg.price) * item.quantity;
         }
       }
 
-      res.redirect(`/checkout?error=payment_failed`);
+      const total = subtotal;
+
+      const order = await storage.createOrder({
+        userId,
+        totalAmount: subtotal.toFixed(2),
+        discountAmount: '0.00',
+        finalAmount: total.toFixed(2),
+        status: "completed",
+        paymentMethod: "toyyibpay",
+        paymentId: transaction.billpaymentInvoiceNo,
+        couponCode: null,
+      });
+
+      for (const cartItem of cartItems) {
+        const pkg = await storage.getPackage(cartItem.packageId);
+        if (!pkg) continue;
+
+        await storage.createOrderItem({
+          orderId: order.id,
+          packageId: pkg.id,
+          quantity: cartItem.quantity,
+          priceAtPurchase: pkg.price,
+        });
+
+        for (let i = 0; i < cartItem.quantity; i++) {
+          const code = generateRedemptionCode();
+          await storage.createRedemptionCode({
+            code,
+            packageId: pkg.id,
+            orderId: order.id,
+            status: "active",
+          });
+
+          try {
+            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
+          } catch (fivemError) {
+            console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
+          }
+        }
+      }
+
+      await storage.clearCart(userId);
+
+      try {
+        const user = await storage.getUser(userId);
+        if (user?.email) {
+          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
+          const codesWithPackageNames = await Promise.all(
+            redemptionCodes.map(async (code) => {
+              const pkg = await storage.getPackage(code.packageId);
+              return {
+                code: code.code,
+                packageName: pkg?.name || 'AECOIN Package'
+              };
+            })
+          );
+          
+          await sendOrderConfirmationEmail(
+            user.email,
+            order.id,
+            order.finalAmount,
+            codesWithPackageNames
+          );
+        }
+      } catch (emailError) {
+        console.error("Failed to send order confirmation email:", emailError);
+      }
+
+      res.redirect(`/orders?payment=success&provider=toyyibpay`);
     } catch (error) {
       console.error("ToyyibPay return error:", error);
       res.redirect(`/checkout?error=payment_failed`);
