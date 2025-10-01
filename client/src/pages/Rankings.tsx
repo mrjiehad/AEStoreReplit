@@ -8,12 +8,6 @@ import type { PlayerRanking } from "@shared/schema";
 import sultan1 from "@assets/S2_1759294544784.png";
 import sultan2 from "@assets/S1_1759294544782.png";
 import sultan3 from "@assets/S3_1759294544785.png";
-import gtaCar1 from "@assets/stock_images/gta_5_luxury_sports__7da85e9b.jpg";
-import gtaCar2 from "@assets/stock_images/gta_5_luxury_sports__13cbe027.jpg";
-import gtaCar3 from "@assets/stock_images/gta_5_luxury_sports__6b05248e.jpg";
-import moneyImage1 from "@assets/stock_images/gaming_money_cash_do_220ee2d8.jpg";
-import moneyImage2 from "@assets/stock_images/gaming_money_cash_do_694d3fe8.jpg";
-import moneyImage3 from "@assets/stock_images/gaming_money_cash_do_3e521cf4.jpg";
 import cityBg from "@assets/stock_images/gta_5_cityscape_los__a8b6c683.jpg";
 
 interface PlayerRankingWithUser extends PlayerRanking {
@@ -24,8 +18,6 @@ interface PlayerRankingWithUser extends PlayerRanking {
 }
 
 const characterImages = [sultan1, sultan2, sultan3, sultan1, sultan2];
-const moneyImages = [moneyImage1, moneyImage2, moneyImage3];
-const carImages = [gtaCar1, gtaCar2, gtaCar3];
 
 export default function Rankings() {
   const { data: rankings = [], isLoading } = useQuery<PlayerRankingWithUser[]>({
@@ -102,7 +94,6 @@ export default function Rankings() {
                       const isWinner = player.rank === 1;
                       const heights = ["min-h-[500px]", "min-h-[600px]", "min-h-[450px]"];
                       const characterImage = characterImages[index % characterImages.length];
-                      const overlayImage = index === 0 ? moneyImages[0] : (index === 1 ? carImages[0] : moneyImages[1]);
                       
                       return (
                         <div
@@ -142,15 +133,6 @@ export default function Rankings() {
                                   isWinner ? 'text-black' : 'text-white'
                                 }`}>#{player.rank}</span>
                               </div>
-                            </div>
-
-                            {/* Money/Car Overlay Image */}
-                            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-25">
-                              <img 
-                                src={overlayImage} 
-                                alt="Reward"
-                                className="w-48 h-48 object-contain"
-                              />
                             </div>
 
                             {/* Content */}
