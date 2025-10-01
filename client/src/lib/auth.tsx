@@ -28,19 +28,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [data]);
 
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/auth/login");
-      const data = await response.json();
-      return data;
-    },
-    onSuccess: (data: { user: User }) => {
-      setUser(data.user);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-    },
-  });
-
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -53,7 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const login = async () => {
-    await loginMutation.mutateAsync();
+    // Redirect to Discord OAuth
+    window.location.href = '/api/auth/discord';
   };
 
   const logout = async () => {

@@ -1,8 +1,9 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getDiscordUserInfo } from "./discord";
+import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
 import "./types";
+import crypto from "crypto";
 
 // Middleware to check if user is authenticated
 function requireAuth(req: Request, res: Response, next: Function) {
@@ -13,10 +14,38 @@ function requireAuth(req: Request, res: Response, next: Function) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Authentication routes
-  app.post("/api/auth/login", async (req, res) => {
+  // Discord OAuth flow - Step 1: Redirect to Discord
+  app.get("/api/auth/discord", (req, res) => {
+    // Generate and store state for CSRF protection
+    const state = crypto.randomBytes(16).toString('hex');
+    req.session.oauthState = state;
+    
+    const authUrl = getDiscordAuthUrl(state);
+    res.redirect(authUrl);
+  });
+
+  // Discord OAuth flow - Step 2: Handle callback
+  app.get("/api/auth/discord/callback", async (req, res) => {
+    const { code, state } = req.query;
+
+    // Verify state for CSRF protection
+    if (!state || state !== req.session.oauthState) {
+      return res.status(403).send("Invalid state parameter");
+    }
+
+    // Clear state after use
+    delete req.session.oauthState;
+
+    if (!code || typeof code !== 'string') {
+      return res.status(400).send("No code provided");
+    }
+
     try {
-      const discordUser = await getDiscordUserInfo();
+      // Exchange code for access token
+      const tokenData = await exchangeCodeForToken(code);
+      
+      // Get user info from Discord
+      const discordUser = await getDiscordUserInfo(tokenData.access_token);
       
       // Check if user exists
       let user = await storage.getUserByDiscordId(discordUser.discordId);
@@ -31,13 +60,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Set session
-      req.session.userId = user.id;
-      
-      res.json({ user });
+      // Regenerate session to prevent session fixation attacks
+      const oldSession = req.session;
+      req.session.regenerate((err) => {
+        if (err) {
+          console.error("Session regeneration error:", err);
+          return res.status(500).send("Authentication failed");
+        }
+        
+        // Set user ID in new session
+        req.session.userId = user.id;
+        
+        // Save session and redirect
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).send("Authentication failed");
+          }
+          res.redirect('/');
+        });
+      });
     } catch (error: any) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Failed to authenticate with Discord" });
+      console.error("OAuth callback error:", error);
+      res.status(500).send("Authentication failed");
     }
   });
 

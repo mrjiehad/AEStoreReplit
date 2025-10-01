@@ -119,21 +119,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
               </div>
             ) : (
               <Button
-                onClick={async () => {
-                  try {
-                    await login();
-                    toast({
-                      title: "Welcome!",
-                      description: "You've successfully logged in with Discord.",
-                    });
-                  } catch (error) {
-                    toast({
-                      title: "Login Failed",
-                      description: "Could not authenticate with Discord. Please try again.",
-                      variant: "destructive",
-                    });
-                  }
-                }}
+                onClick={() => login()}
                 disabled={isLoading}
                 className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full flex items-center gap-2"
                 data-testid="button-login-discord"
