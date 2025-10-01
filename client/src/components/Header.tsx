@@ -74,13 +74,6 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
               GALLERY
             </button>
             <button
-              onClick={() => scrollToSection("orders")}
-              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
-              data-testid="link-orders"
-            >
-              ORDERS
-            </button>
-            <button
               onClick={() => scrollToSection("faq")}
               className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-faq"
