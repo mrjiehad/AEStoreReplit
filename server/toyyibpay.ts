@@ -39,22 +39,23 @@ async function ensureCategoryExists(): Promise<string> {
     });
 
     const responseText = await response.text();
-    console.log('ToyyibPay category response:', responseText);
     
-    let data: CreateCategoryResponse[];
+    let data: any;
     try {
-      data = JSON.parse(responseText) as CreateCategoryResponse[];
+      data = JSON.parse(responseText);
     } catch (parseError) {
       console.error('Failed to parse ToyyibPay response:', responseText);
       throw new Error(`ToyyibPay API error: ${responseText}`);
     }
     
-    if (!data || !data[0]?.CategoryCode) {
+    const catCode: string | undefined = Array.isArray(data) ? data[0]?.CategoryCode : data?.CategoryCode;
+    
+    if (!catCode) {
       console.error('Invalid category response:', data);
       throw new Error(`Failed to create ToyyibPay category: ${responseText}`);
     }
 
-    categoryCode = data[0].CategoryCode;
+    categoryCode = catCode as string;
     console.log('✓ ToyyibPay category created:', categoryCode);
     
     return categoryCode;
