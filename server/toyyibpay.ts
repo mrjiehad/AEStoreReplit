@@ -38,10 +38,20 @@ async function ensureCategoryExists(): Promise<string> {
       }),
     });
 
-    const data = await response.json() as CreateCategoryResponse[];
+    const responseText = await response.text();
+    console.log('ToyyibPay category response:', responseText);
+    
+    let data: CreateCategoryResponse[];
+    try {
+      data = JSON.parse(responseText) as CreateCategoryResponse[];
+    } catch (parseError) {
+      console.error('Failed to parse ToyyibPay response:', responseText);
+      throw new Error(`ToyyibPay API error: ${responseText}`);
+    }
     
     if (!data || !data[0]?.CategoryCode) {
-      throw new Error('Failed to create ToyyibPay category');
+      console.error('Invalid category response:', data);
+      throw new Error(`Failed to create ToyyibPay category: ${responseText}`);
     }
 
     categoryCode = data[0].CategoryCode;
