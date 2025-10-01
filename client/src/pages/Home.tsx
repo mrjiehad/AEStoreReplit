@@ -3,6 +3,10 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { ReferenceHero } from "@/components/ReferenceHero";
+import { TrustBadges } from "@/components/TrustBadges";
+import { StatsCounter } from "@/components/StatsCounter";
+import { ScrollFadeIn } from "@/components/ScrollFadeIn";
+import { BackToTop } from "@/components/BackToTop";
 import { PackagesSection } from "@/components/PackagesSection";
 import { GallerySection } from "@/components/GallerySection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
@@ -80,24 +84,62 @@ export default function Home() {
     enabled: !!user,
   });
 
-  // Add to cart mutation
+  // Add to cart mutation with optimistic updates
   const addToCart = useMutation({
     mutationFn: async (packageId: string) => {
       await apiRequest("POST", "/api/cart", { packageId, quantity: 1 });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    onMutate: async (packageId) => {
+      // Find the package first
+      const pkg = dbPackages.find(p => p.id === packageId);
+      
+      // If package not found, don't proceed with optimistic update
+      if (!pkg) {
+        return { previousCart: undefined };
+      }
+
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["/api/cart"] });
+
+      // Snapshot previous value
+      const previousCart = queryClient.getQueryData(["/api/cart"]);
+
+      // Optimistically update cart (add item for instant feedback)
+      queryClient.setQueryData(["/api/cart"], (old: any[] = []) => [
+        ...old,
+        { 
+          id: `temp-${Date.now()}`, 
+          packageId, 
+          quantity: 1,
+          package: pkg 
+        }
+      ]);
+
+      // Show instant success toast
       toast({
         title: "Added to Cart!",
         description: "Package added to your cart successfully.",
       });
+
+      return { previousCart };
     },
-    onError: () => {
+    onError: (err: any, _packageId, context) => {
+      // Rollback on error
+      if (context?.previousCart) {
+        queryClient.setQueryData(["/api/cart"], context.previousCart);
+      }
+      
+      // Show appropriate error message
+      const errorMessage = err?.message || "Failed to add item to cart. Please try again.";
       toast({
         title: "Failed to Add",
-        description: "Please log in to add items to cart.",
+        description: errorMessage,
         variant: "destructive",
       });
+    },
+    onSettled: () => {
+      // Always refetch to sync with server
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
     },
   });
 
@@ -158,11 +200,34 @@ export default function Home() {
     <div className="min-h-screen bg-[#0a1628]">
       <Header cartItemCount={cartItems.length} onCartClick={handleCartClick} />
       <ReferenceHero onShopClick={scrollToPackages} onPackagesClick={scrollToPackages} />
-      <PackagesSection packages={packages} onAddToCart={handleAddToCart} />
-      <GallerySection images={galleryImages} onCtaClick={scrollToPackages} />
-      <HowItWorksSection />
-      <FAQSection faqs={faqs} />
+      
+      <ScrollFadeIn>
+        <TrustBadges />
+      </ScrollFadeIn>
+      
+      <ScrollFadeIn delay={0.1}>
+        <StatsCounter />
+      </ScrollFadeIn>
+      
+      <ScrollFadeIn delay={0.1}>
+        <PackagesSection packages={packages} onAddToCart={handleAddToCart} />
+      </ScrollFadeIn>
+      
+      <ScrollFadeIn delay={0.1}>
+        <GallerySection images={galleryImages} onCtaClick={scrollToPackages} />
+      </ScrollFadeIn>
+      
+      <ScrollFadeIn delay={0.1}>
+        <HowItWorksSection />
+      </ScrollFadeIn>
+      
+      <ScrollFadeIn delay={0.1}>
+        <FAQSection faqs={faqs} />
+      </ScrollFadeIn>
+      
       <Footer />
+      
+      <BackToTop />
       
       <CartDrawer
         open={cartOpen}
