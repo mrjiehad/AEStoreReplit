@@ -3,8 +3,6 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { ReferenceHero } from "@/components/ReferenceHero";
-import { TrustBadges } from "@/components/TrustBadges";
-import { StatsCounter } from "@/components/StatsCounter";
 import { ScrollFadeIn } from "@/components/ScrollFadeIn";
 import { BackToTop } from "@/components/BackToTop";
 import { PackagesSection } from "@/components/PackagesSection";
@@ -200,14 +198,6 @@ export default function Home() {
     <div className="min-h-screen bg-[#0a1628]">
       <Header cartItemCount={cartItems.length} onCartClick={handleCartClick} />
       <ReferenceHero onShopClick={scrollToPackages} onPackagesClick={scrollToPackages} />
-      
-      <ScrollFadeIn>
-        <TrustBadges />
-      </ScrollFadeIn>
-      
-      <ScrollFadeIn delay={0.1}>
-        <StatsCounter />
-      </ScrollFadeIn>
       
       <ScrollFadeIn delay={0.1}>
         <PackagesSection packages={packages} onAddToCart={handleAddToCart} />
