@@ -84,8 +84,7 @@ export function Footer() {
                 ✓ All Systems Operational
               </Badge>
               <Button
-                size="sm"
-                className="bg-neon-yellow hover:bg-neon-yellow text-black font-bold uppercase"
+                className="bg-neon-yellow hover:bg-neon-yellow text-black font-bold uppercase text-xs h-9 px-6 rounded-sm"
                 data-testid="button-get-in-touch"
               >
                 GET IN TOUCH

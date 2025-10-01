@@ -1,5 +1,5 @@
 import { PackageCard } from "../PackageCard";
-import coinImage from "@assets/generated_images/Golden_coins_package_visual_49569ac5.png";
+import coinImage from "@assets/stock_images/gold_coins_money_cas_b3778293.jpg";
 
 export default function PackageCardExample() {
   const samplePackage = {

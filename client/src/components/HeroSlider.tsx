@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import heroImage1 from "@assets/generated_images/Cyberpunk_cityscape_hero_background_172a86dd.png";
-import heroImage2 from "@assets/generated_images/GTA_style_sports_car_7f8331d4.png";
-import heroImage3 from "@assets/generated_images/Neon_arcade_machine_755a81ea.png";
+import heroImage1 from "@assets/stock_images/gta_5_los_santos_cit_75686f5c.jpg";
+import heroImage2 from "@assets/stock_images/gta_5_sports_car_mus_b25fc22c.jpg";
+import heroImage3 from "@assets/stock_images/gta_5_los_santos_cit_829ca4e8.jpg";
 
 interface Slide {
   image: string;
@@ -72,7 +72,7 @@ export function HeroSlider({ onShopClick, onGalleryClick }: HeroSliderProps) {
   };
 
   return (
-    <section className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+    <section className="relative h-[450px] md:h-[550px] lg:h-[600px] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -100,20 +100,18 @@ export function HeroSlider({ onShopClick, onGalleryClick }: HeroSliderProps) {
               >
                 {slide.subtitle}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                 <Button
-                  size="lg"
                   onClick={onShopClick}
-                  className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-base md:text-lg px-6 md:px-8 py-5 md:py-6 border-2 border-neon-yellow/50 uppercase"
+                  className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm"
                   data-testid={`button-cta1-${index}`}
                 >
                   {slide.cta1}
                 </Button>
                 <Button
-                  size="lg"
                   variant="outline"
                   onClick={onGalleryClick}
-                  className="w-full sm:w-auto bg-black/30 hover:bg-black/40 border-2 border-neon-yellow/70 text-neon-yellow font-bold text-base md:text-lg px-6 md:px-8 py-5 md:py-6 backdrop-blur-sm uppercase"
+                  className="w-full sm:w-auto bg-transparent hover:bg-neon-yellow/10 border border-neon-yellow text-neon-yellow font-bold text-sm px-8 py-2 h-10 uppercase rounded-sm"
                   data-testid={`button-cta2-${index}`}
                 >
                   {slide.cta2}
@@ -128,31 +126,31 @@ export function HeroSlider({ onShopClick, onGalleryClick }: HeroSliderProps) {
         variant="ghost"
         size="icon"
         onClick={prevSlide}
-        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-neon-yellow h-10 w-10 md:h-12 md:w-12"
+        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-neon-yellow h-9 w-9 rounded-sm"
         data-testid="button-prev-slide"
       >
-        <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
+        <ChevronLeft className="w-5 h-5" />
       </Button>
 
       <Button
         variant="ghost"
         size="icon"
         onClick={nextSlide}
-        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-neon-yellow h-10 w-10 md:h-12 md:w-12"
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-neon-yellow h-9 w-9 rounded-sm"
         data-testid="button-next-slide"
       >
-        <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
+        <ChevronRight className="w-5 h-5" />
       </Button>
 
-      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-2 md:gap-3">
+      <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2 md:h-3 rounded-full transition-all ${
+            className={`h-1 rounded-sm transition-all ${
               index === currentSlide
-                ? "w-8 md:w-12 bg-neon-yellow"
-                : "w-2 md:w-3 bg-white/50 hover:bg-white/80"
+                ? "w-8 bg-neon-yellow"
+                : "w-8 bg-white/30 hover:bg-white/60"
             }`}
             data-testid={`button-slide-indicator-${index}`}
           />

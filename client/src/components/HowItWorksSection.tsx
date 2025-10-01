@@ -74,15 +74,15 @@ export function HowItWorksSection() {
           {features.map((feature, index) => (
             <Badge
               key={index}
-              className="px-6 py-3 text-base font-bold bg-card border-2 flex items-center gap-2"
+              className="px-5 py-2 text-sm font-bold bg-card border flex items-center gap-2 rounded-sm"
               style={{
                 borderColor: feature.color,
                 color: feature.color,
-                boxShadow: `0 0 20px ${feature.color}40`,
+                boxShadow: `0 0 15px ${feature.color}30`,
               }}
               data-testid={`feature-${index}`}
             >
-              <feature.icon className="w-5 h-5" />
+              <feature.icon className="w-4 h-4" />
               {feature.title}
             </Badge>
           ))}

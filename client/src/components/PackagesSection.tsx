@@ -11,7 +11,7 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
     <section id="packages" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div
-          className="text-center mb-6 md:mb-8 bg-gradient-to-r from-transparent via-neon-yellow/20 to-transparent py-3 rounded-md border border-neon-yellow/30 mx-4"
+          className="text-center mb-6 md:mb-8 bg-gradient-to-r from-transparent via-neon-yellow/20 to-transparent py-2 rounded-sm border border-neon-yellow/30 mx-4"
           data-testid="banner-limited-offer"
         >
           <div className="flex items-center justify-center gap-2 text-neon-yellow font-bold text-sm md:text-base">

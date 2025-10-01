@@ -23,10 +23,10 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
           {images.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-md overflow-hidden cursor-pointer transition-all duration-300"
+              className="relative aspect-square rounded-sm overflow-hidden cursor-pointer transition-all duration-300"
               style={{
-                border: hoveredIndex === index ? "2px solid #FFD700" : "2px solid transparent",
-                boxShadow: hoveredIndex === index ? "0 0 30px rgba(255, 215, 0, 0.6)" : "none",
+                border: hoveredIndex === index ? "1px solid #FFD700" : "1px solid transparent",
+                boxShadow: hoveredIndex === index ? "0 0 15px rgba(255, 215, 0, 0.4)" : "none",
               }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -35,7 +35,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
               <img
                 src={image}
                 alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
             </div>
           ))}
@@ -43,9 +43,8 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
 
         <div className="text-center">
           <Button
-            size="lg"
             onClick={onCtaClick}
-            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-base md:text-lg px-8 md:px-12 py-5 md:py-6 transition-all uppercase mx-4"
+            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-sm px-10 h-10 transition-all uppercase mx-4 rounded-sm"
             data-testid="button-get-aecoin"
           >
             GET YOUR AECOIN NOW

@@ -21,13 +21,13 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
 
   return (
     <Card
-      className="group relative overflow-hidden bg-card border-2 border-border hover-elevate transition-all duration-300"
+      className="group relative overflow-hidden bg-card border border-border hover-elevate transition-all duration-300 rounded-sm"
       style={{
         boxShadow: "0 0 0 rgba(255, 215, 0, 0)",
         transition: "box-shadow 0.3s ease, transform 0.3s ease",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 0 30px rgba(255, 215, 0, 0.4)";
+        e.currentTarget.style.boxShadow = "0 0 20px rgba(255, 215, 0, 0.3)";
         e.currentTarget.style.borderColor = "#FFD700";
       }}
       onMouseLeave={(e) => {
@@ -38,46 +38,46 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
     >
       {pkg.badge && (
         <div
-          className="absolute top-3 right-3 bg-neon-yellow text-black font-bold text-xs px-3 py-1 rounded-md z-10 uppercase whitespace-nowrap"
+          className="absolute top-2 right-2 bg-neon-yellow text-black font-bold text-[10px] px-2 py-1 rounded-sm z-10 uppercase whitespace-nowrap"
           data-testid={`badge-package-${pkg.id}`}
         >
           {pkg.badge}
         </div>
       )}
-      <CardHeader className="pb-4">
-        <div className="aspect-square rounded-md overflow-hidden mb-4 bg-background/50">
+      <CardHeader className="pb-3 pt-3 px-3">
+        <div className="aspect-square rounded-sm overflow-hidden mb-3 bg-background/50">
           <img
             src={pkg.image}
             alt={`${pkg.amount} AECOIN`}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             data-testid={`img-package-${pkg.id}`}
           />
         </div>
-        <CardTitle className="text-xl md:text-2xl font-montserrat font-black text-center uppercase" data-testid={`text-package-amount-${pkg.id}`}>
+        <CardTitle className="text-lg font-montserrat font-black text-center uppercase" data-testid={`text-package-amount-${pkg.id}`}>
           <span className="text-neon-yellow">
             {pkg.amount.toLocaleString()}
           </span>{" "}
           AECOIN
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-4">
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-3xl font-bold text-neon-yellow" data-testid={`text-price-${pkg.id}`}>
+      <CardContent className="pb-3 px-3">
+        <div className="text-center space-y-1">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-2xl font-bold text-neon-yellow" data-testid={`text-price-${pkg.id}`}>
               RM{pkg.price}
             </span>
-            <span className="text-lg text-muted-foreground line-through" data-testid={`text-original-price-${pkg.id}`}>
+            <span className="text-sm text-muted-foreground line-through" data-testid={`text-original-price-${pkg.id}`}>
               RM{pkg.originalPrice}
             </span>
           </div>
-          <Badge variant="secondary" className="bg-neon-cyan/20 text-neon-cyan border-neon-cyan/30">
-            Save {discount}%
-          </Badge>
+          <div className="text-xs text-neon-cyan font-semibold">
+            SAVE {discount}%
+          </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="px-3 pb-3">
         <Button
-          className="w-full bg-neon-yellow hover:bg-neon-yellow text-black font-bold transition-all uppercase text-sm md:text-base"
+          className="w-full bg-neon-yellow hover:bg-neon-yellow text-black font-bold transition-all uppercase text-xs h-9 rounded-sm"
           onClick={() => onAddToCart?.(pkg)}
           data-testid={`button-add-to-cart-${pkg.id}`}
         >

@@ -30,7 +30,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-background border-2 border-border rounded-md px-6 data-[state=open]:border-neon-yellow transition-all"
+              className="bg-background border border-border rounded-sm px-6 data-[state=open]:border-neon-yellow transition-all"
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger

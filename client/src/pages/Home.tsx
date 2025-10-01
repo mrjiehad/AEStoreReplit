@@ -9,31 +9,33 @@ import { Footer } from "@/components/Footer";
 import type { Package } from "@/components/PackageCard";
 import type { FAQItem } from "@/components/FAQSection";
 
-import coinImage from "@assets/generated_images/Golden_coins_package_visual_49569ac5.png";
-import chestImage from "@assets/generated_images/Treasure_chest_with_coins_e01577f1.png";
-import vipImage from "@assets/generated_images/Premium_VIP_card_df8b7c42.png";
-import controllerImage from "@assets/generated_images/Neon_gaming_controller_c2d9ebdc.png";
-import pcImage from "@assets/generated_images/Gaming_PC_setup_f3d4ef1a.png";
-import arcadeImage from "@assets/generated_images/Neon_arcade_machine_755a81ea.png";
-import carImage from "@assets/generated_images/GTA_style_sports_car_7f8331d4.png";
+import coinImage from "@assets/stock_images/gold_coins_money_cas_b3778293.jpg";
+import car1Image from "@assets/stock_images/gta_5_sports_car_mus_ecdea8c8.jpg";
+import car2Image from "@assets/stock_images/gta_5_sports_car_mus_07d7cbe9.jpg";
+import car3Image from "@assets/stock_images/gta_5_sports_car_mus_7250542e.jpg";
+import bike1Image from "@assets/stock_images/gta_5_motorcycle_bik_bfe4c529.jpg";
+import bike2Image from "@assets/stock_images/gta_5_motorcycle_bik_0e441d76.jpg";
+import char1Image from "@assets/stock_images/gta_5_character_gang_408947e4.jpg";
+import char2Image from "@assets/stock_images/gta_5_character_gang_e760f97e.jpg";
+import cityImage from "@assets/stock_images/gta_5_los_santos_cit_cb9a6b5e.jpg";
 
 const packages: Package[] = [
   { id: "1", amount: 500, price: 60, originalPrice: 65, image: coinImage },
   { id: "2", amount: 1000, price: 98, originalPrice: 110, image: coinImage, badge: "POPULAR" },
-  { id: "3", amount: 3000, price: 295, originalPrice: 310, image: chestImage },
-  { id: "4", amount: 5000, price: 490, originalPrice: 510, image: chestImage, badge: "BEST VALUE" },
-  { id: "5", amount: 10000, price: 980, originalPrice: 1000, image: vipImage },
+  { id: "3", amount: 3000, price: 295, originalPrice: 310, image: coinImage },
+  { id: "4", amount: 5000, price: 490, originalPrice: 510, image: coinImage, badge: "BEST VALUE" },
+  { id: "5", amount: 10000, price: 980, originalPrice: 1000, image: coinImage },
 ];
 
 const galleryImages = [
-  controllerImage,
-  pcImage,
-  arcadeImage,
-  carImage,
-  coinImage,
-  chestImage,
-  controllerImage,
-  pcImage,
+  car1Image,
+  bike1Image,
+  char1Image,
+  cityImage,
+  car2Image,
+  bike2Image,
+  char2Image,
+  car3Image,
 ];
 
 const faqs: FAQItem[] = [
