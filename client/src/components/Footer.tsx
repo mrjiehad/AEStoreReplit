@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div data-testid="footer-company-info">
-            <h3 className="text-xl font-orbitron font-bold text-neon-yellow mb-4">AECOIN STORE</h3>
+            <h3 className="text-xl font-montserrat font-black text-neon-yellow mb-4 uppercase">AECOIN STORE</h3>
             <p className="text-muted-foreground mb-4">
               Fast, Secure, Reliable gaming currency provider for GTA Online players worldwide.
             </p>
@@ -29,7 +29,7 @@ export function Footer() {
           </div>
 
           <div data-testid="footer-quick-links">
-            <h3 className="text-xl font-orbitron font-bold text-neon-yellow mb-4">Quick Links</h3>
+            <h3 className="text-xl font-montserrat font-black text-neon-yellow mb-4 uppercase">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-neon-yellow transition-colors">
@@ -50,7 +50,7 @@ export function Footer() {
           </div>
 
           <div data-testid="footer-info-links">
-            <h3 className="text-xl font-orbitron font-bold text-neon-yellow mb-4">Information</h3>
+            <h3 className="text-xl font-montserrat font-black text-neon-yellow mb-4 uppercase">Information</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-neon-yellow transition-colors">
@@ -85,10 +85,7 @@ export function Footer() {
               </Badge>
               <Button
                 size="sm"
-                className="bg-neon-yellow hover:bg-neon-yellow text-black font-bold"
-                style={{
-                  boxShadow: "0 0 15px rgba(255, 215, 0, 0.3)",
-                }}
+                className="bg-neon-yellow hover:bg-neon-yellow text-black font-bold uppercase"
                 data-testid="button-get-in-touch"
               >
                 GET IN TOUCH

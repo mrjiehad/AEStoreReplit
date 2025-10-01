@@ -13,17 +13,13 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
     <section id="gallery" className="py-20 bg-card">
       <div className="container mx-auto px-4">
         <h2
-          className="text-4xl md:text-5xl font-orbitron font-bold text-center mb-16 tracking-wide"
-          style={{
-            color: "#FFD700",
-            textShadow: "0 0 20px rgba(255, 215, 0, 0.6)",
-          }}
+          className="text-3xl md:text-4xl lg:text-5xl font-montserrat font-black text-center mb-12 md:mb-16 tracking-tight uppercase text-neon-yellow px-4"
           data-testid="text-gallery-title"
         >
           GTA GALLERY
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12 px-4">
           {images.map((image, index) => (
             <div
               key={index}
@@ -49,10 +45,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
           <Button
             size="lg"
             onClick={onCtaClick}
-            className="bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-lg px-12 py-6 transition-all"
-            style={{
-              boxShadow: "0 0 25px rgba(255, 215, 0, 0.5)",
-            }}
+            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow text-black font-bold text-base md:text-lg px-8 md:px-12 py-5 md:py-6 transition-all uppercase mx-4"
             data-testid="button-get-aecoin"
           >
             GET YOUR AECOIN NOW

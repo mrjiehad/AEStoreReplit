@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { HeroSection } from "@/components/HeroSection";
+import { HeroSlider } from "@/components/HeroSlider";
 import { PackagesSection } from "@/components/PackagesSection";
 import { GallerySection } from "@/components/GallerySection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
@@ -85,7 +85,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Header cartItemCount={cartItems.length} onCartClick={handleCartClick} />
-      <HeroSection onShopClick={scrollToPackages} onGalleryClick={scrollToGallery} />
+      <HeroSlider onShopClick={scrollToPackages} onGalleryClick={scrollToGallery} />
       <PackagesSection packages={packages} onAddToCart={handleAddToCart} />
       <GallerySection images={galleryImages} onCtaClick={scrollToPackages} />
       <HowItWorksSection />
