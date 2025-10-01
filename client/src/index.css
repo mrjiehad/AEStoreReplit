@@ -2,6 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-25px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-25px); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes title-glow {
+  0%, 100% { filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.6)); }
+  50% { filter: drop-shadow(0 0 80px rgba(255, 215, 0, 0.8)); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 4s ease-in-out infinite 2s;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+.animate-fade-in-slow {
+  animation: fade-in 1.2s ease-out 0.6s both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out 0.3s both;
+}
+
+.animate-slide-up-delayed {
+  animation: slide-up 0.8s ease-out 0.5s both;
+}
+
+.animate-title-glow {
+  animation: title-glow 3s ease-in-out infinite;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* LIGHT MODE */
 :root {
   --button-outline: rgba(0,0,0, .10);
