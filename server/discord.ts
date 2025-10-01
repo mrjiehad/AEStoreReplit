@@ -1,6 +1,21 @@
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID!;
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET!;
-const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'http://localhost:5000/api/auth/discord/callback';
+
+// Construct redirect URI based on environment
+const getRedirectUri = () => {
+  if (process.env.DISCORD_REDIRECT_URI) {
+    return process.env.DISCORD_REDIRECT_URI;
+  }
+  
+  // Use REPLIT_DEV_DOMAIN for development, or fallback to localhost
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    return `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/discord/callback`;
+  }
+  
+  return 'http://localhost:5000/api/auth/discord/callback';
+};
+
+const DISCORD_REDIRECT_URI = getRedirectUri();
 
 export function getDiscordAuthUrl(state: string): string {
   const params = new URLSearchParams({
