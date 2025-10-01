@@ -5,11 +5,9 @@ import { Star, Trophy, Crown, Medal } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import type { PlayerRanking } from "@shared/schema";
 
-import gtaCharacter1 from "@assets/stock_images/gta_5_game_character_33a848f7.jpg";
-import gtaCharacter2 from "@assets/stock_images/gta_5_game_character_4a4d57d4.jpg";
-import gtaCharacter3 from "@assets/stock_images/gta_5_game_character_1af12639.jpg";
-import gtaCharacter4 from "@assets/stock_images/gta_5_game_character_a8a95458.jpg";
-import gtaCharacter5 from "@assets/stock_images/gta_5_game_character_e71f8cb9.jpg";
+import sultan1 from "@assets/S2_1759294544784.png";
+import sultan2 from "@assets/S1_1759294544782.png";
+import sultan3 from "@assets/S3_1759294544785.png";
 import gtaCar1 from "@assets/stock_images/gta_5_luxury_sports__7da85e9b.jpg";
 import gtaCar2 from "@assets/stock_images/gta_5_luxury_sports__13cbe027.jpg";
 import gtaCar3 from "@assets/stock_images/gta_5_luxury_sports__6b05248e.jpg";
@@ -25,7 +23,7 @@ interface PlayerRankingWithUser extends PlayerRanking {
   };
 }
 
-const characterImages = [gtaCharacter1, gtaCharacter2, gtaCharacter3, gtaCharacter4, gtaCharacter5];
+const characterImages = [sultan1, sultan2, sultan3, sultan1, sultan2];
 const moneyImages = [moneyImage1, moneyImage2, moneyImage3];
 const carImages = [gtaCar1, gtaCar2, gtaCar3];
 
