@@ -96,9 +96,9 @@ export default function AdminOrders() {
   const filteredOrders = orders?.filter((order) => {
     const matchesStatus = statusFilter === "all" || order.status === statusFilter;
     const matchesSearch =
-      order.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase());
+      (order.userEmail?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (order.userName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (order.id?.toLowerCase() || "").includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
@@ -243,14 +243,14 @@ export default function AdminOrders() {
                             {new Date(order.createdAt).toLocaleString()}
                           </div>
                           <div className="space-y-1">
-                            {order.orderItems.map((item, idx) => (
+                            {order.orderItems?.map((item, idx) => (
                               <p key={idx} className="text-sm text-zinc-300">
                                 {item.quantity}x {item.packageName} - {order.currency}{" "}
                                 {item.price}
                               </p>
                             ))}
                           </div>
-                          {order.redemptionCodes.length > 0 && (
+                          {order.redemptionCodes && order.redemptionCodes.length > 0 && (
                             <details className="text-sm">
                               <summary className="cursor-pointer text-cyan-400 hover:text-cyan-300">
                                 View Codes ({order.redemptionCodes.length})

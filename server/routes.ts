@@ -1008,7 +1008,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/admin/orders", requireAdmin, async (req, res) => {
     try {
       const orders = await storage.getAllOrders();
-      res.json(orders);
+      
+      // Enrich orders with user information
+      const enrichedOrders = await Promise.all(
+        orders.map(async (order) => {
+          const user = await storage.getUser(order.userId);
+          const orderItems = await storage.getOrderItems(order.id);
+          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
+          
+          // Fetch package names for each order item
+          const enrichedOrderItems = await Promise.all(
+            orderItems.map(async (item) => {
+              const pkg = await storage.getPackage(item.packageId);
+              return {
+                packageName: pkg?.name || "Unknown Package",
+                quantity: item.quantity,
+                price: item.priceAtPurchase
+              };
+            })
+          );
+          
+          return {
+            ...order,
+            userName: user?.username || "Unknown User",
+            userEmail: user?.email || "no-email@example.com",
+            orderItems: enrichedOrderItems,
+            redemptionCodes: redemptionCodes.map(code => ({
+              code: code.code
+            }))
+          };
+        })
+      );
+      
+      res.json(enrichedOrders);
     } catch (error: any) {
       console.error("Admin orders fetch error:", error);
       res.status(500).json({ message: "Failed to fetch orders" });
