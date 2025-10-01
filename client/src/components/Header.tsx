@@ -1,7 +1,6 @@
 import { ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -9,16 +8,6 @@ interface HeaderProps {
 }
 
 export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -27,61 +16,67 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/95 backdrop-blur-md shadow-lg" : "bg-transparent"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a1628]/95 backdrop-blur-lg border-b border-white/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+          {/* Logo */}
           <div
-            className="text-3xl font-bebas tracking-wider cursor-pointer text-neon-yellow uppercase"
+            className="text-xl font-rajdhani font-bold cursor-pointer text-white uppercase tracking-wider"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             data-testid="logo-aecoin-store"
           >
-            AECOIN STORE
+            AECOIN<span className="text-neon-yellow">.STORE</span>
           </div>
 
+          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-home"
             >
-              Home
+              HOME
             </button>
             <button
               onClick={() => scrollToSection("packages")}
-              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-packages"
             >
-              Packages
+              PACKAGES
             </button>
             <button
               onClick={() => scrollToSection("gallery")}
-              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-gallery"
             >
-              Gallery
+              GALLERY
+            </button>
+            <button
+              onClick={() => scrollToSection("orders")}
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
+              data-testid="link-orders"
+            >
+              ORDERS
             </button>
             <button
               onClick={() => scrollToSection("faq")}
-              className="text-foreground hover:text-neon-yellow hover:scale-110 transition-all font-rajdhani font-bold uppercase text-sm"
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-faq"
             >
               FAQ
             </button>
           </nav>
 
-          <div className="relative">
+          {/* Right Actions */}
+          <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={onCartClick}
-              className="relative hover-elevate"
+              className="relative text-white hover:text-neon-yellow"
               data-testid="button-cart"
             >
-              <ShoppingCart className="w-6 h-6 text-neon-yellow" />
+              <ShoppingCart className="w-5 h-5" />
               {cartItemCount > 0 && (
                 <Badge
                   className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1 bg-neon-yellow text-black font-bold text-xs"
@@ -90,6 +85,19 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
                   {cartItemCount}
                 </Badge>
               )}
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-gray-300 hover:text-white font-rajdhani font-semibold uppercase text-sm h-9 px-4"
+              data-testid="button-login"
+            >
+              Login
+            </Button>
+            <Button
+              className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-sm"
+              data-testid="button-signup"
+            >
+              Sign Up
             </Button>
           </div>
         </div>
