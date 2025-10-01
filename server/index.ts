@@ -4,7 +4,18 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.use(express.json());
+
+// Stripe webhook needs raw body for signature verification - apply raw middleware only for webhook path
+app.use("/api/webhooks/stripe", express.raw({ type: 'application/json' }));
+
+// Apply JSON middleware for all other routes
+app.use((req, res, next) => {
+  if (req.path === '/api/webhooks/stripe') {
+    return next();
+  }
+  express.json()(req, res, next);
+});
+
 app.use(express.urlencoded({ extended: false }));
 
 // Validate SESSION_SECRET exists

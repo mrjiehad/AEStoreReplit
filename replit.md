@@ -2,7 +2,33 @@
 
 ## Overview
 
-AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online currency (AECOIN packages). The application features a cyberpunk/neon-themed dark interface, Discord OAuth authentication, Stripe payment processing, and automated code delivery via email and FiveM database integration.
+AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online currency (AECOIN packages). The application features a cyberpunk/neon-themed dark interface, Discord OAuth authentication, dual payment gateways (Stripe + ToyyibPay), and automated code delivery via email and FiveM database integration.
+
+## Recent Updates (Production Hardening - Phase 1)
+
+### Completed (Critical Security Fixes):
+1. **PendingPayment System** - Prevents cart tampering and payment fraud
+   - Database table tracks payment intent before completion
+   - Stores cart snapshot, amount, currency for verification
+   - Unique constraint on externalId (paymentIntentId/billCode)
+
+2. **Payment Result Pages** - Better user experience
+   - /payment/pending - Loading state during verification
+   - /payment/cancelled - Payment cancellation handling
+   - /payment/failed - Error page with troubleshooting
+
+3. **Stripe Production Security** - Industry-standard payment processing
+   - Webhook handler with signature verification (STRIPE_WEBHOOK_SECRET required)
+   - Server-side order creation (client cannot forge completion)
+   - Amount verification in cents (prevents floating-point fraud)
+   - Currency verification
+   - Idempotency via unique paymentId constraint
+   - Order status lifecycle: created → paid → fulfilled
+
+### In Progress:
+4. ToyyibPay security hardening (PendingPayment integration)
+5. Frontend payment cancellation handling
+6. Comprehensive error handling throughout checkout
 
 ## User Preferences
 

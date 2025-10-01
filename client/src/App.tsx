@@ -7,6 +7,9 @@ import { AuthProvider } from "@/lib/auth";
 import Home from "@/pages/Home";
 import Checkout from "@/pages/Checkout";
 import Orders from "@/pages/Orders";
+import PaymentPending from "@/pages/PaymentPending";
+import PaymentCancelled from "@/pages/PaymentCancelled";
+import PaymentFailed from "@/pages/PaymentFailed";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,6 +18,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/orders" component={Orders} />
+      <Route path="/payment/pending" component={PaymentPending} />
+      <Route path="/payment/cancelled" component={PaymentCancelled} />
+      <Route path="/payment/failed" component={PaymentFailed} />
       <Route component={NotFound} />
     </Switch>
   );

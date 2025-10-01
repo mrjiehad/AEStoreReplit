@@ -6,7 +6,8 @@ import {
   type OrderItem, type InsertOrderItem,
   type RedemptionCode, type InsertRedemptionCode,
   type Coupon, type InsertCoupon,
-  users, packages, cartItems, orders, orderItems, redemptionCodes, coupons
+  type PendingPayment, type InsertPendingPayment,
+  users, packages, cartItems, orders, orderItems, redemptionCodes, coupons, pendingPayments
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -51,6 +52,11 @@ export interface IStorage {
   getCoupon(code: string): Promise<Coupon | undefined>;
   createCoupon(coupon: InsertCoupon): Promise<Coupon>;
   incrementCouponUse(id: string): Promise<boolean>;
+  
+  // Pending payment operations
+  createPendingPayment(payment: InsertPendingPayment): Promise<PendingPayment>;
+  getPendingPaymentByExternalId(externalId: string): Promise<PendingPayment | undefined>;
+  updatePendingPaymentStatus(externalId: string, status: string): Promise<PendingPayment | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -163,7 +169,7 @@ export class DbStorage implements IStorage {
     if (paymentId) {
       updateData.paymentId = paymentId;
     }
-    if (status === 'completed') {
+    if (status === 'fulfilled' || status === 'completed') {
       updateData.completedAt = new Date();
     }
     const result = await db.update(orders).set(updateData).where(eq(orders.id, id)).returning();
@@ -217,6 +223,25 @@ export class DbStorage implements IStorage {
       .set({ currentUses: sql`${coupons.currentUses} + 1` })
       .where(eq(coupons.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Pending payment operations
+  async createPendingPayment(payment: InsertPendingPayment): Promise<PendingPayment> {
+    const result = await db.insert(pendingPayments).values(payment).returning();
+    return result[0];
+  }
+
+  async getPendingPaymentByExternalId(externalId: string): Promise<PendingPayment | undefined> {
+    const result = await db.select().from(pendingPayments).where(eq(pendingPayments.externalId, externalId)).limit(1);
+    return result[0];
+  }
+
+  async updatePendingPaymentStatus(externalId: string, status: string): Promise<PendingPayment | undefined> {
+    const result = await db.update(pendingPayments)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(pendingPayments.externalId, externalId))
+      .returning();
+    return result[0];
   }
 }
 

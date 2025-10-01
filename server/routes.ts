@@ -1,5 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
 import { storage } from "./storage";
 import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
 import { sendOrderConfirmationEmail } from "./email";
@@ -16,6 +17,9 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2025-09-30.clover",
 });
+
+// Stripe webhook secret (optional but recommended for production)
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 // Middleware to check if user is authenticated
 function requireAuth(req: Request, res: Response, next: Function) {
@@ -118,6 +122,148 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     res.json({ user });
+  });
+
+  // Stripe webhook handler - Raw body middleware applied in index.ts
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    if (!sig || typeof sig !== 'string') {
+      return res.status(400).send('No signature');
+    }
+
+    if (!STRIPE_WEBHOOK_SECRET) {
+      console.error('STRIPE_WEBHOOK_SECRET not configured - rejecting webhook');
+      return res.status(500).send('Webhook secret not configured');
+    }
+
+    let event: Stripe.Event;
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+    } catch (err: any) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    try {
+      if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        
+        const existingOrder = await storage.getOrderByPaymentId(paymentIntent.id);
+        if (existingOrder) {
+          console.log(`Order already exists for payment ${paymentIntent.id}`);
+          return res.json({ received: true, orderId: existingOrder.id });
+        }
+
+        const pendingPayment = await storage.getPendingPaymentByExternalId(paymentIntent.id);
+        if (!pendingPayment) {
+          console.error(`No pending payment found for ${paymentIntent.id}`);
+          return res.status(400).send('Pending payment not found');
+        }
+
+        // Verify amount in minor units (cents) to avoid floating point issues
+        const paidAmountCents = paymentIntent.amount;
+        const expectedAmountCents = Math.round(parseFloat(pendingPayment.amount) * 100);
+        if (paidAmountCents !== expectedAmountCents) {
+          console.error(`Amount mismatch: paid ${paidAmountCents} cents, expected ${expectedAmountCents} cents`);
+          await storage.updatePendingPaymentStatus(paymentIntent.id, 'failed');
+          return res.status(400).send('Amount mismatch');
+        }
+
+        // Verify currency matches
+        if (paymentIntent.currency.toUpperCase() !== pendingPayment.currency.toUpperCase()) {
+          console.error(`Currency mismatch: paid ${paymentIntent.currency}, expected ${pendingPayment.currency}`);
+          await storage.updatePendingPaymentStatus(paymentIntent.id, 'failed');
+          return res.status(400).send('Currency mismatch');
+        }
+
+        const cartSnapshot = JSON.parse(pendingPayment.cartSnapshot);
+        const metadata = pendingPayment.metadata ? JSON.parse(pendingPayment.metadata) : {};
+
+        const order = await storage.createOrder({
+          userId: pendingPayment.userId,
+          totalAmount: metadata.subtotal || pendingPayment.amount,
+          discountAmount: metadata.discount || '0',
+          finalAmount: pendingPayment.amount,
+          status: "paid",
+          paymentMethod: "stripe",
+          paymentId: paymentIntent.id,
+          couponCode: pendingPayment.couponCode,
+        });
+
+        for (const item of cartSnapshot) {
+          await storage.createOrderItem({
+            orderId: order.id,
+            packageId: item.packageId,
+            quantity: item.quantity,
+            priceAtPurchase: item.price,
+          });
+
+          for (let i = 0; i < item.quantity; i++) {
+            const code = crypto.randomBytes(8).toString('hex').toUpperCase().match(/.{1,4}/g)!.join('-');
+            await storage.createRedemptionCode({
+              code,
+              packageId: item.packageId,
+              orderId: order.id,
+              status: "active",
+            });
+
+            try {
+              await insertRedemptionCodeToFiveM(code, item.aecoinAmount);
+            } catch (fivemError) {
+              console.error(`Failed to insert code ${code} into FiveM:`, fivemError);
+            }
+          }
+        }
+
+        await storage.updateOrderStatus(order.id, 'fulfilled');
+
+        if (pendingPayment.couponCode) {
+          const coupon = await storage.getCoupon(pendingPayment.couponCode);
+          if (coupon) {
+            await storage.incrementCouponUse(coupon.id);
+          }
+        }
+
+        await storage.clearCart(pendingPayment.userId);
+        await storage.updatePendingPaymentStatus(paymentIntent.id, 'succeeded');
+
+        try {
+          const user = await storage.getUser(pendingPayment.userId);
+          if (user?.email) {
+            const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
+            const codesWithPackageNames = redemptionCodes.map((code, idx) => ({
+              code: code.code,
+              packageName: cartSnapshot[idx]?.packageName || 'AECOIN Package'
+            }));
+            
+            await sendOrderConfirmationEmail(
+              user.email,
+              order.id,
+              order.finalAmount,
+              codesWithPackageNames
+            );
+          }
+        } catch (emailError) {
+          console.error("Failed to send order confirmation email:", emailError);
+        }
+
+        console.log(`✓ Order ${order.id} fulfilled via Stripe webhook`);
+        return res.json({ received: true, orderId: order.id });
+      } 
+      else if (event.type === 'payment_intent.payment_failed') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await storage.updatePendingPaymentStatus(paymentIntent.id, 'failed');
+        console.log(`Payment failed for ${paymentIntent.id}`);
+        return res.json({ received: true });
+      }
+
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('Webhook handler error:', error);
+      res.status(500).send(`Webhook Error: ${error.message}`);
+    }
   });
 
   // Package routes
@@ -461,6 +607,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           discount: discount.toFixed(2),
           total: total.toFixed(2),
         },
+      });
+
+      // Create PendingPayment record for security and tracking
+      const cartSnapshot = await Promise.all(
+        cartItems.map(async (item) => {
+          const pkg = await storage.getPackage(item.packageId);
+          return {
+            packageId: item.packageId,
+            packageName: pkg?.name || '',
+            quantity: item.quantity,
+            price: pkg?.price || '0',
+            aecoinAmount: pkg?.aecoinAmount || 0,
+          };
+        })
+      );
+
+      await storage.createPendingPayment({
+        userId,
+        provider: 'stripe',
+        externalId: paymentIntent.id,
+        amount: total.toFixed(2),
+        currency: 'MYR',
+        status: 'created',
+        cartSnapshot: JSON.stringify(cartSnapshot),
+        couponCode: validatedCoupon?.code || null,
+        metadata: JSON.stringify({
+          subtotal: subtotal.toFixed(2),
+          discount: discount.toFixed(2),
+        }),
       });
       
       res.json({ 

@@ -56,6 +56,30 @@ export const insertCartItemSchema = createInsertSchema(cartItems).omit({
 export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
 export type CartItem = typeof cartItems.$inferSelect;
 
+// Pending payments table - Tracks payment intent/bill creation before completion
+export const pendingPayments = pgTable("pending_payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  provider: text("provider").notNull(), // stripe, toyyibpay
+  externalId: text("external_id").notNull().unique(), // paymentIntentId or billCode
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("MYR"),
+  status: text("status").notNull().default("created"), // created, processing, succeeded, failed, cancelled, expired
+  cartSnapshot: text("cart_snapshot").notNull(), // JSON string of cart items
+  couponCode: text("coupon_code"),
+  metadata: text("metadata"), // JSON string for additional data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertPendingPaymentSchema = createInsertSchema(pendingPayments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPendingPayment = z.infer<typeof insertPendingPaymentSchema>;
+export type PendingPayment = typeof pendingPayments.$inferSelect;
+
 // Orders table
 export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -63,9 +87,9 @@ export const orders = pgTable("orders", {
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }).default("0"),
   finalAmount: decimal("final_amount", { precision: 10, scale: 2 }).notNull(),
-  status: text("status").notNull().default("pending"), // pending, processing, completed, failed, refunded
+  status: text("status").notNull().default("pending"), // pending, paid, fulfilled, failed, cancelled
   paymentMethod: text("payment_method").notNull(), // stripe, toyyibpay
-  paymentId: text("payment_id"), // External payment ID from Stripe/ToyyibPay
+  paymentId: text("payment_id").unique(), // External payment ID from Stripe/ToyyibPay - must be unique for idempotency
   couponCode: text("coupon_code"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
