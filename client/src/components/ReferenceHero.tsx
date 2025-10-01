@@ -149,7 +149,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
               {currentSlideData.subtitle}
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bebas text-white leading-none tracking-wide uppercase whitespace-nowrap">
               {currentSlideData.title}
             </h1>
 
