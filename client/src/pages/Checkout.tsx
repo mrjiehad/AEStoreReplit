@@ -133,17 +133,17 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState<string>("");
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
 
-  // Check for error query parameter and redirect to appropriate page
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const error = params.get('error');
-    
-    if (error === 'payment_failed') {
-      navigate('/payment/failed');
-    } else if (error === 'payment_cancelled') {
-      navigate('/payment/cancelled');
-    }
-  }, [navigate]);
+  // Check for error query parameter and redirect BEFORE anything else
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get('error');
+  
+  if (error === 'payment_failed') {
+    navigate('/payment/failed');
+    return null;
+  } else if (error === 'payment_cancelled') {
+    navigate('/payment/cancelled');
+    return null;
+  }
 
   // Fetch cart items (only if user is authenticated)
   const { data: cartItems = [], isLoading } = useQuery<CartItemWithPackage[]>({
