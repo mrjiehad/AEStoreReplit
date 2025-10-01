@@ -11,7 +11,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-09-30.clover",
 });
 
 // Middleware to check if user is authenticated
@@ -203,6 +203,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(order);
   });
 
+  // Get redemption codes for an order
+  app.get("/api/orders/:id/codes", requireAuth, async (req, res) => {
+    const order = await storage.getOrder(req.params.id);
+    
+    if (!order || order.userId !== req.session.userId) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    
+    const codes = await storage.getOrderRedemptionCodes(req.params.id);
+    res.json(codes);
+  });
+
   // Coupon routes
   app.get("/api/coupons/:code", async (req, res) => {
     const coupon = await storage.getCoupon(req.params.code.toUpperCase());
@@ -233,6 +245,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     res.json(coupon);
+  });
+
+  // Helper function to generate unique AECOIN redemption codes
+  function generateRedemptionCode(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude ambiguous characters
+    const segments = 4;
+    const segmentLength = 4;
+    const code = [];
+    
+    for (let i = 0; i < segments; i++) {
+      let segment = '';
+      for (let j = 0; j < segmentLength; j++) {
+        segment += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      code.push(segment);
+    }
+    
+    return code.join('-'); // Format: XXXX-XXXX-XXXX-XXXX
+  }
+
+  // Stripe payment success handler - Create order and redemption codes
+  app.post("/api/orders/complete", requireAuth, async (req, res) => {
+    try {
+      const { paymentIntentId } = req.body;
+      const userId = req.session.userId!;
+
+      if (!paymentIntentId) {
+        return res.status(400).json({ message: "Payment intent ID required" });
+      }
+
+      // Verify payment intent with Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      if (paymentIntent.status !== "succeeded") {
+        return res.status(400).json({ message: "Payment not completed" });
+      }
+
+      // Check if order already exists for this payment
+      const existingOrder = await storage.getOrderByPaymentId(paymentIntent.id);
+      if (existingOrder) {
+        return res.json({ order: existingOrder, success: true });
+      }
+
+      // Get cart items
+      const cartItems = await storage.getCartItems(userId);
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      // Extract metadata from payment intent
+      const metadata = paymentIntent.metadata;
+      const subtotal = parseFloat(metadata.subtotal || "0");
+      const discount = parseFloat(metadata.discount || "0");
+      const total = parseFloat(metadata.total || "0");
+      const couponCode = metadata.couponCode || null;
+
+      // Create order
+      const order = await storage.createOrder({
+        userId,
+        totalAmount: subtotal.toFixed(2),
+        discountAmount: discount.toFixed(2),
+        finalAmount: total.toFixed(2),
+        status: "completed",
+        paymentMethod: "stripe",
+        paymentId: paymentIntent.id,
+        couponCode,
+      });
+
+      // Create order items and redemption codes
+      for (const cartItem of cartItems) {
+        const pkg = await storage.getPackage(cartItem.packageId);
+        if (!pkg) continue;
+
+        // Create order item
+        await storage.createOrderItem({
+          orderId: order.id,
+          packageId: pkg.id,
+          quantity: cartItem.quantity,
+          priceAtPurchase: pkg.price,
+        });
+
+        // Generate redemption codes (one per quantity)
+        for (let i = 0; i < cartItem.quantity; i++) {
+          const code = generateRedemptionCode();
+          await storage.createRedemptionCode({
+            code,
+            packageId: pkg.id,
+            orderId: order.id,
+            status: "active",
+          });
+        }
+      }
+
+      // Increment coupon usage if used
+      if (couponCode) {
+        const coupon = await storage.getCoupon(couponCode);
+        if (coupon) {
+          await storage.incrementCouponUse(coupon.id);
+        }
+      }
+
+      // Clear user's cart
+      await storage.clearCart(userId);
+
+      res.json({ order, success: true });
+    } catch (error: any) {
+      console.error("Order completion error:", error);
+      res.status(500).json({ 
+        message: "Failed to complete order: " + error.message 
+      });
+    }
   });
 
   // Stripe payment intent endpoint - Server-side amount calculation (security fix)
@@ -304,6 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ 
         clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
         amount: total,
       });
     } catch (error: any) {

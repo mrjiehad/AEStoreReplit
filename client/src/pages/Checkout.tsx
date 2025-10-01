@@ -28,9 +28,11 @@ interface CartItemWithPackage extends CartItem {
 // Stripe Checkout Form Component (from blueprint:javascript_stripe)
 function StripeCheckoutForm({ 
   total, 
+  paymentIntentId,
   onSuccess 
 }: { 
   total: number; 
+  paymentIntentId: string;
   onSuccess: () => void;
 }) {
   const stripe = useStripe();
@@ -48,7 +50,7 @@ function StripeCheckoutForm({
     setIsProcessing(true);
 
     try {
-      const { error } = await stripe.confirmPayment({
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/orders`,
@@ -62,12 +64,27 @@ function StripeCheckoutForm({
           description: error.message,
           variant: "destructive",
         });
-      } else {
-        toast({
-          title: "Payment Successful!",
-          description: "Your order has been placed successfully.",
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
+        // Complete order creation on backend
+        const response = await apiRequest("POST", "/api/orders/complete", {
+          paymentIntentId: paymentIntent.id,
         });
-        onSuccess();
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          toast({
+            title: "Payment Successful!",
+            description: "Your order has been placed successfully.",
+          });
+          onSuccess();
+        } else {
+          toast({
+            title: "Order Error",
+            description: "Payment successful but order creation failed. Please contact support.",
+            variant: "destructive",
+          });
+        }
       }
     } catch (err: any) {
       toast({
@@ -114,6 +131,7 @@ export default function Checkout() {
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "toyyibpay">("stripe");
   const [clientSecret, setClientSecret] = useState<string>("");
+  const [paymentIntentId, setPaymentIntentId] = useState<string>("");
 
   // Fetch cart items (only if user is authenticated)
   const { data: cartItems = [], isLoading } = useQuery<CartItemWithPackage[]>({
@@ -195,6 +213,7 @@ export default function Checkout() {
         .then((res) => res.json())
         .then((data) => {
           setClientSecret(data.clientSecret);
+          setPaymentIntentId(data.paymentIntentId || "");
           // Server returns the calculated amount for display verification
           if (data.amount && Math.abs(data.amount - total) > 0.01) {
             toast({
@@ -448,7 +467,8 @@ export default function Checkout() {
                 {paymentMethod === "stripe" && clientSecret ? (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <StripeCheckoutForm 
-                      total={total} 
+                      total={total}
+                      paymentIntentId={paymentIntentId}
                       onSuccess={handlePaymentSuccess}
                     />
                   </Elements>
