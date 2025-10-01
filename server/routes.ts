@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
+import { sendOrderConfirmationEmail } from "./email";
 import "./types";
 import crypto from "crypto";
 import Stripe from "stripe";
@@ -348,6 +349,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Clear user's cart
       await storage.clearCart(userId);
+
+      // Send order confirmation email with redemption codes
+      try {
+        const user = await storage.getUser(userId);
+        if (user?.email) {
+          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
+          const codesWithPackageNames = await Promise.all(
+            redemptionCodes.map(async (code) => {
+              const pkg = await storage.getPackage(code.packageId);
+              return {
+                code: code.code,
+                packageName: pkg?.name || 'AECOIN Package'
+              };
+            })
+          );
+          
+          await sendOrderConfirmationEmail(
+            user.email,
+            order.id,
+            order.finalAmount,
+            codesWithPackageNames
+          );
+        }
+      } catch (emailError) {
+        console.error("Failed to send order confirmation email:", emailError);
+      }
 
       res.json({ order, success: true });
     } catch (error: any) {
