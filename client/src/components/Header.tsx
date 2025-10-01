@@ -1,10 +1,19 @@
-import { ShoppingCart, LogOut } from "lucide-react";
+import { ShoppingCart, LogOut, User, Package } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -14,6 +23,8 @@ interface HeaderProps {
 export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   const { user, login, logout, isLoading } = useAuth();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
+  
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -91,32 +102,57 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
             </Button>
 
             {user ? (
-              <div className="flex items-center gap-3">
-                <Avatar className="w-9 h-9 ring-2 ring-neon-yellow/50">
-                  <AvatarImage src={user.avatar || undefined} alt={user.username} />
-                  <AvatarFallback className="bg-neon-yellow text-black font-bold">
-                    {user.username.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden md:block text-white font-rajdhani font-semibold text-sm">
-                  {user.username}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={async () => {
-                    await logout();
-                    toast({
-                      title: "Logged Out",
-                      description: "You have been logged out successfully.",
-                    });
-                  }}
-                  className="text-gray-300 hover:text-white rounded-full"
-                  data-testid="button-logout"
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-3 h-auto p-2 rounded-full hover:bg-white/5"
+                    data-testid="button-user-menu"
+                  >
+                    <Avatar className="w-9 h-9 ring-2 ring-neon-yellow/50">
+                      <AvatarImage src={user.avatar || undefined} alt={user.username} />
+                      <AvatarFallback className="bg-neon-yellow text-black font-bold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:block text-white font-rajdhani font-semibold text-sm">
+                      {user.username}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 bg-[#0d1d35] border-white/10"
                 >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
+                  <DropdownMenuLabel className="font-rajdhani text-white">
+                    My Account
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/orders")}
+                    className="font-rajdhani text-gray-300 hover:text-white focus:text-white cursor-pointer"
+                    data-testid="menu-item-profile"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Profile & Orders
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      await logout();
+                      toast({
+                        title: "Logged Out",
+                        description: "You have been logged out successfully.",
+                      });
+                    }}
+                    className="font-rajdhani text-red-400 hover:text-red-300 focus:text-red-300 cursor-pointer"
+                    data-testid="menu-item-logout"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 onClick={() => login()}

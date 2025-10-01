@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -13,8 +14,12 @@ import {
   ChevronDown, 
   ChevronUp, 
   Copy,
-  Check
+  Check,
+  Mail,
+  ShoppingBag,
+  User as UserIcon
 } from "lucide-react";
+import { SiDiscord } from "react-icons/si";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import type { Order, RedemptionCode } from "@shared/schema";
@@ -178,23 +183,70 @@ export default function Orders() {
             Back to Shop
           </Button>
           <h1 className="text-3xl font-bebas text-neon-yellow uppercase tracking-wider">
-            My Orders
+            Profile & Orders
           </h1>
           <div className="w-24" />
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Success Message (if just completed payment) */}
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-600/10 border-2 border-green-500/30 rounded-3xl mb-8">
-          <CardContent className="p-8 text-center">
-            <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bebas text-white mb-2">
-              Payment Successful!
-            </h2>
-            <p className="text-gray-300 font-rajdhani">
-              Your order has been placed successfully. You will receive your AECOIN redemption codes via email shortly.
-            </p>
+        {/* User Profile Section */}
+        <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-neon-yellow/30 rounded-3xl mb-8">
+          <CardContent className="p-8">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+              {/* Avatar */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-neon-yellow/20 blur-2xl rounded-full"></div>
+                <Avatar className="w-24 h-24 ring-4 ring-neon-yellow/50 relative">
+                  <AvatarImage src={user.avatar || undefined} alt={user.username} />
+                  <AvatarFallback className="bg-neon-yellow text-black font-bold text-3xl">
+                    {user.username.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+
+              {/* User Info */}
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <h2 className="text-3xl font-bebas text-white uppercase tracking-wider">
+                    {user.username}
+                  </h2>
+                  <Badge className="bg-[#5865F2] text-white font-rajdhani">
+                    <SiDiscord className="w-3 h-3 mr-1" />
+                    Discord
+                  </Badge>
+                </div>
+                
+                <div className="space-y-2 text-gray-300 font-rajdhani">
+                  {user.email && (
+                    <div className="flex items-center justify-center md:justify-start gap-2">
+                      <Mail className="w-4 h-4 text-neon-yellow" />
+                      <span className="text-sm">{user.email}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <ShoppingBag className="w-4 h-4 text-neon-yellow" />
+                    <span className="text-sm">{orders.length} Total Order{orders.length !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-4 md:gap-6">
+                <div className="text-center bg-black/30 rounded-2xl p-4 min-w-[100px]">
+                  <p className="text-3xl font-bebas text-neon-yellow">
+                    {orders.filter(o => o.status === 'fulfilled' || o.status === 'completed').length}
+                  </p>
+                  <p className="text-xs text-gray-400 font-rajdhani uppercase">Completed</p>
+                </div>
+                <div className="text-center bg-black/30 rounded-2xl p-4 min-w-[100px]">
+                  <p className="text-3xl font-bebas text-neon-yellow">
+                    RM{orders.reduce((sum, o) => sum + parseFloat(o.finalAmount), 0).toFixed(0)}
+                  </p>
+                  <p className="text-xs text-gray-400 font-rajdhani uppercase">Total Spent</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
