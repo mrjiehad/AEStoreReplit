@@ -11,7 +11,7 @@ import {
   users, packages, cartItems, orders, orderItems, redemptionCodes, coupons, pendingPayments, playerRankings
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, asc } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -85,7 +85,7 @@ export class DbStorage implements IStorage {
 
   // Package operations
   async getAllPackages(): Promise<Package[]> {
-    return await db.select().from(packages);
+    return await db.select().from(packages).orderBy(asc(packages.price));
   }
 
   async getPackage(id: string): Promise<Package | undefined> {
