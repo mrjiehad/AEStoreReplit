@@ -5,15 +5,18 @@ import { Star, Trophy, Crown, Medal } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import type { PlayerRanking } from "@shared/schema";
 
-import trophyImage1 from "@assets/stock_images/gold_trophy_champion_d1a6c804.jpg";
-import trophyImage2 from "@assets/stock_images/gold_trophy_champion_5128ff0d.jpg";
-import trophyImage3 from "@assets/stock_images/gold_trophy_champion_8bd69346.jpg";
-import character1 from "@assets/stock_images/gta_5_character_gang_ee85e2a1.jpg";
-import character2 from "@assets/stock_images/gta_5_character_gang_ec0f6902.jpg";
-import character3 from "@assets/stock_images/gta_5_character_gang_31e0d588.jpg";
-import character4 from "@assets/stock_images/gta_5_character_gang_060f8c48.jpg";
-import character5 from "@assets/stock_images/gta_5_character_gang_649de338.jpg";
-import neonBg from "@assets/stock_images/neon_lights_cyberpun_f1af9a3d.jpg";
+import gtaCharacter1 from "@assets/stock_images/gta_5_game_character_33a848f7.jpg";
+import gtaCharacter2 from "@assets/stock_images/gta_5_game_character_4a4d57d4.jpg";
+import gtaCharacter3 from "@assets/stock_images/gta_5_game_character_1af12639.jpg";
+import gtaCharacter4 from "@assets/stock_images/gta_5_game_character_a8a95458.jpg";
+import gtaCharacter5 from "@assets/stock_images/gta_5_game_character_e71f8cb9.jpg";
+import gtaCar1 from "@assets/stock_images/gta_5_luxury_sports__7da85e9b.jpg";
+import gtaCar2 from "@assets/stock_images/gta_5_luxury_sports__13cbe027.jpg";
+import gtaCar3 from "@assets/stock_images/gta_5_luxury_sports__6b05248e.jpg";
+import moneyImage1 from "@assets/stock_images/gaming_money_cash_do_220ee2d8.jpg";
+import moneyImage2 from "@assets/stock_images/gaming_money_cash_do_694d3fe8.jpg";
+import moneyImage3 from "@assets/stock_images/gaming_money_cash_do_3e521cf4.jpg";
+import cityBg from "@assets/stock_images/gta_5_cityscape_los__a8b6c683.jpg";
 
 interface PlayerRankingWithUser extends PlayerRanking {
   user?: {
@@ -22,8 +25,9 @@ interface PlayerRankingWithUser extends PlayerRanking {
   };
 }
 
-const characterImages = [character1, character2, character3, character4, character5];
-const trophyImages = [trophyImage1, trophyImage2, trophyImage3];
+const characterImages = [gtaCharacter1, gtaCharacter2, gtaCharacter3, gtaCharacter4, gtaCharacter5];
+const moneyImages = [moneyImage1, moneyImage2, moneyImage3];
+const carImages = [gtaCar1, gtaCar2, gtaCar3];
 
 export default function Rankings() {
   const { data: rankings = [], isLoading } = useQuery<PlayerRankingWithUser[]>({
@@ -55,8 +59,8 @@ export default function Rankings() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src={neonBg} 
-            alt="Background"
+            src={cityBg} 
+            alt="GTA City Background"
             className="w-full h-full object-cover opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/80 via-[#0a1628]/90 to-[#0a1628]" />
@@ -100,7 +104,7 @@ export default function Rankings() {
                       const isWinner = player.rank === 1;
                       const heights = ["min-h-[500px]", "min-h-[600px]", "min-h-[450px]"];
                       const characterImage = characterImages[index % characterImages.length];
-                      const trophyImage = trophyImages[index % trophyImages.length];
+                      const overlayImage = index === 0 ? moneyImages[0] : (index === 1 ? carImages[0] : moneyImages[1]);
                       
                       return (
                         <div
@@ -142,12 +146,12 @@ export default function Rankings() {
                               </div>
                             </div>
 
-                            {/* Trophy Image */}
-                            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-30">
+                            {/* Money/Car Overlay Image */}
+                            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-25">
                               <img 
-                                src={trophyImage} 
-                                alt="Trophy"
-                                className="w-40 h-40 object-contain"
+                                src={overlayImage} 
+                                alt="Reward"
+                                className="w-48 h-48 object-contain"
                               />
                             </div>
 
