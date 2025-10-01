@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Mail } from "lucide-react";
+import { MessageCircle, Mail, HelpCircle } from "lucide-react";
 
 export interface FAQItem {
   question: string;
@@ -18,63 +18,84 @@ interface FAQSectionProps {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   return (
-    <section id="faq" className="min-h-screen bg-[#0a1628] flex items-center py-20">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-3">
-          <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
-            SUPPORT
-          </span>
+    <section id="faq" className="min-h-screen bg-gradient-to-br from-[#0d1d35] via-black to-[#0d1d35] flex items-center py-20 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 opacity-5" style={{
+        backgroundImage: 'linear-gradient(#FFD700 1px, transparent 1px), linear-gradient(90deg, #FFD700 1px, transparent 1px)',
+        backgroundSize: '120px 120px',
+      }} />
+
+      {/* Floating Help Icons */}
+      <HelpCircle className="absolute top-10 left-10 w-16 h-16 text-neon-yellow/10 animate-float" />
+      <HelpCircle className="absolute bottom-20 right-10 w-20 h-20 text-neon-yellow/10 animate-float-delayed" />
+
+      <div className="container mx-auto px-4 max-w-5xl relative z-10">
+        {/* Section Label */}
+        <div className="text-center mb-4">
+          <div className="inline-block">
+            <div className="text-neon-yellow font-rajdhani font-black text-sm tracking-[0.3em] uppercase px-8 py-4 border-4 border-neon-yellow/50 bg-neon-yellow/10 transform -skew-x-12">
+              <span className="inline-block transform skew-x-12">SUPPORT</span>
+            </div>
+          </div>
         </div>
 
+        {/* Section Title */}
         <h2
-          className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
+          className="text-5xl md:text-7xl lg:text-8xl font-bebas text-center mb-6 tracking-wider uppercase text-neon-yellow animate-neon-pulse"
+          style={{
+            textShadow: '0 0 20px #FFD700, 0 0 40px #FFD700, 0 0 60px #FFD700, 6px 6px 0px #000',
+            WebkitTextStroke: '2px #FFD700',
+          }}
           data-testid="text-faq-title"
         >
           NEED ANSWERS?
         </h2>
 
-        <p className="text-center text-gray-300 font-rajdhani text-lg mb-12">
+        {/* Subtitle */}
+        <p className="text-center text-gray-300 font-rajdhani text-xl md:text-2xl mb-16 font-semibold">
           Everything you need to know about AECOIN and our services
         </p>
 
-        <Accordion type="single" collapsible className="space-y-4 mb-16">
+        {/* FAQ Accordion - Neon Style */}
+        <Accordion type="single" collapsible className="space-y-6 mb-20">
           {faqs.map((faq, index) => (
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-[#0d1d35] border border-white/10 rounded-2xl px-6 data-[state=open]:border-neon-yellow/50 transition-all"
+              className="bg-gradient-to-r from-neon-yellow/10 to-transparent border-4 border-neon-yellow/30 rounded-2xl px-8 data-[state=open]:border-neon-yellow data-[state=open]:neon-border transition-all transform hover:scale-105"
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger
-                className="text-left font-rajdhani font-bold text-white hover:text-neon-yellow hover:no-underline text-base md:text-lg py-5"
+                className="text-left font-bebas text-white hover:text-neon-yellow hover:no-underline text-xl md:text-2xl py-6"
                 data-testid={`faq-question-${index}`}
               >
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-300 font-rajdhani pt-2 pb-5" data-testid={`faq-answer-${index}`}>
+              <AccordionContent className="text-gray-300 font-rajdhani pt-2 pb-6 text-lg" data-testid={`faq-answer-${index}`}>
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
 
-        <div className="bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6 text-center">
-          <h3 className="text-2xl md:text-3xl font-bebas text-white mb-3 uppercase">
+        {/* Support Section - Gaming Style */}
+        <div className="bg-gradient-to-r from-neon-yellow/20 via-neon-yellow/10 to-neon-yellow/20 border-4 border-neon-yellow rounded-3xl py-16 px-8 text-center relative overflow-hidden neon-border-strong">
+          {/* Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-t from-neon-yellow/10 via-transparent to-transparent blur-2xl" />
+          
+          <h3 className="text-3xl md:text-5xl font-bebas text-white mb-4 uppercase tracking-wider relative z-10 text-glow-strong">
             Still Have Questions?
           </h3>
-          <p className="text-gray-300 font-rajdhani text-lg mb-8">
+          <p className="text-gray-300 font-rajdhani text-xl md:text-2xl mb-10 relative z-10 font-semibold">
             Our expert support team is available 24/7 to help you with any issues
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full">
-              <MessageCircle className="w-5 h-5 mr-2" />
+          <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
+            <Button className="bg-gradient-to-r from-neon-yellow via-yellow-400 to-neon-yellow hover:from-yellow-400 hover:to-neon-yellow text-black font-black uppercase text-lg px-12 h-16 rounded-xl font-bebas tracking-widest border-4 border-yellow-600 transform hover:scale-110 transition-all animate-gradient">
+              <MessageCircle className="w-6 h-6 mr-3" />
               LIVE CHAT SUPPORT
             </Button>
-            <Button
-              variant="outline"
-              className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full"
-            >
-              <Mail className="w-5 h-5 mr-2" />
+            <Button className="bg-black border-4 border-neon-yellow text-neon-yellow hover:bg-neon-yellow hover:text-black font-black uppercase text-lg px-12 h-16 rounded-xl font-bebas tracking-widest transform hover:scale-110 transition-all">
+              <Mail className="w-6 h-6 mr-3" />
               EMAIL SUPPORT
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { ShoppingBag, CreditCard, Zap, Gamepad2 } from "lucide-react";
+import { ShoppingBag, CreditCard, Zap, Gamepad2, Target, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const steps = [
@@ -30,55 +30,86 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="min-h-screen bg-[#0d1d35] flex items-center py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-3">
-          <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
-            SIMPLE PROCESS
-          </span>
+    <section className="min-h-screen bg-gradient-to-br from-black via-[#0d1d35] to-black flex items-center py-20 relative overflow-hidden">
+      {/* Animated Grid */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'linear-gradient(#FFD700 1px, transparent 1px), linear-gradient(90deg, #FFD700 1px, transparent 1px)',
+        backgroundSize: '100px 100px',
+      }} />
+
+      {/* Floating Icons */}
+      <Target className="absolute top-20 right-10 w-16 h-16 text-neon-yellow/10 animate-float" />
+      <Rocket className="absolute bottom-20 left-20 w-20 h-20 text-neon-yellow/15 animate-float-delayed" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Section Label */}
+        <div className="text-center mb-4">
+          <div className="inline-block">
+            <div className="text-neon-yellow font-rajdhani font-black text-sm tracking-[0.3em] uppercase px-8 py-4 border-4 border-neon-yellow/50 bg-neon-yellow/10 transform -skew-x-12">
+              <span className="inline-block transform skew-x-12">SIMPLE PROCESS</span>
+            </div>
+          </div>
         </div>
 
+        {/* Section Title */}
         <h2
-          className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
+          className="text-5xl md:text-7xl lg:text-8xl font-bebas text-center mb-6 tracking-wider uppercase text-neon-yellow animate-neon-pulse"
+          style={{
+            textShadow: '0 0 20px #FFD700, 0 0 40px #FFD700, 0 0 60px #FFD700, 6px 6px 0px #000',
+            WebkitTextStroke: '2px #FFD700',
+          }}
           data-testid="text-how-it-works-title"
         >
           HOW IT WORKS
         </h2>
 
-        <p className="text-center text-gray-300 font-rajdhani text-lg mb-16 max-w-3xl mx-auto">
+        {/* Subtitle */}
+        <p className="text-center text-gray-300 font-rajdhani text-xl md:text-2xl mb-20 max-w-3xl mx-auto font-semibold">
           From purchase to playing – your journey to Los Santos dominance in four simple steps
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        {/* Steps Grid - More Dynamic */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
           {steps.map((step, index) => (
-            <div key={index} className="text-center" data-testid={`step-${index}`}>
-              <div className="text-neon-yellow/30 font-bebas text-6xl mb-4">
-                {step.number}
+            <div key={index} className="group" data-testid={`step-${index}`}>
+              <div className="relative bg-gradient-to-br from-neon-yellow/20 via-neon-yellow/10 to-transparent border-4 border-neon-yellow/50 rounded-3xl p-8 text-center transform hover:scale-110 hover:-rotate-2 transition-all duration-500 neon-border">
+                {/* Number Badge */}
+                <div className="absolute -top-6 -right-6 w-16 h-16 bg-gradient-to-br from-neon-yellow to-yellow-600 rounded-full flex items-center justify-center border-4 border-yellow-800 shadow-xl transform group-hover:rotate-12 transition-transform">
+                  <span className="text-black font-bebas text-2xl">{step.number}</span>
+                </div>
+
+                {/* Icon */}
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-black/50 border-4 border-neon-yellow/50 flex items-center justify-center transform group-hover:rotate-6 transition-transform">
+                  <step.icon className="w-10 h-10 text-neon-yellow animate-pulse" />
+                </div>
+
+                {/* Title */}
+                <h3 className="text-2xl font-bebas text-neon-yellow uppercase tracking-wide mb-4 text-glow">
+                  {step.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-gray-300 font-rajdhani text-base leading-relaxed font-semibold">
+                  {step.description}
+                </p>
               </div>
-
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
-                <step.icon className="w-8 h-8 text-neon-yellow" />
-              </div>
-
-              <h3 className="text-xl font-bebas text-white uppercase tracking-wide mb-3">
-                {step.title}
-              </h3>
-
-              <p className="text-gray-400 font-rajdhani text-sm leading-relaxed">
-                {step.description}
-              </p>
             </div>
           ))}
         </div>
 
-        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6">
-          <h3 className="text-3xl md:text-4xl font-bebas text-white mb-3 uppercase">
+        {/* CTA Section - Massive */}
+        <div className="text-center bg-gradient-to-r from-neon-yellow/20 via-neon-yellow/10 to-neon-yellow/20 border-4 border-neon-yellow rounded-3xl py-16 px-8 relative overflow-hidden neon-border-strong">
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-t from-neon-yellow/10 via-transparent to-transparent blur-2xl" />
+          
+          <h3 className="text-4xl md:text-6xl font-bebas text-white mb-6 uppercase tracking-wider relative z-10 text-glow-strong">
             READY TO RULE LOS SANTOS?
           </h3>
-          <p className="text-gray-300 font-rajdhani text-lg mb-6">
+          <p className="text-gray-300 font-rajdhani text-2xl mb-10 relative z-10 font-semibold">
             Join thousands of players who trust us for their AECOIN needs
           </p>
-          <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12 rounded-full">
+          <Button className="relative z-10 bg-gradient-to-r from-neon-yellow via-yellow-400 to-neon-yellow hover:from-yellow-400 hover:to-neon-yellow text-black font-black uppercase text-2xl px-16 h-20 rounded-2xl font-bebas tracking-widest shadow-2xl transform hover:scale-110 transition-all duration-300 border-4 border-yellow-600 animate-gradient">
+            <Zap className="w-8 h-8 mr-3 fill-current" />
             START YOUR EMPIRE NOW
           </Button>
         </div>
