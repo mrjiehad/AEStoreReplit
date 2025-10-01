@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
 import { sendOrderConfirmationEmail } from "./email";
 import { insertRedemptionCodeToFiveM } from "./fivem-db";
+import { createBill, getPaymentUrl, getBillTransactions } from "./toyyibpay";
 import "./types";
 import crypto from "crypto";
 import Stripe from "stripe";
@@ -471,6 +472,273 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Stripe payment intent error:", error);
       res.status(500).json({ 
         message: "Error creating payment intent: " + error.message 
+      });
+    }
+  });
+
+  // ToyyibPay payment intent endpoint
+  app.post("/api/create-toyyibpay-bill", requireAuth, async (req, res) => {
+    try {
+      const { couponCode } = req.body;
+      const userId = req.session.userId!;
+
+      const cartItems = await storage.getCartItems(userId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      let subtotal = 0;
+      for (const item of cartItems) {
+        const pkg = await storage.getPackage(item.packageId);
+        if (pkg) {
+          subtotal += parseFloat(pkg.price) * item.quantity;
+        }
+      }
+
+      let discount = 0;
+      let validatedCoupon = null;
+      if (couponCode) {
+        const coupon = await storage.getCoupon(couponCode.toUpperCase());
+        
+        if (coupon && coupon.isActive) {
+          const isExpired = coupon.expiresAt && new Date(coupon.expiresAt) < new Date();
+          const isOverUsed = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
+          const belowMinPurchase = coupon.minPurchase && parseFloat(coupon.minPurchase) > subtotal;
+
+          if (!isExpired && !isOverUsed && !belowMinPurchase) {
+            validatedCoupon = coupon;
+            if (coupon.discountType === 'percentage') {
+              discount = (subtotal * parseFloat(coupon.discountValue)) / 100;
+            } else {
+              discount = parseFloat(coupon.discountValue);
+            }
+          }
+        }
+      }
+
+      const total = Math.max(0, subtotal - discount);
+
+      if (total <= 0) {
+        return res.status(400).json({ message: "Invalid order total" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const pendingOrderId = crypto.randomUUID();
+      const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+        : `http://localhost:5000`;
+
+      const billCode = await createBill({
+        billName: `AECOIN Order #${pendingOrderId.substring(0, 8)}`,
+        billDescription: `AECOIN Package Purchase`,
+        billAmount: total,
+        billTo: user.username,
+        billEmail: user.email,
+        billPhone: '0000000000',
+        billExternalReferenceNo: pendingOrderId,
+        billReturnUrl: `${baseUrl}/api/toyyibpay/return`,
+        billCallbackUrl: `${baseUrl}/api/toyyibpay/callback`,
+      });
+
+      const paymentUrl = getPaymentUrl(billCode);
+
+      res.json({
+        billCode,
+        paymentUrl,
+        pendingOrderId,
+        amount: total,
+        metadata: {
+          couponCode: validatedCoupon?.code || "",
+          subtotal: Math.round(subtotal),
+          discount: Math.round(discount),
+          total: Math.round(total),
+        }
+      });
+    } catch (error: any) {
+      console.error("ToyyibPay bill creation error:", error);
+      res.status(500).json({ 
+        message: "Error creating ToyyibPay bill: " + error.message 
+      });
+    }
+  });
+
+  // ToyyibPay callback handler (called by ToyyibPay when payment completes)
+  app.get("/api/toyyibpay/callback", async (req, res) => {
+    try {
+      const { status_id, billcode, order_id } = req.query;
+
+      console.log("ToyyibPay callback:", { status_id, billcode, order_id });
+
+      if (status_id === '1') {
+        const transactions = await getBillTransactions(billcode as string);
+        
+        if (transactions && transactions.length > 0) {
+          console.log("✓ ToyyibPay payment successful:", order_id);
+        }
+      }
+
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error("ToyyibPay callback error:", error);
+      res.status(200).send('OK');
+    }
+  });
+
+  // ToyyibPay return handler (user redirected here after payment)
+  app.get("/api/toyyibpay/return", async (req, res) => {
+    try {
+      const { status_id, billcode, order_id, transaction_id } = req.query;
+
+      if (status_id === '1') {
+        const transactions = await getBillTransactions(billcode as string);
+        
+        if (transactions && transactions.length > 0) {
+          res.redirect(`/checkout/success?orderId=${order_id}&provider=toyyibpay`);
+          return;
+        }
+      }
+
+      res.redirect(`/checkout?error=payment_failed`);
+    } catch (error) {
+      console.error("ToyyibPay return error:", error);
+      res.redirect(`/checkout?error=payment_failed`);
+    }
+  });
+
+  // ToyyibPay order completion endpoint
+  app.post("/api/complete-toyyibpay-order", requireAuth, async (req, res) => {
+    try {
+      const { billCode, couponCode } = req.body;
+      const userId = req.session.userId!;
+
+      const transactions = await getBillTransactions(billCode);
+      
+      if (!transactions || transactions.length === 0) {
+        return res.status(400).json({ message: "Payment not verified" });
+      }
+
+      const transaction = transactions[0];
+      if (transaction.billpaymentStatus !== '1') {
+        return res.status(400).json({ message: "Payment not successful" });
+      }
+
+      const cartItems = await storage.getCartItems(userId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      let subtotal = 0;
+      for (const item of cartItems) {
+        const pkg = await storage.getPackage(item.packageId);
+        if (pkg) {
+          subtotal += parseFloat(pkg.price) * item.quantity;
+        }
+      }
+
+      let discount = 0;
+      if (couponCode) {
+        const coupon = await storage.getCoupon(couponCode);
+        if (coupon && coupon.isActive) {
+          const isExpired = coupon.expiresAt && new Date(coupon.expiresAt) < new Date();
+          const isOverUsed = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
+          const belowMinPurchase = coupon.minPurchase && parseFloat(coupon.minPurchase) > subtotal;
+
+          if (!isExpired && !isOverUsed && !belowMinPurchase) {
+            if (coupon.discountType === 'percentage') {
+              discount = (subtotal * parseFloat(coupon.discountValue)) / 100;
+            } else {
+              discount = parseFloat(coupon.discountValue);
+            }
+          }
+        }
+      }
+
+      const total = Math.max(0, subtotal - discount);
+
+      const order = await storage.createOrder({
+        userId,
+        totalAmount: subtotal.toFixed(2),
+        discountAmount: discount.toFixed(2),
+        finalAmount: total.toFixed(2),
+        status: "completed",
+        paymentMethod: "toyyibpay",
+        paymentId: transaction.billpaymentInvoiceNo,
+        couponCode,
+      });
+
+      for (const cartItem of cartItems) {
+        const pkg = await storage.getPackage(cartItem.packageId);
+        if (!pkg) continue;
+
+        await storage.createOrderItem({
+          orderId: order.id,
+          packageId: pkg.id,
+          quantity: cartItem.quantity,
+          priceAtPurchase: pkg.price,
+        });
+
+        for (let i = 0; i < cartItem.quantity; i++) {
+          const code = generateRedemptionCode();
+          await storage.createRedemptionCode({
+            code,
+            packageId: pkg.id,
+            orderId: order.id,
+            status: "active",
+          });
+
+          try {
+            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
+          } catch (fivemError) {
+            console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
+          }
+        }
+      }
+
+      if (couponCode) {
+        const coupon = await storage.getCoupon(couponCode);
+        if (coupon) {
+          await storage.incrementCouponUse(coupon.id);
+        }
+      }
+
+      await storage.clearCart(userId);
+
+      try {
+        const user = await storage.getUser(userId);
+        if (user?.email) {
+          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
+          const codesWithPackageNames = await Promise.all(
+            redemptionCodes.map(async (code) => {
+              const pkg = await storage.getPackage(code.packageId);
+              return {
+                code: code.code,
+                packageName: pkg?.name || 'AECOIN Package'
+              };
+            })
+          );
+          
+          await sendOrderConfirmationEmail(
+            user.email,
+            order.id,
+            order.finalAmount,
+            codesWithPackageNames
+          );
+        }
+      } catch (emailError) {
+        console.error("Failed to send order confirmation email:", emailError);
+      }
+
+      res.json({ order, success: true });
+    } catch (error: any) {
+      console.error("ToyyibPay order completion error:", error);
+      res.status(500).json({ 
+        message: "Failed to complete order: " + error.message 
       });
     }
   });
