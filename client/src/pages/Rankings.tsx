@@ -108,14 +108,6 @@ export default function Rankings() {
                           className={`order-${position} relative group`}
                           data-testid={`podium-${player.rank}`}
                         >
-                          {/* Crown for winner */}
-                          {isWinner && (
-                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-                              <Crown className="w-20 h-20 text-neon-yellow" 
-                                     style={{ filter: "drop-shadow(0 0 20px rgba(255, 215, 0, 1))" }} />
-                            </div>
-                          )}
-
                           <div className={`relative ${heights[index]} bg-gradient-to-br from-[#1a2942] via-[#0d1d35] to-black border-4 ${
                             isWinner ? 'border-neon-yellow' : 'border-white/20'
                           } rounded-3xl overflow-hidden transition-all duration-500 hover:scale-105 hover:border-neon-yellow`}

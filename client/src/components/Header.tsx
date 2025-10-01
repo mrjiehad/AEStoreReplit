@@ -23,12 +23,32 @@ interface HeaderProps {
 export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   const { user, login, logout, isLoading } = useAuth();
   const { toast } = useToast();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    // If we're not on the home page, navigate there first
+    if (location !== "/") {
+      navigate("/");
+      // Wait for navigation and render, then scroll
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  const goToHome = () => {
+    if (location !== "/") {
+      navigate("/");
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -38,7 +58,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           <div
             className="text-xl font-rajdhani font-bold cursor-pointer text-white uppercase tracking-wider"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={goToHome}
             data-testid="logo-aecoin-store"
           >
             AECOIN<span className="text-neon-yellow">.STORE</span>
@@ -46,7 +66,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
 
           <nav className="hidden md:flex items-center gap-8">
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={goToHome}
               className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-home"
             >
