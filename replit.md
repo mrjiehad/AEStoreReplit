@@ -4,7 +4,7 @@
 
 AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online currency (AECOIN packages). The application features a cyberpunk/neon-themed dark interface, Discord OAuth authentication, dual payment gateways (Stripe + ToyyibPay), and automated code delivery via email and FiveM database integration.
 
-## Recent Updates (Production Hardening - COMPLETED)
+## Recent Updates (Production Hardening & Admin Module - COMPLETED)
 
 ### Completed (Critical Security Fixes):
 1. **PendingPayment System** - Prevents cart tampering and payment fraud
@@ -19,7 +19,7 @@ AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online curr
 
 3. **Stripe Production Security** - Industry-standard payment processing ✅
    - STRIPE_WEBHOOK_SECRET configured and validated
-   - Webhook handler with signature verification
+   - Webhook handler with signature verification (development mode bypass available)
    - Server-side order creation (client cannot forge completion)
    - Amount verification in cents (prevents floating-point fraud)
    - Currency verification against PendingPayment
@@ -36,9 +36,19 @@ AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online curr
    - Return handler validates against PendingPayment, not live cart
    - Proper error handling with user-friendly redirects
 
+5. **Admin Dashboard** - Complete operations management system ✅
+   - Admin role system with isAdmin column in users table
+   - requireAdmin middleware protecting all admin routes
+   - Admin Orders Page: View all orders, filter by status, search, update status, view codes
+   - Admin Packages Page: Full CRUD operations, mark popular packages
+   - Admin Coupons Page: Full CRUD operations with validation (code format, expiry, limits)
+   - Admin navigation in header dropdown (visible only to admins)
+   - Access control: Non-admin users shown "ACCESS DENIED"
+   - Cyberpunk aesthetic matching main site design
+
 ### Next Phase:
-5. Admin Dashboard for operations management
 6. Email domain verification (aeofficial.my on Resend)
+7. End-to-end testing of payment flows and admin operations
 
 ## User Preferences
 
