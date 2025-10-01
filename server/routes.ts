@@ -194,6 +194,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(order);
   });
 
+  // Coupon routes
+  app.get("/api/coupons/:code", async (req, res) => {
+    const coupon = await storage.getCoupon(req.params.code.toUpperCase());
+    const subtotal = req.query.subtotal ? parseFloat(req.query.subtotal as string) : 0;
+    
+    if (!coupon) {
+      return res.status(404).json({ message: "Coupon not found" });
+    }
+    
+    // Validate coupon
+    if (!coupon.isActive) {
+      return res.status(400).json({ message: "Coupon is no longer active" });
+    }
+    
+    if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
+      return res.status(400).json({ message: "Coupon has expired" });
+    }
+    
+    if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) {
+      return res.status(400).json({ message: "Coupon usage limit reached" });
+    }
+    
+    // Validate minimum purchase requirement
+    if (coupon.minPurchase && parseFloat(coupon.minPurchase) > subtotal) {
+      return res.status(400).json({ 
+        message: `Minimum purchase of RM${coupon.minPurchase} required` 
+      });
+    }
+    
+    res.json(coupon);
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

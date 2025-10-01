@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { ReferenceHero } from "@/components/ReferenceHero";
@@ -63,6 +64,7 @@ const faqs: FAQItem[] = [
 ];
 
 export default function Home() {
+  const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [cartOpen, setCartOpen] = useState(false);
@@ -135,11 +137,7 @@ export default function Home() {
 
   const handleCheckout = () => {
     setCartOpen(false);
-    // Navigate to checkout page (to be implemented)
-    toast({
-      title: "Checkout",
-      description: "Checkout functionality coming soon!",
-    });
+    navigate("/checkout");
   };
 
   const scrollToPackages = () => {
