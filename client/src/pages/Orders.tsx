@@ -65,7 +65,7 @@ function OrderCard({ order }: { order: Order }) {
           <div>
             <span className="text-gray-400 font-rajdhani">Total:</span>
             <p className="text-neon-yellow font-rajdhani font-bold text-lg">
-              RM{parseFloat(order.finalAmount).toFixed(2)}
+              RM{Math.round(parseFloat(order.finalAmount))}
             </p>
           </div>
           <div>

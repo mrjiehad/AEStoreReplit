@@ -114,7 +114,7 @@ function StripeCheckoutForm({
         ) : (
           <>
             <CreditCard className="mr-2 h-4 w-4" />
-            Pay RM{total.toFixed(2)}
+            Pay RM{Math.round(total)}
           </>
         )}
       </Button>
@@ -240,7 +240,9 @@ export default function Checkout() {
     navigate("/orders");
   };
 
-  const handleCheckout = () => {
+  const [isProcessingToyyibPay, setIsProcessingToyyibPay] = useState(false);
+
+  const handleCheckout = async () => {
     if (cartItems.length === 0) {
       toast({
         title: "Cart is Empty",
@@ -251,11 +253,33 @@ export default function Checkout() {
     }
 
     if (paymentMethod === "toyyibpay") {
-      // TODO: Implement ToyyibPay
-      toast({
-        title: "Coming Soon",
-        description: "ToyyibPay integration coming soon!",
-      });
+      setIsProcessingToyyibPay(true);
+      
+      try {
+        const response = await apiRequest("POST", "/api/create-toyyibpay-bill", {
+          couponCode: appliedCoupon?.code || "",
+        });
+        
+        const data = await response.json();
+        
+        if (data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to create payment. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (error: any) {
+        toast({
+          title: "Payment Error",
+          description: error.message || "Failed to initialize ToyyibPay payment.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsProcessingToyyibPay(false);
+      }
     }
   };
 
@@ -373,12 +397,21 @@ export default function Checkout() {
                     </p>
                     <Button
                       onClick={handleCheckout}
-                      disabled={cartItems.length === 0}
+                      disabled={cartItems.length === 0 || isProcessingToyyibPay}
                       className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-base h-12 rounded-full font-rajdhani tracking-wide"
                       data-testid="button-place-order"
                     >
-                      <Wallet className="w-5 h-5 mr-2" />
-                      Continue to ToyyibPay
+                      {isProcessingToyyibPay ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Redirecting...
+                        </>
+                      ) : (
+                        <>
+                          <Wallet className="w-5 h-5 mr-2" />
+                          Continue to ToyyibPay
+                        </>
+                      )}
                     </Button>
                   </div>
                 )}

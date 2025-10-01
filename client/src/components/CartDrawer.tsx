@@ -109,7 +109,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
                           {item.package.aecoinAmount.toLocaleString()} AECOIN
                         </p>
                         <p className="text-neon-yellow font-bold mt-2" data-testid={`text-cart-item-price-${item.id}`}>
-                          RM{parseFloat(item.package.price).toFixed(2)}
+                          RM{Math.round(parseFloat(item.package.price))}
                         </p>
                       </div>
 
@@ -165,7 +165,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-rajdhani font-semibold text-white">Total:</span>
                   <span className="text-2xl font-bold text-neon-yellow" data-testid="text-cart-total">
-                    RM{total.toFixed(2)}
+                    RM{Math.round(total)}
                   </span>
                 </div>
 

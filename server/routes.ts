@@ -592,13 +592,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ToyyibPay return handler (user redirected here after payment)
   app.get("/api/toyyibpay/return", async (req, res) => {
     try {
-      const { status_id, billcode, order_id, transaction_id } = req.query;
+      const { status_id, billcode, order_id } = req.query;
 
       if (status_id === '1') {
         const transactions = await getBillTransactions(billcode as string);
         
         if (transactions && transactions.length > 0) {
-          res.redirect(`/checkout/success?orderId=${order_id}&provider=toyyibpay`);
+          res.redirect(`/orders?payment=success&provider=toyyibpay`);
           return;
         }
       }

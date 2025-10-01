@@ -105,8 +105,8 @@ export default function Home() {
   const packages: Package[] = dbPackages.map((pkg, index) => ({
     id: pkg.id,
     amount: pkg.aecoinAmount,
-    price: parseFloat(pkg.price),
-    originalPrice: parseFloat(pkg.price) * 1.1, // 10% fake discount
+    price: Math.round(parseFloat(pkg.price)),
+    originalPrice: Math.round(parseFloat(pkg.price) * 1.1), // 10% fake discount
     image: packageImages[index % packageImages.length],
     badge: pkg.featured ? "FEATURED" : undefined,
   }));
