@@ -125,7 +125,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cart routes (require authentication)
   app.get("/api/cart", requireAuth, async (req, res) => {
     const items = await storage.getCartItems(req.session.userId!);
-    res.json(items);
+    
+    // Join package data for each cart item
+    const itemsWithPackages = await Promise.all(
+      items.map(async (item) => {
+        const pkg = await storage.getPackage(item.packageId);
+        return {
+          ...item,
+          package: pkg,
+        };
+      })
+    );
+    
+    res.json(itemsWithPackages);
   });
 
   app.post("/api/cart", requireAuth, async (req, res) => {
