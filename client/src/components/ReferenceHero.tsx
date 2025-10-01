@@ -90,7 +90,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   const currentSlideData = slides[currentSlide];
 
   return (
-    <section className="relative h-screen bg-black overflow-hidden flex items-center pt-16">
+    <section className="relative h-screen bg-black overflow-hidden flex items-center pt-20 z-0">
       {/* Animated Grid Background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: 'linear-gradient(#FFD700 1px, transparent 1px), linear-gradient(90deg, #FFD700 1px, transparent 1px)',
@@ -104,10 +104,10 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       </div>
 
       {/* Floating Money Icons */}
-      <DollarSign className="absolute top-20 left-10 w-12 h-12 text-neon-yellow/20 animate-float" />
+      <DollarSign className="absolute top-28 left-10 w-12 h-12 text-neon-yellow/20 animate-float" />
       <DollarSign className="absolute top-40 right-20 w-16 h-16 text-neon-yellow/10 animate-float-delayed" />
       <Star className="absolute bottom-40 left-20 w-10 h-10 text-neon-yellow/20 animate-float fill-current" />
-      <Crown className="absolute top-32 right-40 w-14 h-14 text-neon-yellow/15 animate-float-delayed" />
+      <Crown className="absolute top-36 right-40 w-14 h-14 text-neon-yellow/15 animate-float-delayed" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

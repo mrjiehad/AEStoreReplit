@@ -16,10 +16,10 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b-4 border-neon-yellow/50">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-black/90 backdrop-blur-xl border-b-4 border-neon-yellow/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - More Gaming Style */}
+          {/* Logo - Gaming Style */}
           <div
             className="text-2xl font-bebas cursor-pointer text-neon-yellow uppercase tracking-widest text-glow-strong hover:scale-110 transition-transform"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
