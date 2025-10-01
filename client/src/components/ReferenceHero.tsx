@@ -84,7 +84,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   const currentSlideData = slides[currentSlide];
 
   return (
-    <section className="relative h-screen bg-black overflow-hidden flex items-center pt-20 z-0">
+    <section className="relative min-h-screen bg-black overflow-hidden flex items-center mt-16">
       {/* Dark Atmospheric Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/50 to-black" />
       
@@ -103,8 +103,8 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       {/* Radial Glow in Center */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-yellow/5 rounded-full blur-[120px]" />
 
-      <div className="container mx-auto px-4 relative z-10 h-full flex items-center">
-        <div className="grid grid-cols-12 gap-8 items-center w-full">
+      <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="grid grid-cols-12 gap-8 items-center">
           {/* Left Character */}
           <div className="col-span-3 relative h-[600px] flex items-end justify-center">
             <div 
