@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Zap, Shield, Headphones } from "lucide-react";
-import char1 from "@assets/stock_images/gta_5_character_port_70350ab2.jpg";
+import char1 from "@assets/1_1759280228659.png";
+import char2 from "@assets/2_1759280228660.png";
+import char3 from "@assets/3_1759280228660.png";
+import char4 from "@assets/4_1759280228661.png";
 
 interface ReferenceHeroProps {
   onShopClick?: () => void;
@@ -10,14 +13,48 @@ interface ReferenceHeroProps {
 
 export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   
   const slides = [
     {
+      image: char1,
+      badge: "GTA",
       subtitle: "PREMIUM AECOIN CURRENCY",
       title: "DOMINATE SANTOS",
       description: "Build your criminal empire with instant AECOIN delivery. From luxury penthouses to military-grade vehicles.",
       cta1: "START EARNING",
       cta2: "VIEW PACKAGES",
+      theme: "red",
+    },
+    {
+      image: char2,
+      badge: "HEIST",
+      subtitle: "UNLIMITED POSSIBILITIES",
+      title: "EXECUTE THE PERFECT HEIST",
+      description: "Get the gear you need for the biggest scores. Premium weapons, getaway vehicles, and high-tech equipment.",
+      cta1: "GEAR UP NOW",
+      cta2: "EXPLORE ARSENAL",
+      theme: "green",
+    },
+    {
+      image: char3,
+      badge: "CREW",
+      subtitle: "STRENGTH IN NUMBERS",
+      title: "BUILD YOUR EMPIRE",
+      description: "Team up or go solo. With our AECOIN packages, you'll have the resources to rule Los Santos your way.",
+      cta1: "JOIN THE ELITE",
+      cta2: "VIEW DEALS",
+      theme: "blue",
+    },
+    {
+      image: char4,
+      badge: "BOSS",
+      subtitle: "LUXURY LIFESTYLE",
+      title: "LIVE LIKE ROYALTY",
+      description: "From street corners to penthouse suites. Transform your GTA experience with unlimited purchasing power.",
+      cta1: "CLAIM YOUR THRONE",
+      cta2: "SEE PACKAGES",
+      theme: "purple",
     },
   ];
 
@@ -39,40 +76,98 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
     },
   ];
 
+  // Auto-advance slides every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [currentSlide]);
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+  };
+
+  const goToSlide = (index: number) => {
+    if (!isAnimating && index !== currentSlide) {
+      setIsAnimating(true);
+      setCurrentSlide(index);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
   };
 
   const currentSlideData = slides[currentSlide];
 
+  const getThemeGlow = (theme: string) => {
+    switch(theme) {
+      case "red": return "rgba(255, 59, 48, 0.4)";
+      case "green": return "rgba(52, 199, 89, 0.4)";
+      case "blue": return "rgba(0, 122, 255, 0.4)";
+      case "purple": return "rgba(175, 82, 222, 0.4)";
+      default: return "rgba(255, 215, 0, 0.4)";
+    }
+  };
+
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden">
+      {/* Animated Background Gradient */}
+      <div className="absolute inset-0 opacity-30">
+        <div 
+          className="absolute top-1/4 -left-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-1000"
+          style={{ 
+            background: `radial-gradient(circle, ${getThemeGlow(currentSlideData.theme)} 0%, transparent 70%)`
+          }}
+        />
+        <div 
+          className="absolute bottom-1/4 -right-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-1000"
+          style={{ 
+            background: `radial-gradient(circle, ${getThemeGlow(currentSlideData.theme)} 0%, transparent 70%)`
+          }}
+        />
+      </div>
+
       {/* Left Navigation Arrow */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/10 transition-all"
+        disabled={isAnimating}
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-sm border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         data-testid="button-prev-slide"
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
       </button>
 
       {/* Right Navigation Arrow */}
       <button
         onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/10 transition-all"
+        disabled={isAnimating}
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-sm border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         data-testid="button-next-slide"
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
       </button>
 
-      <div className="container mx-auto px-4 pt-32 pb-20">
+      <div className="container mx-auto px-4 pt-32 pb-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-8">
+          {/* Left Content - Animated */}
+          <div 
+            className="space-y-8"
+            key={`content-${currentSlide}`}
+            style={{
+              animation: "slideInLeft 0.6s ease-out"
+            }}
+          >
             {/* Subtitle */}
             <div className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
               {currentSlideData.subtitle}
@@ -84,7 +179,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             </h1>
 
             {/* Description */}
-            <p className="text-gray-300 text-lg md:text-xl font-rajdhani max-w-xl">
+            <p className="text-gray-300 text-lg md:text-xl font-rajdhani max-w-xl leading-relaxed">
               {currentSlideData.description}
             </p>
 
@@ -92,7 +187,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             <div className="flex flex-wrap gap-4">
               <Button
                 onClick={onShopClick}
-                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-8 h-12 uppercase rounded-sm font-rajdhani tracking-wide"
+                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-8 h-12 uppercase rounded-sm font-rajdhani tracking-wide shadow-lg shadow-neon-yellow/20 hover:shadow-neon-yellow/40 transition-all"
                 data-testid="button-start-earning"
               >
                 {currentSlideData.cta1}
@@ -110,7 +205,13 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             {/* Feature Badges */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-3">
+                <div 
+                  key={index} 
+                  className="flex items-start gap-3"
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out ${0.2 + index * 0.1}s both`
+                  }}
+                >
                   <div className="w-12 h-12 rounded-sm bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center flex-shrink-0">
                     <feature.icon className="w-6 h-6 text-neon-yellow" />
                   </div>
@@ -127,40 +228,115 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             </div>
           </div>
 
-          {/* Right Character */}
+          {/* Right Character - Animated */}
           <div className="relative">
-            <div className="relative">
+            <div 
+              className="relative"
+              key={`character-${currentSlide}`}
+              style={{
+                animation: "slideInRight 0.6s ease-out"
+              }}
+            >
+              {/* Character Image */}
               <img
-                src={char1}
-                alt="GTA Character"
-                className="w-full max-w-md mx-auto lg:max-w-lg relative z-10"
+                src={currentSlideData.image}
+                alt={`GTA Character ${currentSlide + 1}`}
+                className="w-full max-w-md mx-auto lg:max-w-lg xl:max-w-xl relative z-10 drop-shadow-2xl"
                 style={{
-                  filter: 'drop-shadow(0 0 60px rgba(255, 215, 0, 0.3))',
+                  filter: `drop-shadow(0 0 60px ${getThemeGlow(currentSlideData.theme)})`,
                 }}
                 data-testid="img-hero-character"
               />
-              {/* GTA Badge */}
-              <div className="absolute top-8 right-8 w-20 h-20 rounded-full bg-neon-yellow flex items-center justify-center">
-                <span className="text-black font-bebas text-2xl tracking-wider">GTA</span>
+              
+              {/* Badge */}
+              <div 
+                className="absolute top-8 right-8 w-20 h-20 rounded-full bg-neon-yellow flex items-center justify-center shadow-lg shadow-neon-yellow/30"
+                style={{
+                  animation: "scaleIn 0.4s ease-out 0.3s both"
+                }}
+              >
+                <span className="text-black font-bebas text-2xl tracking-wider">
+                  {currentSlideData.badge}
+                </span>
               </div>
+
+              {/* Decorative Elements */}
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-neon-yellow/5 rounded-full blur-3xl" />
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-neon-yellow/5 rounded-full blur-3xl" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              currentSlide === index ? "bg-neon-yellow w-8" : "bg-white/30"
+            onClick={() => goToSlide(index)}
+            disabled={isAnimating}
+            className={`transition-all duration-300 rounded-full ${
+              currentSlide === index 
+                ? "bg-neon-yellow w-10 h-3" 
+                : "bg-white/30 w-3 h-3 hover:bg-white/50"
             }`}
             data-testid={`indicator-${index}`}
           />
         ))}
       </div>
+
+      {/* Slide Number */}
+      <div className="absolute bottom-8 right-8 z-20 font-bebas text-white/50 text-lg">
+        <span className="text-neon-yellow text-2xl">{String(currentSlide + 1).padStart(2, '0')}</span>
+        {' / '}
+        {String(slides.length).padStart(2, '0')}
+      </div>
+
+      <style>{`
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.5) rotate(-180deg);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
+      `}</style>
     </section>
   );
 }
