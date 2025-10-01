@@ -30,48 +30,40 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20 bg-[#0d1d35]">
+    <section className="min-h-screen bg-[#0d1d35] flex items-center py-20">
       <div className="container mx-auto px-4">
-        {/* Section Label */}
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
             SIMPLE PROCESS
           </span>
         </div>
 
-        {/* Section Title */}
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
+          className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-how-it-works-title"
         >
           HOW IT WORKS
         </h2>
 
-        {/* Subtitle */}
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-16 max-w-3xl mx-auto">
           From purchase to playing – your journey to Los Santos dominance in four simple steps
         </p>
 
-        {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {steps.map((step, index) => (
             <div key={index} className="text-center" data-testid={`step-${index}`}>
-              {/* Step Number */}
               <div className="text-neon-yellow/30 font-bebas text-6xl mb-4">
                 {step.number}
               </div>
 
-              {/* Icon */}
-              <div className="w-16 h-16 mx-auto mb-6 rounded-sm bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
                 <step.icon className="w-8 h-8 text-neon-yellow" />
               </div>
 
-              {/* Title */}
               <h3 className="text-xl font-bebas text-white uppercase tracking-wide mb-3">
                 {step.title}
               </h3>
 
-              {/* Description */}
               <p className="text-gray-400 font-rajdhani text-sm leading-relaxed">
                 {step.description}
               </p>
@@ -79,15 +71,14 @@ export function HowItWorksSection() {
           ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-sm py-12 px-6">
+        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6">
           <h3 className="text-3xl md:text-4xl font-bebas text-white mb-3 uppercase">
             READY TO RULE LOS SANTOS?
           </h3>
           <p className="text-gray-300 font-rajdhani text-lg mb-6">
             Join thousands of players who trust us for their AECOIN needs
           </p>
-          <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12 rounded-sm">
+          <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12 rounded-full">
             START YOUR EMPIRE NOW
           </Button>
         </div>

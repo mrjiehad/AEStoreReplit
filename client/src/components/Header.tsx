@@ -19,7 +19,6 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a1628]/95 backdrop-blur-lg border-b border-white/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div
             className="text-xl font-rajdhani font-bold cursor-pointer text-white uppercase tracking-wider"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -28,7 +27,6 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
             AECOIN<span className="text-neon-yellow">.STORE</span>
           </div>
 
-          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -67,19 +65,18 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
             </button>
           </nav>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={onCartClick}
-              className="relative text-white hover:text-neon-yellow"
+              className="relative text-white hover:text-neon-yellow rounded-full"
               data-testid="button-cart"
             >
               <ShoppingCart className="w-5 h-5" />
               {cartItemCount > 0 && (
                 <Badge
-                  className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1 bg-neon-yellow text-black font-bold text-xs"
+                  className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1 bg-neon-yellow text-black font-bold text-xs rounded-full"
                   data-testid="badge-cart-count"
                 >
                   {cartItemCount}
@@ -88,13 +85,13 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
             </Button>
             <Button
               variant="ghost"
-              className="text-gray-300 hover:text-white font-rajdhani font-semibold uppercase text-sm h-9 px-4"
+              className="text-gray-300 hover:text-white font-rajdhani font-semibold uppercase text-sm h-9 px-4 rounded-full"
               data-testid="button-login"
             >
               Login
             </Button>
             <Button
-              className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-sm"
+              className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full"
               data-testid="button-signup"
             >
               Sign Up

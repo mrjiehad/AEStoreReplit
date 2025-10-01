@@ -1,6 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export interface Package {
   id: string;
@@ -21,68 +20,62 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
 
   return (
     <Card
-      className="group relative overflow-hidden bg-card border border-border hover-elevate transition-all duration-300 rounded-sm"
-      style={{
-        boxShadow: "0 0 0 rgba(255, 215, 0, 0)",
-        transition: "box-shadow 0.3s ease, transform 0.3s ease",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 0 20px rgba(255, 215, 0, 0.3)";
-        e.currentTarget.style.borderColor = "#FFD700";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 0 0 rgba(255, 215, 0, 0)";
-        e.currentTarget.style.borderColor = "hsl(var(--border))";
-      }}
+      className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
       data-testid={`card-package-${pkg.id}`}
     >
-      {pkg.badge && (
-        <div
-          className="absolute top-2 right-2 bg-neon-yellow text-black font-bold text-[10px] px-2 py-1 rounded-sm z-10 uppercase whitespace-nowrap"
-          data-testid={`badge-package-${pkg.id}`}
-        >
-          {pkg.badge}
-        </div>
-      )}
-      <CardHeader className="pb-3 pt-3 px-3 relative">
-        <div className="absolute inset-0 opacity-20 blur-xl" style={{ backgroundImage: `url(${pkg.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-        <div className="aspect-square rounded-sm overflow-hidden mb-3 bg-background/30 backdrop-blur-sm relative z-10">
-          <img
-            src={pkg.image}
-            alt={`${pkg.amount} AECOIN`}
-            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
-            data-testid={`img-package-${pkg.id}`}
-          />
-        </div>
-        <CardTitle className="text-xl font-bebas text-center uppercase tracking-wider relative z-10" data-testid={`text-package-amount-${pkg.id}`}>
-          <span className="text-neon-yellow">
+      {/* Image Background */}
+      <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl">
+        <img
+          src={pkg.image}
+          alt={`${pkg.amount} AECOIN`}
+          className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+          data-testid={`img-package-${pkg.id}`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1d35] via-transparent to-transparent" />
+        
+        {/* Badge */}
+        {pkg.badge && (
+          <div
+            className="absolute top-4 right-4 bg-neon-yellow text-black font-bold text-xs px-3 py-1 rounded-full uppercase"
+            data-testid={`badge-package-${pkg.id}`}
+          >
+            {pkg.badge}
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <CardHeader className="pb-2 pt-6">
+        <div className="text-center">
+          <div className="text-5xl font-bebas text-white tracking-wider" data-testid={`text-package-amount-${pkg.id}`}>
             {pkg.amount.toLocaleString()}
-          </span>{" "}
-          AECOIN
-        </CardTitle>
+          </div>
+          <div className="text-sm font-rajdhani text-gray-400 uppercase tracking-widest mt-1">
+            AECOIN
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="pb-3 px-3">
-        <div className="text-center space-y-1">
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-2xl font-bold text-neon-yellow" data-testid={`text-price-${pkg.id}`}>
+
+      <CardContent className="pb-2">
+        <div className="text-center">
+          <div className="flex items-baseline justify-center gap-2">
+            <span className="text-3xl font-bold text-neon-yellow" data-testid={`text-price-${pkg.id}`}>
               RM{pkg.price}
             </span>
-            <span className="text-sm text-muted-foreground line-through" data-testid={`text-original-price-${pkg.id}`}>
+            <span className="text-base text-gray-500 line-through" data-testid={`text-original-price-${pkg.id}`}>
               RM{pkg.originalPrice}
             </span>
           </div>
-          <div className="text-xs text-neon-cyan font-semibold">
-            SAVE {discount}%
-          </div>
         </div>
       </CardContent>
-      <CardFooter className="px-3 pb-3">
+
+      <CardFooter className="px-6 pb-6">
         <Button
-          className="w-full bg-neon-yellow hover:bg-neon-yellow hover:scale-105 text-black font-bold transition-transform uppercase text-xs h-9 rounded-sm font-rajdhani tracking-wide"
+          className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-sm h-12 rounded-full font-rajdhani tracking-wide shadow-lg shadow-neon-yellow/20"
           onClick={() => onAddToCart?.(pkg)}
           data-testid={`button-add-to-cart-${pkg.id}`}
         >
-          Add to Cart
+          BUY NOW
         </Button>
       </CardFooter>
     </Card>

@@ -76,7 +76,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
     },
   ];
 
-  // Auto-advance slides every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
@@ -121,8 +120,8 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden">
-      {/* Animated Background Gradient */}
+    <section className="relative h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden flex items-center">
+      {/* Animated Background */}
       <div className="absolute inset-0 opacity-30">
         <div 
           className="absolute top-1/4 -left-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-1000"
@@ -138,56 +137,49 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
         />
       </div>
 
-      {/* Left Navigation Arrow */}
+      {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
         disabled={isAnimating}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-sm border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50"
         data-testid="button-prev-slide"
       >
-        <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
+        <ChevronLeft className="w-6 h-6" />
       </button>
 
-      {/* Right Navigation Arrow */}
       <button
         onClick={nextSlide}
         disabled={isAnimating}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-sm border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-neon-yellow/50 bg-black/40 backdrop-blur-md flex items-center justify-center text-neon-yellow hover:bg-neon-yellow/20 hover:border-neon-yellow transition-all disabled:opacity-50"
         data-testid="button-next-slide"
       >
-        <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
+        <ChevronRight className="w-6 h-6" />
       </button>
 
-      <div className="container mx-auto px-4 pt-32 pb-20 relative z-10">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content - Animated */}
+          {/* Left Content */}
           <div 
             className="space-y-8"
             key={`content-${currentSlide}`}
-            style={{
-              animation: "slideInLeft 0.6s ease-out"
-            }}
+            style={{ animation: "slideInLeft 0.6s ease-out" }}
           >
-            {/* Subtitle */}
             <div className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
               {currentSlideData.subtitle}
             </div>
 
-            {/* Main Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
               {currentSlideData.title}
             </h1>
 
-            {/* Description */}
             <p className="text-gray-300 text-lg md:text-xl font-rajdhani max-w-xl leading-relaxed">
               {currentSlideData.description}
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4">
               <Button
                 onClick={onShopClick}
-                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-8 h-12 uppercase rounded-sm font-rajdhani tracking-wide shadow-lg shadow-neon-yellow/20 hover:shadow-neon-yellow/40 transition-all"
+                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-8 h-12 uppercase rounded-full font-rajdhani tracking-wide shadow-lg"
                 data-testid="button-start-earning"
               >
                 {currentSlideData.cta1}
@@ -195,24 +187,22 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
               <Button
                 onClick={onPackagesClick}
                 variant="outline"
-                className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-bold text-sm px-8 h-12 uppercase rounded-sm font-rajdhani tracking-wide"
+                className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-bold text-sm px-8 h-12 uppercase rounded-full font-rajdhani tracking-wide"
                 data-testid="button-view-packages"
               >
                 {currentSlideData.cta2}
               </Button>
             </div>
 
-            {/* Feature Badges */}
+            {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
               {features.map((feature, index) => (
                 <div 
                   key={index} 
                   className="flex items-start gap-3"
-                  style={{
-                    animation: `fadeInUp 0.6s ease-out ${0.2 + index * 0.1}s both`
-                  }}
+                  style={{ animation: `fadeInUp 0.6s ease-out ${0.2 + index * 0.1}s both` }}
                 >
-                  <div className="w-12 h-12 rounded-sm bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center flex-shrink-0">
                     <feature.icon className="w-6 h-6 text-neon-yellow" />
                   </div>
                   <div>
@@ -228,47 +218,35 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             </div>
           </div>
 
-          {/* Right Character - Animated */}
+          {/* Right Character */}
           <div className="relative">
             <div 
               className="relative"
               key={`character-${currentSlide}`}
-              style={{
-                animation: "slideInRight 0.6s ease-out"
-              }}
+              style={{ animation: "slideInRight 0.6s ease-out" }}
             >
-              {/* Character Image */}
               <img
                 src={currentSlideData.image}
                 alt={`GTA Character ${currentSlide + 1}`}
                 className="w-full max-w-md mx-auto lg:max-w-lg xl:max-w-xl relative z-10 drop-shadow-2xl"
-                style={{
-                  filter: `drop-shadow(0 0 60px ${getThemeGlow(currentSlideData.theme)})`,
-                }}
+                style={{ filter: `drop-shadow(0 0 60px ${getThemeGlow(currentSlideData.theme)})` }}
                 data-testid="img-hero-character"
               />
               
-              {/* Badge */}
               <div 
-                className="absolute top-8 right-8 w-20 h-20 rounded-full bg-neon-yellow flex items-center justify-center shadow-lg shadow-neon-yellow/30"
-                style={{
-                  animation: "scaleIn 0.4s ease-out 0.3s both"
-                }}
+                className="absolute top-8 right-8 w-20 h-20 rounded-full bg-neon-yellow flex items-center justify-center shadow-lg"
+                style={{ animation: "scaleIn 0.4s ease-out 0.3s both" }}
               >
                 <span className="text-black font-bebas text-2xl tracking-wider">
                   {currentSlideData.badge}
                 </span>
               </div>
-
-              {/* Decorative Elements */}
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-neon-yellow/5 rounded-full blur-3xl" />
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-neon-yellow/5 rounded-full blur-3xl" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Slide Indicators */}
+      {/* Indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
@@ -285,7 +263,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
         ))}
       </div>
 
-      {/* Slide Number */}
       <div className="absolute bottom-8 right-8 z-20 font-bebas text-white/50 text-lg">
         <span className="text-neon-yellow text-2xl">{String(currentSlide + 1).padStart(2, '0')}</span>
         {' / '}
@@ -294,47 +271,20 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
 
       <style>{`
         @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(-50px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
         @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(50px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.5) rotate(-180deg);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) rotate(0deg);
-          }
+          from { opacity: 0; transform: scale(0.5) rotate(-180deg); }
+          to { opacity: 1; transform: scale(1) rotate(0deg); }
         }
       `}</style>
     </section>

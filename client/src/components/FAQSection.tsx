@@ -18,35 +18,31 @@ interface FAQSectionProps {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   return (
-    <section id="faq" className="py-20 bg-[#0a1628]">
+    <section id="faq" className="min-h-screen bg-[#0a1628] flex items-center py-20">
       <div className="container mx-auto px-4 max-w-4xl">
-        {/* Section Label */}
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
             SUPPORT
           </span>
         </div>
 
-        {/* Section Title */}
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
+          className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-faq-title"
         >
           NEED ANSWERS?
         </h2>
 
-        {/* Subtitle */}
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-12">
           Everything you need to know about AECOIN and our services
         </p>
 
-        {/* FAQ Accordion */}
         <Accordion type="single" collapsible className="space-y-4 mb-16">
           {faqs.map((faq, index) => (
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-[#0d1d35] border border-white/10 rounded-sm px-6 data-[state=open]:border-neon-yellow/50 transition-all"
+              className="bg-[#0d1d35] border border-white/10 rounded-2xl px-6 data-[state=open]:border-neon-yellow/50 transition-all"
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger
@@ -62,8 +58,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           ))}
         </Accordion>
 
-        {/* Support Section */}
-        <div className="bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-sm py-12 px-6 text-center">
+        <div className="bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6 text-center">
           <h3 className="text-2xl md:text-3xl font-bebas text-white mb-3 uppercase">
             Still Have Questions?
           </h3>
@@ -71,13 +66,13 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             Our expert support team is available 24/7 to help you with any issues
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-sm">
+            <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full">
               <MessageCircle className="w-5 h-5 mr-2" />
               LIVE CHAT SUPPORT
             </Button>
             <Button
               variant="outline"
-              className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-sm"
+              className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full"
             >
               <Mail className="w-5 h-5 mr-2" />
               EMAIL SUPPORT

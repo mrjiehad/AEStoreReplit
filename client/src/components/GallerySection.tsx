@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 interface GallerySectionProps {
   images: string[];
@@ -33,35 +32,31 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
   const [activeCategory, setActiveCategory] = useState("All");
 
   return (
-    <section id="gallery" className="py-20 bg-[#0a1628]">
+    <section id="gallery" className="min-h-screen bg-[#0a1628] flex items-center py-20">
       <div className="container mx-auto px-4">
-        {/* Section Label */}
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
             SHOWCASE
           </span>
         </div>
 
-        {/* Section Title */}
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
+          className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-gallery-title"
         >
           LOS SANTOS LIFESTYLE
         </h2>
 
-        {/* Subtitle */}
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-12 max-w-3xl mx-auto">
           See what awaits you in the most dangerous and lucrative city in the world
         </p>
 
-        {/* Category Tabs */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-sm font-rajdhani font-semibold text-sm uppercase tracking-wide transition-all ${
+              className={`px-6 py-2 rounded-full font-rajdhani font-semibold text-sm uppercase tracking-wide transition-all ${
                 activeCategory === category
                   ? "bg-neon-yellow text-black"
                   : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
@@ -73,14 +68,13 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
           ))}
         </div>
 
-        {/* Gallery Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
           {images.slice(0, 8).map((image, index) => {
             const labelData = categoryLabels[index % categoryLabels.length];
             return (
               <div
                 key={index}
-                className="relative aspect-[4/3] rounded-sm overflow-hidden group cursor-pointer"
+                className="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
                 data-testid={`img-gallery-${index}`}
               >
                 <img
