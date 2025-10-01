@@ -158,3 +158,20 @@ export const insertCouponSchema = createInsertSchema(coupons).omit({
 });
 export type InsertCoupon = z.infer<typeof insertCouponSchema>;
 export type Coupon = typeof coupons.$inferSelect;
+
+// Player rankings table - Leaderboard data
+export const playerRankings = pgTable("player_rankings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  playerName: text("player_name").notNull(), // In-game name
+  stars: integer("stars").notNull().default(0), // Achievement/score system
+  rank: integer("rank").notNull(), // Position in leaderboard
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertPlayerRankingSchema = createInsertSchema(playerRankings).omit({
+  id: true,
+  updatedAt: true,
+});
+export type InsertPlayerRanking = z.infer<typeof insertPlayerRankingSchema>;
+export type PlayerRanking = typeof playerRankings.$inferSelect;

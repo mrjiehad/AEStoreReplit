@@ -54,6 +54,7 @@ Preferred communication style: Simple, everyday language.
 
 **Key Pages & Components**
 - Home page with hero slider, package cards, gallery, FAQ, and "how it works" sections
+- Rankings page with player leaderboard and top 3 podium display
 - Checkout page with Stripe Elements integration for payment processing
 - Orders page for viewing purchase history and redemption codes
 - Reusable components: Header with cart, PackageCard, CartDrawer, Footer
@@ -68,8 +69,9 @@ Preferred communication style: Simple, everyday language.
 **API Structure**
 - RESTful endpoints under `/api` namespace
 - Authentication routes: `/api/auth/discord`, `/api/auth/discord/callback`, `/api/auth/me`, `/api/auth/logout`
-- Resource routes: packages, cart, orders, coupons, checkout
-- All routes require authentication via session middleware except OAuth flow
+- Resource routes: packages, cart, orders, coupons, checkout, rankings
+- Rankings routes: `/api/rankings` (all players), `/api/rankings/top/:limit` (top N players)
+- All routes require authentication via session middleware except OAuth flow and rankings (public)
 
 **Business Logic Flow**
 1. User authenticates via Discord OAuth
@@ -84,9 +86,10 @@ Preferred communication style: Simple, everyday language.
 
 **Primary Database (PostgreSQL via Neon)**
 - Drizzle ORM for type-safe database queries
-- Schema includes: users, packages, cart_items, orders, order_items, redemption_codes, coupons
+- Schema includes: users, packages, cart_items, orders, order_items, redemption_codes, coupons, player_rankings
 - UUID primary keys with automatic generation
 - Foreign key constraints with cascade deletes for data integrity
+- Player rankings table stores leaderboard data with stars (achievement points) and rank positions
 
 **FiveM Database (MySQL)**
 - Separate MySQL connection pool for external FiveM game server

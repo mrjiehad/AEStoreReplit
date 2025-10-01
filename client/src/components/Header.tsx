@@ -60,6 +60,13 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
               PACKAGES
             </button>
             <button
+              onClick={() => navigate("/rankings")}
+              className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
+              data-testid="link-rankings"
+            >
+              RANKINGS
+            </button>
+            <button
               onClick={() => scrollToSection("gallery")}
               className="text-gray-300 hover:text-white transition-colors font-rajdhani font-semibold uppercase text-sm"
               data-testid="link-gallery"

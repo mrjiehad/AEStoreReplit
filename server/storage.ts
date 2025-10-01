@@ -7,7 +7,8 @@ import {
   type RedemptionCode, type InsertRedemptionCode,
   type Coupon, type InsertCoupon,
   type PendingPayment, type InsertPendingPayment,
-  users, packages, cartItems, orders, orderItems, redemptionCodes, coupons, pendingPayments
+  type PlayerRanking, type InsertPlayerRanking,
+  users, packages, cartItems, orders, orderItems, redemptionCodes, coupons, pendingPayments, playerRankings
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -57,6 +58,12 @@ export interface IStorage {
   createPendingPayment(payment: InsertPendingPayment): Promise<PendingPayment>;
   getPendingPaymentByExternalId(externalId: string): Promise<PendingPayment | undefined>;
   updatePendingPaymentStatus(externalId: string, status: string): Promise<PendingPayment | undefined>;
+  
+  // Player rankings operations
+  getAllPlayerRankings(): Promise<PlayerRanking[]>;
+  getPlayerRanking(userId: string): Promise<PlayerRanking | undefined>;
+  createOrUpdatePlayerRanking(ranking: InsertPlayerRanking): Promise<PlayerRanking>;
+  getTopPlayers(limit: number): Promise<PlayerRanking[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -242,6 +249,38 @@ export class DbStorage implements IStorage {
       .where(eq(pendingPayments.externalId, externalId))
       .returning();
     return result[0];
+  }
+
+  // Player rankings operations
+  async getAllPlayerRankings(): Promise<PlayerRanking[]> {
+    return await db.select().from(playerRankings).orderBy(sql`${playerRankings.rank} ASC`);
+  }
+
+  async getPlayerRanking(userId: string): Promise<PlayerRanking | undefined> {
+    const result = await db.select().from(playerRankings).where(eq(playerRankings.userId, userId)).limit(1);
+    return result[0];
+  }
+
+  async createOrUpdatePlayerRanking(ranking: InsertPlayerRanking): Promise<PlayerRanking> {
+    const existing = await this.getPlayerRanking(ranking.userId);
+    
+    if (existing) {
+      const result = await db.update(playerRankings)
+        .set({ ...ranking, updatedAt: new Date() })
+        .where(eq(playerRankings.userId, ranking.userId))
+        .returning();
+      return result[0];
+    } else {
+      const result = await db.insert(playerRankings).values(ranking).returning();
+      return result[0];
+    }
+  }
+
+  async getTopPlayers(limit: number = 100): Promise<PlayerRanking[]> {
+    return await db.select()
+      .from(playerRankings)
+      .orderBy(sql`${playerRankings.rank} ASC`)
+      .limit(limit);
   }
 }
 

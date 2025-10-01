@@ -280,6 +280,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(pkg);
   });
 
+  // Player rankings routes
+  app.get("/api/rankings", async (_req, res) => {
+    const rankings = await storage.getAllPlayerRankings();
+    res.json(rankings);
+  });
+
+  app.get("/api/rankings/top/:limit?", async (req, res) => {
+    const limit = parseInt(req.params.limit || "100");
+    const rankings = await storage.getTopPlayers(limit);
+    res.json(rankings);
+  });
+
   // Cart routes (require authentication)
   app.get("/api/cart", requireAuth, async (req, res) => {
     const items = await storage.getCartItems(req.session.userId!);
