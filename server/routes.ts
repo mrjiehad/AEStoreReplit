@@ -497,11 +497,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: "active",
           });
 
-          // Insert code into FiveM game server database with +50 bonus
+          // Insert code into FiveM game server database
           try {
-            const bonusAmount = 50;
-            const totalAmount = pkg.aecoinAmount + bonusAmount;
-            await insertRedemptionCodeToFiveM(code, totalAmount);
+            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
           } catch (fivemError) {
             console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
             // Continue with order completion even if FiveM insertion fails
@@ -976,9 +974,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           try {
-            const bonusAmount = 50;
-            const totalAmount = pkg.aecoinAmount + bonusAmount;
-            await insertRedemptionCodeToFiveM(code, totalAmount);
+            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
           } catch (fivemError) {
             console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
           }
