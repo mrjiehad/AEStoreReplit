@@ -1,6 +1,10 @@
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, LogOut } from "lucide-react";
+import { SiDiscord } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -8,6 +12,8 @@ interface HeaderProps {
 }
 
 export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
+  const { user, login, logout, isLoading } = useAuth();
+  const { toast } = useToast();
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -83,19 +89,59 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
                 </Badge>
               )}
             </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-300 hover:text-white font-rajdhani font-semibold uppercase text-sm h-9 px-4 rounded-full"
-              data-testid="button-login"
-            >
-              Login
-            </Button>
-            <Button
-              className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full"
-              data-testid="button-signup"
-            >
-              Sign Up
-            </Button>
+
+            {user ? (
+              <div className="flex items-center gap-3">
+                <Avatar className="w-9 h-9 ring-2 ring-neon-yellow/50">
+                  <AvatarImage src={user.avatar || undefined} alt={user.username} />
+                  <AvatarFallback className="bg-neon-yellow text-black font-bold">
+                    {user.username.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden md:block text-white font-rajdhani font-semibold text-sm">
+                  {user.username}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={async () => {
+                    await logout();
+                    toast({
+                      title: "Logged Out",
+                      description: "You have been logged out successfully.",
+                    });
+                  }}
+                  className="text-gray-300 hover:text-white rounded-full"
+                  data-testid="button-logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={async () => {
+                  try {
+                    await login();
+                    toast({
+                      title: "Welcome!",
+                      description: "You've successfully logged in with Discord.",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Login Failed",
+                      description: "Could not authenticate with Discord. Please try again.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                disabled={isLoading}
+                className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full flex items-center gap-2"
+                data-testid="button-login-discord"
+              >
+                <SiDiscord className="w-5 h-5" />
+                Login with Discord
+              </Button>
+            )}
           </div>
         </div>
       </div>
