@@ -44,8 +44,18 @@ function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: 
       {/* Content */}
       <CardHeader className="pb-2 pt-6">
         <div className="text-center">
-          <div className="text-5xl font-bebas text-white tracking-wider" data-testid={`text-package-amount-${pkg.id}`}>
-            {pkg.amount.toLocaleString()}
+          <div className="flex items-center justify-center gap-2">
+            <div className="text-5xl font-bebas text-white tracking-wider" data-testid={`text-package-amount-${pkg.id}`}>
+              {pkg.amount.toLocaleString()}
+            </div>
+            <div className="flex flex-col items-start">
+              <div className="text-lg font-bebas text-neon-yellow" style={{ textShadow: "0 0 10px rgba(255, 215, 0, 0.5)" }}>
+                +50
+              </div>
+              <div className="text-[10px] font-rajdhani text-neon-yellow uppercase tracking-wide -mt-1">
+                BONUS
+              </div>
+            </div>
           </div>
           <div className="text-sm font-rajdhani text-gray-400 uppercase tracking-widest mt-1">
             AECOIN
