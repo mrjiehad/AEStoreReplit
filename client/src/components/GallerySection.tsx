@@ -1,55 +1,106 @@
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface GallerySectionProps {
   images: string[];
   onCtaClick?: () => void;
 }
 
+const categories = [
+  "All",
+  "Vehicles",
+  "Properties",
+  "Weapons",
+  "Heists",
+  "Business",
+  "Racing",
+  "Territory",
+  "Lifestyle",
+];
+
+const categoryLabels = [
+  { category: "Vehicles", label: "Luxury Supercars" },
+  { category: "Properties", label: "High-End Apartments" },
+  { category: "Weapons", label: "Military Equipment" },
+  { category: "Heists", label: "Criminal Operations" },
+  { category: "Business", label: "Nightclub Empire" },
+  { category: "Racing", label: "Street Racing" },
+  { category: "Territory", label: "Gang Territory" },
+  { category: "Lifestyle", label: "Penthouse Living" },
+];
+
 export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   return (
-    <section id="gallery" className="py-20 bg-card">
+    <section id="gallery" className="py-20 bg-[#0a1628]">
       <div className="container mx-auto px-4">
+        {/* Section Label */}
+        <div className="text-center mb-3">
+          <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
+            SHOWCASE
+          </span>
+        </div>
+
+        {/* Section Title */}
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
+          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-gallery-title"
         >
-          GTA GALLERY
+          LOS SANTOS LIFESTYLE
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12 px-4">
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className="relative aspect-square rounded-sm overflow-hidden cursor-pointer transition-all duration-500 group"
-              style={{
-                border: hoveredIndex === index ? "2px solid #FFD700" : "2px solid transparent",
-                boxShadow: hoveredIndex === index ? "0 0 20px rgba(255, 215, 0, 0.5)" : "none",
-              }}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              data-testid={`img-gallery-${index}`}
+        {/* Subtitle */}
+        <p className="text-center text-gray-300 font-rajdhani text-lg mb-12 max-w-3xl mx-auto">
+          See what awaits you in the most dangerous and lucrative city in the world
+        </p>
+
+        {/* Category Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-6 py-2 rounded-sm font-rajdhani font-semibold text-sm uppercase tracking-wide transition-all ${
+                activeCategory === category
+                  ? "bg-neon-yellow text-black"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
+              }`}
+              data-testid={`tab-${category.toLowerCase()}`}
             >
-              <img
-                src={image}
-                alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-1"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
+              {category}
+            </button>
           ))}
         </div>
 
-        <div className="text-center">
-          <Button
-            onClick={onCtaClick}
-            className="w-full sm:w-auto bg-neon-yellow hover:bg-neon-yellow hover:scale-105 text-black font-bold text-sm px-10 h-10 transition-transform uppercase mx-4 rounded-sm font-rajdhani tracking-wide"
-            data-testid="button-get-aecoin"
-          >
-            GET YOUR AECOIN NOW
-          </Button>
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+          {images.slice(0, 8).map((image, index) => {
+            const labelData = categoryLabels[index % categoryLabels.length];
+            return (
+              <div
+                key={index}
+                className="relative aspect-[4/3] rounded-sm overflow-hidden group cursor-pointer"
+                data-testid={`img-gallery-${index}`}
+              >
+                <img
+                  src={image}
+                  alt={labelData?.label || `Gallery ${index + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="text-neon-yellow font-rajdhani text-xs font-semibold uppercase tracking-wide mb-1">
+                      {labelData?.category}
+                    </div>
+                    <div className="text-white font-bebas text-xl">
+                      {labelData?.label}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

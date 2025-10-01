@@ -1,91 +1,95 @@
-import { ShoppingBag, CreditCard, Zap, Gamepad2, Shield, Headphones } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ShoppingBag, CreditCard, Zap, Gamepad2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   {
+    number: "01",
     icon: ShoppingBag,
     title: "Choose Package",
-    description: "Select your AECOIN amount",
+    description: "Select your desired AECOIN package from our premium collection",
   },
   {
+    number: "02",
     icon: CreditCard,
     title: "Secure Payment",
-    description: "Pay with trusted methods",
+    description: "Pay safely with our trusted and encrypted payment gateway",
   },
   {
+    number: "03",
     icon: Zap,
     title: "Instant Delivery",
-    description: "Get your code immediately",
+    description: "Receive your activation codes immediately after payment",
   },
   {
+    number: "04",
     icon: Gamepad2,
-    title: "Redeem & Play",
-    description: "Use in GTA Online",
-  },
-];
-
-const features = [
-  {
-    icon: Zap,
-    title: "Instant Delivery",
-    color: "#FFD700",
-  },
-  {
-    icon: Shield,
-    title: "100% Secure",
-    color: "#00E0FF",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    color: "#FFD700",
+    title: "Redeem & Dominate",
+    description: "Enter codes in GTA Online and start your criminal empire",
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-[#0d1d35]">
       <div className="container mx-auto px-4">
+        {/* Section Label */}
+        <div className="text-center mb-3">
+          <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
+            SIMPLE PROCESS
+          </span>
+        </div>
+
+        {/* Section Title */}
         <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-12 md:mb-16 tracking-wider uppercase text-neon-yellow px-4"
+          className="text-4xl md:text-5xl lg:text-6xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-how-it-works-title"
         >
           HOW IT WORKS
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-12 md:mb-16 px-4">
+        {/* Subtitle */}
+        <p className="text-center text-gray-300 font-rajdhani text-lg mb-16 max-w-3xl mx-auto">
+          From purchase to playing – your journey to Los Santos dominance in four simple steps
+        </p>
+
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {steps.map((step, index) => (
             <div key={index} className="text-center" data-testid={`step-${index}`}>
-              <div
-                className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-gradient-to-br from-neon-yellow/20 to-neon-cyan/20 border-2 border-neon-yellow"
-                style={{
-                  boxShadow: "0 0 30px rgba(255, 215, 0, 0.4)",
-                }}
-              >
-                <step.icon className="w-10 h-10 text-neon-yellow" />
+              {/* Step Number */}
+              <div className="text-neon-yellow/30 font-bebas text-6xl mb-4">
+                {step.number}
               </div>
-              <h3 className="text-lg md:text-xl font-bebas mb-2 text-foreground uppercase tracking-wide">{step.title}</h3>
-              <p className="text-muted-foreground">{step.description}</p>
+
+              {/* Icon */}
+              <div className="w-16 h-16 mx-auto mb-6 rounded-sm bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
+                <step.icon className="w-8 h-8 text-neon-yellow" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-xl font-bebas text-white uppercase tracking-wide mb-3">
+                {step.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-gray-400 font-rajdhani text-sm leading-relaxed">
+                {step.description}
+              </p>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6 px-4">
-          {features.map((feature, index) => (
-            <Badge
-              key={index}
-              className="px-5 py-2 text-sm font-bold bg-card border flex items-center gap-2 rounded-sm"
-              style={{
-                borderColor: feature.color,
-                color: feature.color,
-                boxShadow: `0 0 15px ${feature.color}30`,
-              }}
-              data-testid={`feature-${index}`}
-            >
-              <feature.icon className="w-4 h-4" />
-              {feature.title}
-            </Badge>
-          ))}
+        {/* CTA Section */}
+        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-sm py-12 px-6">
+          <h3 className="text-3xl md:text-4xl font-bebas text-white mb-3 uppercase">
+            READY TO RULE LOS SANTOS?
+          </h3>
+          <p className="text-gray-300 font-rajdhani text-lg mb-6">
+            Join thousands of players who trust us for their AECOIN needs
+          </p>
+          <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12 rounded-sm">
+            START YOUR EMPIRE NOW
+          </Button>
         </div>
       </div>
     </section>
