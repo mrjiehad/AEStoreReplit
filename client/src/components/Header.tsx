@@ -1,4 +1,4 @@
-import { ShoppingCart, LogOut, User, Package } from "lucide-react";
+import { ShoppingCart, LogOut, User, Package, Shield } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -156,6 +156,38 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
                     <User className="w-4 h-4 mr-2" />
                     Profile & Orders
                   </DropdownMenuItem>
+                  {user.isAdmin && (
+                    <>
+                      <DropdownMenuSeparator className="bg-white/10" />
+                      <DropdownMenuLabel className="font-rajdhani text-yellow-400">
+                        Admin Panel
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/admin/orders")}
+                        className="font-rajdhani text-gray-300 hover:text-white focus:text-white cursor-pointer"
+                        data-testid="menu-item-admin-orders"
+                      >
+                        <Package className="w-4 h-4 mr-2" />
+                        Manage Orders
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/admin/packages")}
+                        className="font-rajdhani text-gray-300 hover:text-white focus:text-white cursor-pointer"
+                        data-testid="menu-item-admin-packages"
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
+                        Manage Packages
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("/admin/coupons")}
+                        className="font-rajdhani text-gray-300 hover:text-white focus:text-white cursor-pointer"
+                        data-testid="menu-item-admin-coupons"
+                      >
+                        <Package className="w-4 h-4 mr-2" />
+                        Manage Coupons
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem
                     onClick={async () => {
