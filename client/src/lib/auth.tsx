@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,8 +49,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await logoutMutation.mutateAsync();
   };
 
+  const refreshUser = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    const data = await queryClient.fetchQuery<{ user: User }>({
+      queryKey: ["/api/auth/me"],
+    });
+    setUser(data.user);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

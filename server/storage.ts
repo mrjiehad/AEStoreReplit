@@ -17,7 +17,9 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   getUserByDiscordId(discordId: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  createAdminUser(username: string, email: string, passwordHash: string): Promise<User>;
   
   // Package operations
   getAllPackages(): Promise<Package[]>;
@@ -82,8 +84,25 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    return result[0];
+  }
+
   async createUser(user: InsertUser): Promise<User> {
     const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  async createAdminUser(username: string, email: string, passwordHash: string): Promise<User> {
+    const result = await db.insert(users).values({
+      username,
+      email,
+      passwordHash,
+      isAdmin: true,
+      discordId: null,
+      avatar: null,
+    }).returning();
     return result[0];
   }
 

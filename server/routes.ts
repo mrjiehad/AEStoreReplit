@@ -2,6 +2,9 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import express from "express";
 import { storage } from "./storage";
+import { db } from "./db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import { getDiscordAuthUrl, exchangeCodeForToken, getDiscordUserInfo } from "./discord";
 import { sendOrderConfirmationEmail } from "./email";
 import { insertRedemptionCodeToFiveM } from "./fivem-db";
@@ -9,6 +12,8 @@ import { createBill, getPaymentUrl, getBillTransactions } from "./toyyibpay";
 import "./types";
 import crypto from "crypto";
 import Stripe from "stripe";
+import bcrypt from "bcrypt";
+import { z } from "zod";
 
 // Initialize Stripe (from blueprint:javascript_stripe)
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -44,6 +49,47 @@ async function requireAdmin(req: Request, res: Response, next: Function) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // One-time admin user creation endpoint (for initial setup)
+  app.post("/api/seed-admin", async (req, res) => {
+    try {
+      const { username, email, password, setupToken } = req.body;
+
+      // Check if setup token matches (or allow if no admin exists yet)
+      const existingAdmins = await db.select().from(users).where(eq(users.isAdmin, true));
+      
+      if (existingAdmins.length > 0) {
+        return res.status(403).json({ message: "Admin already exists. Cannot create another via seed." });
+      }
+
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: "Username, email, and password are required" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+
+      // Hash password with bcrypt (cost factor 12)
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      // Create admin user
+      const admin = await storage.createAdminUser(username, email, passwordHash);
+
+      res.json({ 
+        message: "Admin user created successfully",
+        admin: {
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          isAdmin: admin.isAdmin,
+        }
+      });
+    } catch (error: any) {
+      console.error("Seed admin error:", error);
+      res.status(500).json({ message: "Failed to create admin user", error: error.message });
+    }
+  });
+
   // Discord OAuth flow - Step 1: Redirect to Discord
   app.get("/api/auth/discord", (req, res) => {
     // Generate and store state for CSRF protection
@@ -136,6 +182,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     res.json({ user });
+  });
+
+  // Admin login with username/password
+  const adminLoginSchema = z.object({
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+  });
+
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = adminLoginSchema.parse(req.body);
+
+      const user = await storage.getUserByUsername(username);
+      
+      if (!user || !user.isAdmin || !user.passwordHash) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      req.session.regenerate((err) => {
+        if (err) {
+          console.error("Session regeneration error:", err);
+          return res.status(500).json({ message: "Login failed" });
+        }
+
+        req.session.userId = user.id;
+        req.session.loginMethod = "admin";
+
+        res.json({ 
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            avatar: user.avatar,
+          }
+        });
+      });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Admin login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
   });
 
   // Stripe webhook handler - Raw body middleware applied in index.ts

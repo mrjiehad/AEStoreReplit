@@ -3,13 +3,14 @@ import { pgTable, text, varchar, integer, decimal, timestamp, boolean } from "dr
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Users table - Discord OAuth
+// Users table - Discord OAuth for regular users, username/password for admins
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  discordId: varchar("discord_id").notNull().unique(),
+  discordId: varchar("discord_id").unique(), // nullable for admin users
   email: text("email").notNull(),
-  username: text("username").notNull(),
+  username: text("username").notNull().unique(), // unique for admin login
   avatar: text("avatar"),
+  passwordHash: text("password_hash"), // for admin users only
   isAdmin: boolean("is_admin").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

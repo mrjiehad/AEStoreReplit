@@ -14,6 +14,7 @@ import PaymentFailed from "@/pages/PaymentFailed";
 import AdminOrders from "@/pages/AdminOrders";
 import AdminPackages from "@/pages/AdminPackages";
 import AdminCoupons from "@/pages/AdminCoupons";
+import AdminLogin from "@/pages/AdminLogin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/payment/pending" component={PaymentPending} />
       <Route path="/payment/cancelled" component={PaymentCancelled} />
       <Route path="/payment/failed" component={PaymentFailed} />
+      <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/packages" component={AdminPackages} />
       <Route path="/admin/coupons" component={AdminCoupons} />
