@@ -1,38 +1,217 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { 
+  type User, type InsertUser,
+  type Package, type InsertPackage,
+  type CartItem, type InsertCartItem,
+  type Order, type InsertOrder,
+  type OrderItem, type InsertOrderItem,
+  type RedemptionCode, type InsertRedemptionCode,
+  type Coupon, type InsertCoupon,
+  users, packages, cartItems, orders, orderItems, redemptionCodes, coupons
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, sql } from "drizzle-orm";
 
 export interface IStorage {
+  // User operations
   getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByDiscordId(discordId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Package operations
+  getAllPackages(): Promise<Package[]>;
+  getPackage(id: string): Promise<Package | undefined>;
+  createPackage(pkg: InsertPackage): Promise<Package>;
+  updatePackage(id: string, pkg: Partial<InsertPackage>): Promise<Package | undefined>;
+  deletePackage(id: string): Promise<boolean>;
+  
+  // Cart operations
+  getCartItems(userId: string): Promise<CartItem[]>;
+  addToCart(item: InsertCartItem): Promise<CartItem>;
+  updateCartItemQuantity(id: string, quantity: number): Promise<CartItem | undefined>;
+  removeFromCart(id: string): Promise<boolean>;
+  clearCart(userId: string): Promise<boolean>;
+  
+  // Order operations
+  getOrder(id: string): Promise<Order | undefined>;
+  getUserOrders(userId: string): Promise<Order[]>;
+  createOrder(order: InsertOrder): Promise<Order>;
+  updateOrderStatus(id: string, status: string, paymentId?: string): Promise<Order | undefined>;
+  
+  // Order items operations
+  createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
+  getOrderItems(orderId: string): Promise<OrderItem[]>;
+  
+  // Redemption code operations
+  createRedemptionCode(code: InsertRedemptionCode): Promise<RedemptionCode>;
+  getOrderRedemptionCodes(orderId: string): Promise<RedemptionCode[]>;
+  redeemCode(code: string): Promise<RedemptionCode | undefined>;
+  
+  // Coupon operations
+  getCoupon(code: string): Promise<Coupon | undefined>;
+  createCoupon(coupon: InsertCoupon): Promise<Coupon>;
+  incrementCouponUse(id: string): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
-  }
-
+export class DbStorage implements IStorage {
+  // User operations
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getUserByDiscordId(discordId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.discordId, discordId)).limit(1);
+    return result[0];
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  // Package operations
+  async getAllPackages(): Promise<Package[]> {
+    return await db.select().from(packages);
+  }
+
+  async getPackage(id: string): Promise<Package | undefined> {
+    const result = await db.select().from(packages).where(eq(packages.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createPackage(pkg: InsertPackage): Promise<Package> {
+    const result = await db.insert(packages).values(pkg).returning();
+    return result[0];
+  }
+
+  async updatePackage(id: string, pkg: Partial<InsertPackage>): Promise<Package | undefined> {
+    const result = await db.update(packages).set(pkg).where(eq(packages.id, id)).returning();
+    return result[0];
+  }
+
+  async deletePackage(id: string): Promise<boolean> {
+    const result = await db.delete(packages).where(eq(packages.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Cart operations
+  async getCartItems(userId: string): Promise<CartItem[]> {
+    return await db.select().from(cartItems).where(eq(cartItems.userId, userId));
+  }
+
+  async addToCart(item: InsertCartItem): Promise<CartItem> {
+    // Check if item already exists in cart
+    const existing = await db.select().from(cartItems)
+      .where(and(
+        eq(cartItems.userId, item.userId),
+        eq(cartItems.packageId, item.packageId)
+      ))
+      .limit(1);
+
+    if (existing[0]) {
+      // Update quantity
+      const updated = await db.update(cartItems)
+        .set({ quantity: existing[0].quantity + item.quantity })
+        .where(eq(cartItems.id, existing[0].id))
+        .returning();
+      return updated[0];
+    } else {
+      // Insert new
+      const result = await db.insert(cartItems).values(item).returning();
+      return result[0];
+    }
+  }
+
+  async updateCartItemQuantity(id: string, quantity: number): Promise<CartItem | undefined> {
+    const result = await db.update(cartItems).set({ quantity }).where(eq(cartItems.id, id)).returning();
+    return result[0];
+  }
+
+  async removeFromCart(id: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  async clearCart(userId: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.userId, userId));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Order operations
+  async getOrder(id: string): Promise<Order | undefined> {
+    const result = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserOrders(userId: string): Promise<Order[]> {
+    return await db.select().from(orders).where(eq(orders.userId, userId));
+  }
+
+  async createOrder(order: InsertOrder): Promise<Order> {
+    const result = await db.insert(orders).values(order).returning();
+    return result[0];
+  }
+
+  async updateOrderStatus(id: string, status: string, paymentId?: string): Promise<Order | undefined> {
+    const updateData: any = { status };
+    if (paymentId) {
+      updateData.paymentId = paymentId;
+    }
+    if (status === 'completed') {
+      updateData.completedAt = new Date();
+    }
+    const result = await db.update(orders).set(updateData).where(eq(orders.id, id)).returning();
+    return result[0];
+  }
+
+  // Order items operations
+  async createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem> {
+    const result = await db.insert(orderItems).values(orderItem).returning();
+    return result[0];
+  }
+
+  async getOrderItems(orderId: string): Promise<OrderItem[]> {
+    return await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  }
+
+  // Redemption code operations
+  async createRedemptionCode(code: InsertRedemptionCode): Promise<RedemptionCode> {
+    const result = await db.insert(redemptionCodes).values(code).returning();
+    return result[0];
+  }
+
+  async getOrderRedemptionCodes(orderId: string): Promise<RedemptionCode[]> {
+    return await db.select().from(redemptionCodes).where(eq(redemptionCodes.orderId, orderId));
+  }
+
+  async redeemCode(code: string): Promise<RedemptionCode | undefined> {
+    const result = await db.update(redemptionCodes)
+      .set({ status: 'redeemed', redeemedAt: new Date() })
+      .where(and(
+        eq(redemptionCodes.code, code),
+        eq(redemptionCodes.status, 'active')
+      ))
+      .returning();
+    return result[0];
+  }
+
+  // Coupon operations
+  async getCoupon(code: string): Promise<Coupon | undefined> {
+    const result = await db.select().from(coupons).where(eq(coupons.code, code)).limit(1);
+    return result[0];
+  }
+
+  async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    const result = await db.insert(coupons).values(coupon).returning();
+    return result[0];
+  }
+
+  async incrementCouponUse(id: string): Promise<boolean> {
+    const result = await db.update(coupons)
+      .set({ currentUses: sql`${coupons.currentUses} + 1` })
+      .where(eq(coupons.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DbStorage();
