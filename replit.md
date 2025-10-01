@@ -4,7 +4,7 @@
 
 AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online currency (AECOIN packages). The application features a cyberpunk/neon-themed dark interface, Discord OAuth authentication, dual payment gateways (Stripe + ToyyibPay), and automated code delivery via email and FiveM database integration.
 
-## Recent Updates (Production Hardening - Phase 1)
+## Recent Updates (Production Hardening - COMPLETED)
 
 ### Completed (Critical Security Fixes):
 1. **PendingPayment System** - Prevents cart tampering and payment fraud
@@ -17,18 +17,28 @@ AECOIN Store is a gaming e-commerce platform for selling virtual GTA Online curr
    - /payment/cancelled - Payment cancellation handling
    - /payment/failed - Error page with troubleshooting
 
-3. **Stripe Production Security** - Industry-standard payment processing
-   - Webhook handler with signature verification (STRIPE_WEBHOOK_SECRET required)
+3. **Stripe Production Security** - Industry-standard payment processing ✅
+   - STRIPE_WEBHOOK_SECRET configured and validated
+   - Webhook handler with signature verification
    - Server-side order creation (client cannot forge completion)
    - Amount verification in cents (prevents floating-point fraud)
-   - Currency verification
+   - Currency verification against PendingPayment
    - Idempotency via unique paymentId constraint
+   - /api/orders/complete converted to read-only status checker
    - Order status lifecycle: created → paid → fulfilled
 
-### In Progress:
-4. ToyyibPay security hardening (PendingPayment integration)
-5. Frontend payment cancellation handling
-6. Comprehensive error handling throughout checkout
+4. **ToyyibPay Production Security** - Malaysian payment gateway hardening ✅
+   - PendingPayment integration with cart snapshot
+   - Server-side transaction verification via getBillTransactions
+   - Amount matching with ToyyibPay cents format handling
+   - Idempotency checks prevent duplicate order creation
+   - Removed vulnerable /api/complete-toyyibpay-order endpoint
+   - Return handler validates against PendingPayment, not live cart
+   - Proper error handling with user-friendly redirects
+
+### Next Phase:
+5. Admin Dashboard for operations management
+6. Email domain verification (aeofficial.my on Resend)
 
 ## User Preferences
 

@@ -426,130 +426,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return code.join('-'); // Format: XXXX-XXXX-XXXX-XXXX
   }
 
-  // Stripe payment success handler - Create order and redemption codes
+  // Stripe payment status checker - READ-ONLY (webhook fulfills orders)
   app.post("/api/orders/complete", requireAuth, async (req, res) => {
     try {
       const { paymentIntentId } = req.body;
-      const userId = req.session.userId!;
 
       if (!paymentIntentId) {
         return res.status(400).json({ message: "Payment intent ID required" });
       }
 
-      // Verify payment intent with Stripe
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-      
-      if (paymentIntent.status !== "succeeded") {
-        return res.status(400).json({ message: "Payment not completed" });
-      }
-
-      // Check if order already exists for this payment
-      const existingOrder = await storage.getOrderByPaymentId(paymentIntent.id);
+      // Check if order already exists (webhook should create it)
+      const existingOrder = await storage.getOrderByPaymentId(paymentIntentId);
       if (existingOrder) {
         return res.json({ order: existingOrder, success: true });
       }
 
-      // Get cart items
-      const cartItems = await storage.getCartItems(userId);
-      if (cartItems.length === 0) {
-        return res.status(400).json({ message: "Cart is empty" });
-      }
-
-      // Extract metadata from payment intent
-      const metadata = paymentIntent.metadata;
-      const subtotal = parseFloat(metadata.subtotal || "0");
-      const discount = parseFloat(metadata.discount || "0");
-      const total = parseFloat(metadata.total || "0");
-      const couponCode = metadata.couponCode || null;
-
-      // Create order
-      const order = await storage.createOrder({
-        userId,
-        totalAmount: subtotal.toFixed(2),
-        discountAmount: discount.toFixed(2),
-        finalAmount: total.toFixed(2),
-        status: "completed",
-        paymentMethod: "stripe",
-        paymentId: paymentIntent.id,
-        couponCode,
-      });
-
-      // Create order items and redemption codes
-      for (const cartItem of cartItems) {
-        const pkg = await storage.getPackage(cartItem.packageId);
-        if (!pkg) continue;
-
-        // Create order item
-        await storage.createOrderItem({
-          orderId: order.id,
-          packageId: pkg.id,
-          quantity: cartItem.quantity,
-          priceAtPurchase: pkg.price,
+      // Check pending payment status
+      const pendingPayment = await storage.getPendingPaymentByExternalId(paymentIntentId);
+      if (!pendingPayment) {
+        return res.status(404).json({ 
+          message: "Payment not found",
+          status: "not_found"
         });
-
-        // Generate redemption codes (one per quantity)
-        for (let i = 0; i < cartItem.quantity; i++) {
-          const code = generateRedemptionCode();
-          await storage.createRedemptionCode({
-            code,
-            packageId: pkg.id,
-            orderId: order.id,
-            status: "active",
-          });
-
-          // Insert code into FiveM game server database
-          try {
-            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
-          } catch (fivemError) {
-            console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
-            // Continue with order completion even if FiveM insertion fails
-            // Customer can still use codes from website/email
-          }
-        }
       }
 
-      // Increment coupon usage if used
-      if (couponCode) {
-        const coupon = await storage.getCoupon(couponCode);
-        if (coupon) {
-          await storage.incrementCouponUse(coupon.id);
-        }
-      }
-
-      // Clear user's cart
-      await storage.clearCart(userId);
-
-      // Send order confirmation email with redemption codes
-      try {
-        const user = await storage.getUser(userId);
-        if (user?.email) {
-          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
-          const codesWithPackageNames = await Promise.all(
-            redemptionCodes.map(async (code) => {
-              const pkg = await storage.getPackage(code.packageId);
-              return {
-                code: code.code,
-                packageName: pkg?.name || 'AECOIN Package'
-              };
-            })
-          );
-          
-          await sendOrderConfirmationEmail(
-            user.email,
-            order.id,
-            order.finalAmount,
-            codesWithPackageNames
-          );
-        }
-      } catch (emailError) {
-        console.error("Failed to send order confirmation email:", emailError);
-      }
-
-      res.json({ order, success: true });
+      // Return pending payment status
+      return res.json({ 
+        success: false,
+        status: pendingPayment.status,
+        message: pendingPayment.status === 'created' 
+          ? 'Payment is being processed. Please wait...'
+          : pendingPayment.status === 'succeeded'
+          ? 'Payment succeeded. Order will be ready shortly.'
+          : 'Payment processing...'
+      });
     } catch (error: any) {
-      console.error("Order completion error:", error);
+      console.error("Order status check error:", error);
       res.status(500).json({ 
-        message: "Failed to complete order: " + error.message 
+        message: "Failed to check order status: " + error.message 
       });
     }
   });
@@ -663,18 +577,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ToyyibPay payment intent endpoint
+  // ToyyibPay payment intent endpoint - With PendingPayment security
   app.post("/api/create-toyyibpay-bill", requireAuth, async (req, res) => {
     try {
       const { couponCode } = req.body;
       const userId = req.session.userId!;
 
+      // Get cart items and calculate total SERVER-SIDE (security: never trust client amounts)
       const cartItems = await storage.getCartItems(userId);
       
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
       }
 
+      // Calculate subtotal from server-side cart data
       let subtotal = 0;
       for (const item of cartItems) {
         const pkg = await storage.getPackage(item.packageId);
@@ -683,6 +599,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Validate coupon if provided
       let discount = 0;
       let validatedCoupon = null;
       if (couponCode) {
@@ -715,21 +632,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not found" });
       }
 
-      const pendingOrderId = crypto.randomUUID();
       const baseUrl = process.env.REPLIT_DEV_DOMAIN 
         ? `https://${process.env.REPLIT_DEV_DOMAIN}`
         : `http://localhost:5000`;
 
+      // Generate unique external reference ID for ToyyibPay
+      const externalReferenceNo = crypto.randomUUID();
+
+      // Create ToyyibPay bill
       const billCode = await createBill({
-        billName: `AECOIN Order #${pendingOrderId.substring(0, 8)}`,
+        billName: `AECOIN Order #${externalReferenceNo.substring(0, 8)}`,
         billDescription: `AECOIN Package Purchase`,
         billAmount: total,
         billTo: user.username,
         billEmail: user.email,
         billPhone: '0000000000',
-        billExternalReferenceNo: pendingOrderId,
+        billExternalReferenceNo: externalReferenceNo,
         billReturnUrl: `${baseUrl}/api/toyyibpay/return`,
         billCallbackUrl: `${baseUrl}/api/toyyibpay/callback`,
+      });
+
+      // Create cart snapshot for security verification
+      const cartSnapshot = await Promise.all(
+        cartItems.map(async (item) => {
+          const pkg = await storage.getPackage(item.packageId);
+          return {
+            packageId: item.packageId,
+            packageName: pkg?.name || '',
+            quantity: item.quantity,
+            price: pkg?.price || '0',
+            aecoinAmount: pkg?.aecoinAmount || 0,
+          };
+        })
+      );
+
+      // Create PendingPayment record for security and tracking (CRITICAL SECURITY)
+      await storage.createPendingPayment({
+        userId,
+        provider: 'toyyibpay',
+        externalId: billCode,
+        amount: total.toFixed(2),
+        currency: 'MYR',
+        status: 'created',
+        cartSnapshot: JSON.stringify(cartSnapshot),
+        couponCode: validatedCoupon?.code || null,
+        metadata: JSON.stringify({
+          subtotal: subtotal.toFixed(2),
+          discount: discount.toFixed(2),
+          externalReferenceNo,
+        }),
       });
 
       const paymentUrl = getPaymentUrl(billCode);
@@ -737,7 +688,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         billCode,
         paymentUrl,
-        pendingOrderId,
         amount: total,
         metadata: {
           couponCode: validatedCoupon?.code || "",
@@ -757,15 +707,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ToyyibPay callback handler (called by ToyyibPay when payment completes)
   app.get("/api/toyyibpay/callback", async (req, res) => {
     try {
-      const { status_id, billcode, order_id } = req.query;
+      const { status_id, billcode } = req.query;
 
-      console.log("ToyyibPay callback:", { status_id, billcode, order_id });
+      console.log("ToyyibPay callback received:", { status_id, billcode });
 
+      if (!billcode) {
+        return res.status(200).send('OK');
+      }
+
+      // Check if payment already processed (idempotency)
+      const existingOrder = await storage.getOrderByPaymentId(billcode as string);
+      if (existingOrder) {
+        console.log(`Order already exists for ToyyibPay bill ${billcode}`);
+        return res.status(200).send('OK');
+      }
+
+      // Verify payment succeeded
       if (status_id === '1') {
+        // Server-side verification: Query ToyyibPay to confirm payment
         const transactions = await getBillTransactions(billcode as string);
         
-        if (transactions && transactions.length > 0) {
-          console.log("✓ ToyyibPay payment successful:", order_id);
+        if (transactions && transactions.length > 0 && transactions[0].billpaymentStatus === '1') {
+          console.log("✓ ToyyibPay payment verified:", billcode);
+          // Actual order fulfillment happens in return handler with session context
         }
       }
 
@@ -776,233 +740,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ToyyibPay return handler (user redirected here after payment)
+  // ToyyibPay return handler (user redirected here after payment) - SECURE VERSION
   app.get("/api/toyyibpay/return", async (req, res) => {
     try {
-      const { status_id, billcode, order_id } = req.query;
+      const { status_id, billcode } = req.query;
 
-      if (status_id !== '1' || !billcode) {
-        res.redirect(`/checkout?error=payment_failed`);
-        return;
+      console.log("ToyyibPay return:", { status_id, billcode });
+
+      if (!billcode || status_id !== '1') {
+        return res.redirect(`/payment/failed?reason=invalid_status`);
       }
 
+      // Check if order already exists (idempotency)
+      const existingOrder = await storage.getOrderByPaymentId(billcode as string);
+      if (existingOrder) {
+        console.log(`Order already fulfilled for ToyyibPay bill ${billcode}`);
+        return res.redirect(`/orders?payment=success&provider=toyyibpay`);
+      }
+
+      // Get PendingPayment record - CRITICAL SECURITY CHECK
+      const pendingPayment = await storage.getPendingPaymentByExternalId(billcode as string);
+      if (!pendingPayment) {
+        console.error(`No pending payment found for ToyyibPay bill ${billcode}`);
+        return res.redirect(`/payment/failed?reason=pending_not_found`);
+      }
+
+      // Server-side transaction verification - NEVER trust URL params
       const transactions = await getBillTransactions(billcode as string);
       
       if (!transactions || transactions.length === 0 || transactions[0].billpaymentStatus !== '1') {
-        res.redirect(`/checkout?error=payment_failed`);
-        return;
+        console.error(`ToyyibPay transaction verification failed for ${billcode}`);
+        await storage.updatePendingPaymentStatus(billcode as string, 'failed');
+        return res.redirect(`/payment/failed?reason=verification_failed`);
       }
 
-      if (!req.session.userId) {
-        res.redirect(`/?error=session_expired`);
-        return;
-      }
-
-      const userId = req.session.userId;
       const transaction = transactions[0];
 
-      const cartItems = await storage.getCartItems(userId);
+      // Verify amount matches (ToyyibPay returns cents)
+      const paidAmountMYR = parseFloat(transaction.billpaymentAmount) / 100;
+      const expectedAmountMYR = parseFloat(pendingPayment.amount);
       
-      if (cartItems.length === 0) {
-        res.redirect(`/orders?payment=success&provider=toyyibpay`);
-        return;
+      if (Math.abs(paidAmountMYR - expectedAmountMYR) > 0.01) {
+        console.error(`ToyyibPay amount mismatch: paid RM${paidAmountMYR}, expected RM${expectedAmountMYR}`);
+        await storage.updatePendingPaymentStatus(billcode as string, 'failed');
+        return res.redirect(`/payment/failed?reason=amount_mismatch`);
       }
 
-      let subtotal = 0;
-      for (const item of cartItems) {
-        const pkg = await storage.getPackage(item.packageId);
-        if (pkg) {
-          subtotal += parseFloat(pkg.price) * item.quantity;
-        }
-      }
+      // Reconstruct order from cart snapshot (prevents cart tampering)
+      const cartSnapshot = JSON.parse(pendingPayment.cartSnapshot);
+      const metadata = pendingPayment.metadata ? JSON.parse(pendingPayment.metadata) : {};
 
-      const total = subtotal;
-
+      // Create order with verified data
       const order = await storage.createOrder({
-        userId,
-        totalAmount: subtotal.toFixed(2),
-        discountAmount: '0.00',
-        finalAmount: total.toFixed(2),
-        status: "completed",
+        userId: pendingPayment.userId,
+        totalAmount: metadata.subtotal || pendingPayment.amount,
+        discountAmount: metadata.discount || '0',
+        finalAmount: pendingPayment.amount,
+        status: "paid",
         paymentMethod: "toyyibpay",
-        paymentId: transaction.billpaymentInvoiceNo,
-        couponCode: null,
+        paymentId: billcode as string,
+        couponCode: pendingPayment.couponCode,
       });
 
-      for (const cartItem of cartItems) {
-        const pkg = await storage.getPackage(cartItem.packageId);
-        if (!pkg) continue;
-
+      // Generate redemption codes from snapshot
+      for (const item of cartSnapshot) {
         await storage.createOrderItem({
           orderId: order.id,
-          packageId: pkg.id,
-          quantity: cartItem.quantity,
-          priceAtPurchase: pkg.price,
+          packageId: item.packageId,
+          quantity: item.quantity,
+          priceAtPurchase: item.price,
         });
 
-        for (let i = 0; i < cartItem.quantity; i++) {
-          const code = generateRedemptionCode();
+        for (let i = 0; i < item.quantity; i++) {
+          const code = crypto.randomBytes(8).toString('hex').toUpperCase().match(/.{1,4}/g)!.join('-');
           await storage.createRedemptionCode({
             code,
-            packageId: pkg.id,
+            packageId: item.packageId,
             orderId: order.id,
             status: "active",
           });
 
           try {
-            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
+            await insertRedemptionCodeToFiveM(code, item.aecoinAmount);
           } catch (fivemError) {
-            console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
+            console.error(`Failed to insert code ${code} into FiveM:`, fivemError);
           }
         }
       }
 
-      await storage.clearCart(userId);
+      // Update order status to fulfilled
+      await storage.updateOrderStatus(order.id, 'fulfilled');
 
-      try {
-        const user = await storage.getUser(userId);
-        if (user?.email) {
-          const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
-          const codesWithPackageNames = await Promise.all(
-            redemptionCodes.map(async (code) => {
-              const pkg = await storage.getPackage(code.packageId);
-              return {
-                code: code.code,
-                packageName: pkg?.name || 'AECOIN Package'
-              };
-            })
-          );
-          
-          await sendOrderConfirmationEmail(
-            user.email,
-            order.id,
-            order.finalAmount,
-            codesWithPackageNames
-          );
-        }
-      } catch (emailError) {
-        console.error("Failed to send order confirmation email:", emailError);
-      }
-
-      res.redirect(`/orders?payment=success&provider=toyyibpay`);
-    } catch (error) {
-      console.error("ToyyibPay return error:", error);
-      res.redirect(`/checkout?error=payment_failed`);
-    }
-  });
-
-  // ToyyibPay order completion endpoint
-  app.post("/api/complete-toyyibpay-order", requireAuth, async (req, res) => {
-    try {
-      const { billCode, couponCode } = req.body;
-      const userId = req.session.userId!;
-
-      const transactions = await getBillTransactions(billCode);
-      
-      if (!transactions || transactions.length === 0) {
-        return res.status(400).json({ message: "Payment not verified" });
-      }
-
-      const transaction = transactions[0];
-      if (transaction.billpaymentStatus !== '1') {
-        return res.status(400).json({ message: "Payment not successful" });
-      }
-
-      const cartItems = await storage.getCartItems(userId);
-      
-      if (cartItems.length === 0) {
-        return res.status(400).json({ message: "Cart is empty" });
-      }
-
-      let subtotal = 0;
-      for (const item of cartItems) {
-        const pkg = await storage.getPackage(item.packageId);
-        if (pkg) {
-          subtotal += parseFloat(pkg.price) * item.quantity;
-        }
-      }
-
-      let discount = 0;
-      if (couponCode) {
-        const coupon = await storage.getCoupon(couponCode);
-        if (coupon && coupon.isActive) {
-          const isExpired = coupon.expiresAt && new Date(coupon.expiresAt) < new Date();
-          const isOverUsed = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
-          const belowMinPurchase = coupon.minPurchase && parseFloat(coupon.minPurchase) > subtotal;
-
-          if (!isExpired && !isOverUsed && !belowMinPurchase) {
-            if (coupon.discountType === 'percentage') {
-              discount = (subtotal * parseFloat(coupon.discountValue)) / 100;
-            } else {
-              discount = parseFloat(coupon.discountValue);
-            }
-          }
-        }
-      }
-
-      const total = Math.max(0, subtotal - discount);
-
-      const order = await storage.createOrder({
-        userId,
-        totalAmount: subtotal.toFixed(2),
-        discountAmount: discount.toFixed(2),
-        finalAmount: total.toFixed(2),
-        status: "completed",
-        paymentMethod: "toyyibpay",
-        paymentId: transaction.billpaymentInvoiceNo,
-        couponCode,
-      });
-
-      for (const cartItem of cartItems) {
-        const pkg = await storage.getPackage(cartItem.packageId);
-        if (!pkg) continue;
-
-        await storage.createOrderItem({
-          orderId: order.id,
-          packageId: pkg.id,
-          quantity: cartItem.quantity,
-          priceAtPurchase: pkg.price,
-        });
-
-        for (let i = 0; i < cartItem.quantity; i++) {
-          const code = generateRedemptionCode();
-          await storage.createRedemptionCode({
-            code,
-            packageId: pkg.id,
-            orderId: order.id,
-            status: "active",
-          });
-
-          try {
-            await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
-          } catch (fivemError) {
-            console.error(`Failed to insert code ${code} into FiveM database:`, fivemError);
-          }
-        }
-      }
-
-      if (couponCode) {
-        const coupon = await storage.getCoupon(couponCode);
+      // Increment coupon usage if applied
+      if (pendingPayment.couponCode) {
+        const coupon = await storage.getCoupon(pendingPayment.couponCode);
         if (coupon) {
           await storage.incrementCouponUse(coupon.id);
         }
       }
 
-      await storage.clearCart(userId);
+      // Clear cart and mark payment succeeded
+      await storage.clearCart(pendingPayment.userId);
+      await storage.updatePendingPaymentStatus(billcode as string, 'succeeded');
 
+      // Send email confirmation (soft fail)
       try {
-        const user = await storage.getUser(userId);
+        const user = await storage.getUser(pendingPayment.userId);
         if (user?.email) {
           const redemptionCodes = await storage.getOrderRedemptionCodes(order.id);
-          const codesWithPackageNames = await Promise.all(
-            redemptionCodes.map(async (code) => {
-              const pkg = await storage.getPackage(code.packageId);
-              return {
-                code: code.code,
-                packageName: pkg?.name || 'AECOIN Package'
-              };
-            })
-          );
+          const codesWithPackageNames = redemptionCodes.map((code, idx) => ({
+            code: code.code,
+            packageName: cartSnapshot[idx]?.packageName || 'AECOIN Package'
+          }));
           
           await sendOrderConfirmationEmail(
             user.email,
@@ -1015,14 +864,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Failed to send order confirmation email:", emailError);
       }
 
-      res.json({ order, success: true });
-    } catch (error: any) {
-      console.error("ToyyibPay order completion error:", error);
-      res.status(500).json({ 
-        message: "Failed to complete order: " + error.message 
-      });
+      console.log(`✓ Order ${order.id} fulfilled via ToyyibPay`);
+      res.redirect(`/orders?payment=success&provider=toyyibpay`);
+    } catch (error) {
+      console.error("ToyyibPay return error:", error);
+      res.redirect(`/payment/failed?reason=server_error`);
     }
   });
+
 
   const httpServer = createServer(app);
 
