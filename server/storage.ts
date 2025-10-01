@@ -37,6 +37,7 @@ export interface IStorage {
   getOrder(id: string): Promise<Order | undefined>;
   getOrderByPaymentId(paymentId: string): Promise<Order | undefined>;
   getUserOrders(userId: string): Promise<Order[]>;
+  getAllOrders(): Promise<Order[]>;
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrderStatus(id: string, status: string, paymentId?: string): Promise<Order | undefined>;
   
@@ -51,7 +52,10 @@ export interface IStorage {
   
   // Coupon operations
   getCoupon(code: string): Promise<Coupon | undefined>;
+  getAllCoupons(): Promise<Coupon[]>;
   createCoupon(coupon: InsertCoupon): Promise<Coupon>;
+  updateCoupon(id: string, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined>;
+  deleteCoupon(id: string): Promise<boolean>;
   incrementCouponUse(id: string): Promise<boolean>;
   
   // Pending payment operations
@@ -166,6 +170,10 @@ export class DbStorage implements IStorage {
     return await db.select().from(orders).where(eq(orders.userId, userId)).orderBy(sql`${orders.createdAt} DESC`);
   }
 
+  async getAllOrders(): Promise<Order[]> {
+    return await db.select().from(orders).orderBy(sql`${orders.createdAt} DESC`);
+  }
+
   async createOrder(order: InsertOrder): Promise<Order> {
     const result = await db.insert(orders).values(order).returning();
     return result[0];
@@ -220,9 +228,23 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
+  async getAllCoupons(): Promise<Coupon[]> {
+    return await db.select().from(coupons).orderBy(sql`${coupons.createdAt} DESC`);
+  }
+
   async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
     const result = await db.insert(coupons).values(coupon).returning();
     return result[0];
+  }
+
+  async updateCoupon(id: string, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    const result = await db.update(coupons).set(coupon).where(eq(coupons.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteCoupon(id: string): Promise<boolean> {
+    const result = await db.delete(coupons).where(eq(coupons.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 
   async incrementCouponUse(id: string): Promise<boolean> {

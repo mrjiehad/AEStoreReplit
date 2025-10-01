@@ -29,6 +29,20 @@ function requireAuth(req: Request, res: Response, next: Function) {
   next();
 }
 
+// Middleware to check if user is admin
+async function requireAdmin(req: Request, res: Response, next: Function) {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const user = await storage.getUser(req.session.userId);
+  if (!user || !user.isAdmin) {
+    return res.status(403).json({ message: "Forbidden: Admin access required" });
+  }
+  
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Discord OAuth flow - Step 1: Redirect to Discord
   app.get("/api/auth/discord", (req, res) => {
@@ -872,6 +886,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================
+  // ADMIN ROUTES - Protected by requireAdmin middleware
+  // ============================================
+
+  // Admin: Get all orders with filters
+  app.get("/api/admin/orders", requireAdmin, async (req, res) => {
+    try {
+      const orders = await storage.getAllOrders();
+      res.json(orders);
+    } catch (error: any) {
+      console.error("Admin orders fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch orders" });
+    }
+  });
+
+  // Admin: Update order status
+  app.patch("/api/admin/orders/:id/status", requireAdmin, async (req, res) => {
+    try {
+      const { status } = req.body;
+      const order = await storage.updateOrderStatus(req.params.id, status);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      res.json(order);
+    } catch (error: any) {
+      console.error("Admin order update error:", error);
+      res.status(500).json({ message: "Failed to update order" });
+    }
+  });
+
+  // Admin: Create package
+  app.post("/api/admin/packages", requireAdmin, async (req, res) => {
+    try {
+      const pkg = await storage.createPackage(req.body);
+      res.json(pkg);
+    } catch (error: any) {
+      console.error("Admin package creation error:", error);
+      res.status(500).json({ message: "Failed to create package" });
+    }
+  });
+
+  // Admin: Update package
+  app.patch("/api/admin/packages/:id", requireAdmin, async (req, res) => {
+    try {
+      const pkg = await storage.updatePackage(req.params.id, req.body);
+      if (!pkg) {
+        return res.status(404).json({ message: "Package not found" });
+      }
+      res.json(pkg);
+    } catch (error: any) {
+      console.error("Admin package update error:", error);
+      res.status(500).json({ message: "Failed to update package" });
+    }
+  });
+
+  // Admin: Delete package
+  app.delete("/api/admin/packages/:id", requireAdmin, async (req, res) => {
+    try {
+      const success = await storage.deletePackage(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Package not found" });
+      }
+      res.json({ message: "Package deleted successfully" });
+    } catch (error: any) {
+      console.error("Admin package deletion error:", error);
+      res.status(500).json({ message: "Failed to delete package" });
+    }
+  });
+
+  // Admin: Get all coupons
+  app.get("/api/admin/coupons", requireAdmin, async (req, res) => {
+    try {
+      const coupons = await storage.getAllCoupons();
+      res.json(coupons);
+    } catch (error: any) {
+      console.error("Admin coupons fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch coupons" });
+    }
+  });
+
+  // Admin: Create coupon
+  app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
+    try {
+      const coupon = await storage.createCoupon(req.body);
+      res.json(coupon);
+    } catch (error: any) {
+      console.error("Admin coupon creation error:", error);
+      res.status(500).json({ message: "Failed to create coupon" });
+    }
+  });
+
+  // Admin: Update coupon
+  app.patch("/api/admin/coupons/:id", requireAdmin, async (req, res) => {
+    try {
+      const coupon = await storage.updateCoupon(req.params.id, req.body);
+      if (!coupon) {
+        return res.status(404).json({ message: "Coupon not found" });
+      }
+      res.json(coupon);
+    } catch (error: any) {
+      console.error("Admin coupon update error:", error);
+      res.status(500).json({ message: "Failed to update coupon" });
+    }
+  });
+
+  // Admin: Delete coupon
+  app.delete("/api/admin/coupons/:id", requireAdmin, async (req, res) => {
+    try {
+      const success = await storage.deleteCoupon(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Coupon not found" });
+      }
+      res.json({ message: "Coupon deleted successfully" });
+    } catch (error: any) {
+      console.error("Admin coupon deletion error:", error);
+      res.status(500).json({ message: "Failed to delete coupon" });
+    }
+  });
 
   const httpServer = createServer(app);
 
