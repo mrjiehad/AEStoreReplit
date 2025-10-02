@@ -56,7 +56,7 @@ function OrderCard({ order }: { order: Order }) {
           </CardTitle>
           <Badge 
             className={`${
-              order.status === 'completed' 
+              order.status === 'completed' || order.status === 'fulfilled'
                 ? 'bg-green-500' 
                 : 'bg-yellow-500'
             } text-black font-bold`}
@@ -81,7 +81,7 @@ function OrderCard({ order }: { order: Order }) {
           </div>
         </div>
 
-        {order.status === 'completed' && (
+        {(order.status === 'completed' || order.status === 'fulfilled') && (
           <>
             <Separator className="bg-white/10" />
             <Button
