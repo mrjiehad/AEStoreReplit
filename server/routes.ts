@@ -616,11 +616,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Create order items and generate redemption codes
         for (const item of cartSnapshot) {
+          // Fetch current package to ensure we have valid price and amount
+          const pkg = await storage.getPackage(item.packageId);
+          if (!pkg) {
+            console.error(`Package ${item.packageId} not found, skipping`);
+            continue;
+          }
+
           await storage.createOrderItem({
             orderId: order.id,
             packageId: item.packageId,
             quantity: item.quantity,
-            priceAtPurchase: item.price,
+            priceAtPurchase: pkg.price, // Use current price from database
           });
 
           for (let i = 0; i < item.quantity; i++) {
@@ -633,7 +640,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
 
             try {
-              await insertRedemptionCodeToFiveM(code, item.aecoinAmount);
+              await insertRedemptionCodeToFiveM(code, pkg.aecoinAmount);
             } catch (fivemError) {
               console.error(`Failed to insert code ${code} into FiveM:`, fivemError);
             }
