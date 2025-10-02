@@ -28,6 +28,7 @@ export const packages = pgTable("packages", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  originalPrice: decimal("original_price", { precision: 10, scale: 2 }), // Original price before discount
   aecoinAmount: integer("aecoin_amount").notNull(), // Amount of AECOIN
   codesPerPackage: integer("codes_per_package").notNull().default(1), // How many codes to generate
   featured: boolean("featured").default(false),

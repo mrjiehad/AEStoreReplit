@@ -146,7 +146,7 @@ export default function Home() {
     id: pkg.id,
     amount: pkg.aecoinAmount,
     price: Math.round(parseFloat(pkg.price)),
-    originalPrice: Math.round(parseFloat(pkg.price) * 1.1), // 10% fake discount
+    originalPrice: pkg.originalPrice ? Math.round(parseFloat(pkg.originalPrice)) : Math.round(parseFloat(pkg.price)),
     image: packageImages[index % packageImages.length],
     badge: pkg.featured ? "FEATURED" : undefined,
   }));
