@@ -97,38 +97,59 @@ function OrderCard({ order }: { order: Order }) {
             </Button>
 
             {expanded && (
-              <div className="space-y-2 pt-2">
+              <div className="space-y-3 pt-2">
                 {loadingCodes ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="w-5 h-5 text-neon-yellow animate-spin" />
                   </div>
                 ) : codes.length > 0 ? (
                   <>
-                    <p className="text-xs text-gray-400 font-rajdhani mb-3">
-                      Use these codes in GTA 5 to redeem your AECOIN:
-                    </p>
-                    {codes.map((code) => (
+                    <div className="bg-black/20 border border-neon-yellow/30 rounded-xl p-3 mb-3">
+                      <p className="text-xs text-gray-300 font-rajdhani flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-neon-yellow" />
+                        <span>Use these codes in GTA 5 to redeem your AECOIN</span>
+                      </p>
+                    </div>
+                    {codes.map((code, index) => (
                       <div
                         key={code.id}
-                        className="flex items-center justify-between bg-black/30 border border-neon-yellow/20 rounded-xl p-3"
+                        className="group relative bg-gradient-to-br from-black/40 to-black/20 border-2 border-neon-yellow/30 hover:border-neon-yellow/60 rounded-xl p-4 transition-all duration-200 hover:shadow-lg hover:shadow-neon-yellow/20"
                         data-testid={`code-${code.id}`}
                       >
-                        <code className="text-neon-yellow font-mono text-sm">
-                          {code.code}
-                        </code>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyCode(code.code)}
-                          className="h-8 px-2 text-white hover:text-neon-yellow"
-                          data-testid={`button-copy-${code.id}`}
-                        >
-                          {copiedCode === code.code ? (
-                            <Check className="w-4 h-4" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </Button>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge className="bg-neon-yellow/20 text-neon-yellow border border-neon-yellow/40 font-bebas text-sm">
+                                {code.aecoinAmount.toLocaleString()} AECOIN
+                              </Badge>
+                              <span className="text-xs text-gray-500 font-rajdhani">
+                                Code #{index + 1}
+                              </span>
+                            </div>
+                            <code className="text-neon-yellow font-mono text-base font-bold tracking-wider block break-all">
+                              {code.code}
+                            </code>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyCode(code.code)}
+                            className="h-10 px-3 text-white hover:text-neon-yellow hover:bg-neon-yellow/10 border border-transparent hover:border-neon-yellow/30 transition-all"
+                            data-testid={`button-copy-${code.id}`}
+                          >
+                            {copiedCode === code.code ? (
+                              <>
+                                <Check className="w-4 h-4 mr-2" />
+                                <span className="text-xs font-rajdhani">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4 mr-2" />
+                                <span className="text-xs font-rajdhani">Copy</span>
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </>
