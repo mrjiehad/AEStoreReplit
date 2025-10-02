@@ -1,6 +1,28 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Zap, Shield, Headphones } from "lucide-react";
+
+function TypingText({ text, speed = 100 }: { text: string; speed?: number }) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setCurrentIndex(0);
+  }, [text]);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, speed);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text, speed]);
+
+  return <>{displayedText}<span className="animate-pulse">|</span></>;
+}
 import char1 from "@assets/1_1759280228659.png";
 import char2 from "@assets/2_1759280228660.png";
 import char3 from "@assets/3_1759280228660.png";
@@ -149,8 +171,8 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
               {currentSlideData.subtitle}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bebas text-white leading-none tracking-wide uppercase whitespace-nowrap">
-              {currentSlideData.title}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bebas text-white leading-none tracking-wide uppercase whitespace-nowrap min-h-[1.2em]">
+              <TypingText text={currentSlideData.title} speed={80} />
             </h1>
 
             <p className="text-gray-300 text-lg md:text-xl font-rajdhani max-w-xl leading-relaxed">
