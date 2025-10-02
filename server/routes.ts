@@ -554,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return code.join('-'); // Format: XXXX-XXXX-XXXX-XXXX
   }
 
-  // Stripe payment status checker - READ-ONLY (webhook fulfills orders)
+  // Stripe payment status checker with fallback order creation
   app.post("/api/orders/complete", requireAuth, async (req, res) => {
     try {
       const { paymentIntentId } = req.body;
@@ -563,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Payment intent ID required" });
       }
 
-      // Check if order already exists (webhook should create it)
+      // Check if order already exists (webhook created it)
       const existingOrder = await storage.getOrderByPaymentId(paymentIntentId);
       if (existingOrder) {
         return res.json({ order: existingOrder, success: true });
@@ -578,20 +578,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Return pending payment status
+      // FALLBACK: Check payment status with Stripe API (for dev environments without webhooks)
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      if (paymentIntent.status === 'succeeded') {
+        console.log('⚠️  Payment succeeded but webhook not processed. Creating order manually...');
+        
+        // Verify amount and currency
+        const paidAmountCents = paymentIntent.amount;
+        const expectedAmountCents = Math.round(parseFloat(pendingPayment.amount) * 100);
+        if (paidAmountCents !== expectedAmountCents) {
+          console.error(`Amount mismatch: paid ${paidAmountCents} cents, expected ${expectedAmountCents} cents`);
+          await storage.updatePendingPaymentStatus(paymentIntentId, 'failed');
+          return res.status(400).json({ message: 'Amount mismatch' });
+        }
+
+        if (paymentIntent.currency.toUpperCase() !== pendingPayment.currency.toUpperCase()) {
+          console.error(`Currency mismatch: paid ${paymentIntent.currency}, expected ${pendingPayment.currency}`);
+          await storage.updatePendingPaymentStatus(paymentIntentId, 'failed');
+          return res.status(400).json({ message: 'Currency mismatch' });
+        }
+
+        const cartSnapshot = JSON.parse(pendingPayment.cartSnapshot);
+        const metadata = pendingPayment.metadata ? JSON.parse(pendingPayment.metadata) : {};
+
+        // Create order
+        const order = await storage.createOrder({
+          userId: pendingPayment.userId,
+          totalAmount: metadata.subtotal || pendingPayment.amount,
+          discountAmount: metadata.discount || '0',
+          finalAmount: pendingPayment.amount,
+          status: "paid",
+          paymentMethod: "stripe",
+          paymentId: paymentIntentId,
+          couponCode: pendingPayment.couponCode,
+        });
+
+        // Create order items and generate redemption codes
+        for (const item of cartSnapshot) {
+          await storage.createOrderItem({
+            orderId: order.id,
+            packageId: item.packageId,
+            quantity: item.quantity,
+            priceAtPurchase: item.price,
+          });
+
+          for (let i = 0; i < item.quantity; i++) {
+            const code = generateRedemptionCode();
+            await storage.createRedemptionCode({
+              code,
+              packageId: item.packageId,
+              orderId: order.id,
+              status: "active",
+            });
+
+            try {
+              await insertRedemptionCodeToFiveM(code, item.aecoinAmount);
+            } catch (fivemError) {
+              console.error(`Failed to insert code ${code} into FiveM:`, fivemError);
+            }
+          }
+        }
+
+        await storage.updateOrderStatus(order.id, 'fulfilled');
+
+        if (pendingPayment.couponCode) {
+          const coupon = await storage.getCoupon(pendingPayment.couponCode);
+          if (coupon) {
+            await storage.incrementCouponUse(coupon.id);
+          }
+        }
+
+        await storage.clearCart(pendingPayment.userId);
+        await storage.updatePendingPaymentStatus(paymentIntentId, 'succeeded');
+
+        console.log(`✓ Order ${order.id} created successfully (fallback)`);
+        return res.json({ order, success: true });
+      }
+
+      // Payment not yet succeeded
       return res.json({ 
         success: false,
-        status: pendingPayment.status,
-        message: pendingPayment.status === 'created' 
+        status: paymentIntent.status,
+        message: paymentIntent.status === 'processing' 
           ? 'Payment is being processed. Please wait...'
-          : pendingPayment.status === 'succeeded'
-          ? 'Payment succeeded. Order will be ready shortly.'
           : 'Payment processing...'
       });
     } catch (error: any) {
-      console.error("Order status check error:", error);
+      console.error("Order completion error:", error);
       res.status(500).json({ 
-        message: "Failed to check order status: " + error.message 
+        message: "Failed to complete order: " + error.message 
       });
     }
   });
