@@ -27,10 +27,11 @@ export default function Rankings() {
   const top3 = rankings.slice(0, 3);
   const restOfRankings = rankings.slice(3);
 
-  const getPodiumOrder = (index: number) => {
-    if (index === 0) return 1;
-    if (index === 1) return 0;
-    return 2;
+  const getPodiumOrder = (rank: number) => {
+    // Rank 1 = middle (order-2), Rank 2 = left (order-1), Rank 3 = right (order-3)
+    if (rank === 1) return 'order-2';
+    if (rank === 2) return 'order-1';
+    return 'order-3';
   };
 
   const getMedalColor = (rank: number) => {
@@ -90,18 +91,18 @@ export default function Rankings() {
                 <div className="mb-24">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-end">
                     {top3.map((player, index) => {
-                      const position = getPodiumOrder(index);
+                      const orderClass = getPodiumOrder(player.rank);
                       const isWinner = player.rank === 1;
-                      const heights = ["min-h-[500px]", "min-h-[600px]", "min-h-[450px]"];
+                      const heightClass = player.rank === 1 ? 'min-h-[600px]' : player.rank === 2 ? 'min-h-[500px]' : 'min-h-[450px]';
                       const characterImage = characterImages[index % characterImages.length];
                       
                       return (
                         <div
                           key={player.id}
-                          className={`order-${position} relative group`}
+                          className={`${orderClass} relative group`}
                           data-testid={`podium-${player.rank}`}
                         >
-                          <div className={`relative ${heights[index]} bg-gradient-to-br from-[#1a2942] via-[#0d1d35] to-black border-4 ${
+                          <div className={`relative ${heightClass} bg-gradient-to-br from-[#1a2942] via-[#0d1d35] to-black border-4 ${
                             isWinner ? 'border-neon-yellow' : 'border-white/20'
                           } rounded-3xl overflow-hidden transition-all duration-500 hover:scale-105 hover:border-neon-yellow`}
                           style={isWinner ? { 
@@ -155,15 +156,20 @@ export default function Rankings() {
                                 </div>
                               </div>
 
-                              {/* Stars */}
+                              {/* Stars - Max 10 displayed */}
                               <div className="flex gap-1 flex-wrap justify-center mb-3">
-                                {Array.from({ length: player.stars }).map((_, i) => (
+                                {Array.from({ length: Math.min(player.stars, 10) }).map((_, i) => (
                                   <Star
                                     key={i}
                                     className={`${isWinner ? 'w-7 h-7' : 'w-6 h-6'} fill-neon-yellow text-neon-yellow`}
                                     style={{ filter: "drop-shadow(0 0 8px rgba(255, 215, 0, 1))" }}
                                   />
                                 ))}
+                                {player.stars > 10 && (
+                                  <span className={`${isWinner ? 'text-2xl' : 'text-xl'} text-neon-yellow font-bold ml-1 font-bebas`}>
+                                    +{player.stars - 10}
+                                  </span>
+                                )}
                               </div>
                               <p className={`text-neon-yellow font-bebas text-center ${
                                 isWinner ? 'text-3xl' : 'text-2xl'
