@@ -93,7 +93,7 @@ export default function Rankings() {
                     {top3.map((player, index) => {
                       const orderClass = getPodiumOrder(player.rank);
                       const isWinner = player.rank === 1;
-                      const heightClass = player.rank === 1 ? 'min-h-[600px]' : player.rank === 2 ? 'min-h-[500px]' : 'min-h-[450px]';
+                      const heightClass = player.rank === 1 ? 'min-h-[400px]' : player.rank === 2 ? 'min-h-[350px]' : 'min-h-[320px]';
                       const characterImage = characterImages[index % characterImages.length];
                       
                       return (
@@ -213,18 +213,15 @@ export default function Rankings() {
                               className="border-b border-white/5 hover:bg-white/10 transition-all duration-300 group relative"
                               data-testid={`row-rank-${player.rank}`}
                             >
-                              {/* Background character image on hover */}
-                              <td colSpan={3} className="absolute inset-0 pointer-events-none">
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
+                              <td className="py-6 px-8 relative">
+                                {/* Background character image on hover */}
+                                <div className="absolute inset-0 left-0 right-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none -z-10" style={{ width: 'calc(300%)' }}>
                                   <img 
                                     src={characterImage}
                                     alt=""
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
-                              </td>
-
-                              <td className="py-6 px-8 relative">
                                 <div className="flex items-center gap-4">
                                   {player.rank <= 6 && (
                                     <Medal className={`w-8 h-8 ${getMedalColor(player.rank)}`} />
