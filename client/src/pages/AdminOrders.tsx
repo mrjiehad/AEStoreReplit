@@ -168,9 +168,9 @@ export default function AdminOrders() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-zinc-400 text-sm">Total Revenue</p>
-                  <p className="text-3xl font-bold text-cyan-400">RM{stats.revenue}</p>
+                  <p className="text-3xl font-bold text-yellow-400">RM{stats.revenue}</p>
                 </div>
-                <DollarSign className="w-8 h-8 text-cyan-400/50" />
+                <DollarSign className="w-8 h-8 text-yellow-400/50" />
               </div>
             </CardContent>
           </Card>
@@ -226,7 +226,7 @@ export default function AdminOrders() {
                             <Badge className={getStatusColor(order.status)}>
                               {order.status.toUpperCase()}
                             </Badge>
-                            <Badge variant="outline" className="border-cyan-500/50 text-cyan-400">
+                            <Badge variant="outline" className="border-yellow-500/50 text-yellow-400">
                               {order.paymentMethod}
                             </Badge>
                           </div>
@@ -252,7 +252,7 @@ export default function AdminOrders() {
                           </div>
                           {order.redemptionCodes && order.redemptionCodes.length > 0 && (
                             <details className="text-sm">
-                              <summary className="cursor-pointer text-cyan-400 hover:text-cyan-300">
+                              <summary className="cursor-pointer text-yellow-400 hover:text-yellow-300">
                                 View Codes ({order.redemptionCodes.length})
                               </summary>
                               <div className="mt-2 space-y-1 pl-4">

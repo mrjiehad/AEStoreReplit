@@ -357,7 +357,7 @@ export default function AdminPackages() {
                               {pkg.name}
                             </h3>
                             {pkg.isPopular && (
-                              <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/50 mt-1">
+                              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 mt-1">
                                 POPULAR
                               </Badge>
                             )}
@@ -368,7 +368,7 @@ export default function AdminPackages() {
                             {pkg.aecoinAmount.toLocaleString()}
                             <span className="text-sm text-yellow-400 ml-1">AECOIN</span>
                           </p>
-                          <p className="text-2xl font-bold text-cyan-400">
+                          <p className="text-2xl font-bold text-yellow-400">
                             RM {pkg.priceRM}
                           </p>
                         </div>

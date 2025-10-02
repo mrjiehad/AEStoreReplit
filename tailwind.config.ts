@@ -82,9 +82,8 @@ export default {
           offline: "rgb(156 163 175)",
         },
         neon: {
-          yellow: "#FFD700",
-          cyan: "#00E0FF",
-          green: "#00FF41",
+          yellow: "#FFD700",  // Gold yellow
+          gold: "#FFD700",    // Alias for gold
         },
       },
       fontFamily: {
