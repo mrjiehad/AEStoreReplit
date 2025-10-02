@@ -126,6 +126,7 @@ export const redemptionCodes = pgTable("redemption_codes", {
   code: text("code").notNull().unique(), // The actual redemption code
   packageId: varchar("package_id").notNull().references(() => packages.id),
   orderId: varchar("order_id").notNull().references(() => orders.id),
+  aecoinAmount: integer("aecoin_amount").notNull(), // AECOIN value for this code
   status: text("status").notNull().default("active"), // active, redeemed, expired
   redeemedAt: timestamp("redeemed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -329,11 +329,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           for (let i = 0; i < item.quantity; i++) {
-            const code = crypto.randomBytes(8).toString('hex').toUpperCase().match(/.{1,4}/g)!.join('-');
+            const code = generateRedemptionCode(item.aecoinAmount);
             await storage.createRedemptionCode({
               code,
               packageId: item.packageId,
               orderId: order.id,
+              aecoinAmount: item.aecoinAmount,
               status: "active",
             });
 
@@ -537,11 +538,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Helper function to generate unique AECOIN redemption codes
-  function generateRedemptionCode(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude ambiguous characters
-    const segments = 4;
+  // Format: AE{VALUE}-XXXX-XXXX-XXXX (e.g., AE1000-ABCD-EFGH-JKLM)
+  function generateRedemptionCode(aecoinAmount: number): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Only letters, no numbers
+    const segments = 3; // Three segments of random letters
     const segmentLength = 4;
-    const code = [];
+    const code = [`AE${aecoinAmount}`]; // Start with AE{VALUE}
     
     for (let i = 0; i < segments; i++) {
       let segment = '';
@@ -551,7 +553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       code.push(segment);
     }
     
-    return code.join('-'); // Format: XXXX-XXXX-XXXX-XXXX
+    return code.join('-'); // Format: AE{VALUE}-XXXX-XXXX-XXXX
   }
 
   // Stripe payment status checker with fallback order creation
@@ -631,11 +633,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           for (let i = 0; i < item.quantity; i++) {
-            const code = generateRedemptionCode();
+            const code = generateRedemptionCode(pkg.aecoinAmount);
             await storage.createRedemptionCode({
               code,
               packageId: item.packageId,
               orderId: order.id,
+              aecoinAmount: pkg.aecoinAmount,
               status: "active",
             });
 
@@ -1023,11 +1026,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         for (let i = 0; i < item.quantity; i++) {
-          const code = crypto.randomBytes(8).toString('hex').toUpperCase().match(/.{1,4}/g)!.join('-');
+          const code = generateRedemptionCode(item.aecoinAmount);
           await storage.createRedemptionCode({
             code,
             packageId: item.packageId,
             orderId: order.id,
+            aecoinAmount: item.aecoinAmount,
             status: "active",
           });
 
