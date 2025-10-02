@@ -28,7 +28,7 @@ function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: 
           className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
           data-testid={`img-package-${pkg.id}`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1d35] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent" />
         
         {/* Badge */}
         {pkg.badge && (
@@ -141,7 +141,7 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
   if (shouldReduceMotion) {
     return (
       <Card
-        className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+        className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
         style={{
           boxShadow: isHovered
             ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"
@@ -174,7 +174,7 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
         className="rounded-3xl"
       >
         <Card
-          className="group relative overflow-hidden bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+          className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
           style={{
             boxShadow: isHovered
               ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"

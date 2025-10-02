@@ -195,7 +195,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a1628]">
+    <div className="min-h-screen bg-[#000000]">
       <Header cartItemCount={cartItems.length} onCartClick={handleCartClick} />
       <ReferenceHero onShopClick={scrollToPackages} onPackagesClick={scrollToPackages} />
       

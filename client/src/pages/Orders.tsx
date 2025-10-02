@@ -46,7 +46,7 @@ function OrderCard({ order }: { order: Order }) {
 
   return (
     <Card
-      className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-neon-yellow/30 rounded-3xl"
+      className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-neon-yellow/30 rounded-3xl"
       data-testid={`card-order-${order.id}`}
     >
       <CardHeader>
@@ -183,16 +183,16 @@ export default function Orders() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a1628] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-neon-yellow animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a1628]">
+    <div className="min-h-screen bg-[#000000]">
       {/* Header */}
-      <header className="border-b-4 border-neon-yellow bg-gradient-to-r from-[#0d1d35] to-[#1a2942] sticky top-0 z-50">
+      <header className="border-b-4 border-neon-yellow bg-gradient-to-r from-[#000000] to-[#1a1a1a] sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Button
             variant="ghost"
@@ -212,7 +212,7 @@ export default function Orders() {
 
       <div className="container mx-auto px-4 py-8">
         {/* User Profile Section */}
-        <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-neon-yellow/30 rounded-3xl mb-8">
+        <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-neon-yellow/30 rounded-3xl mb-8">
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               {/* Avatar */}
@@ -232,7 +232,7 @@ export default function Orders() {
                   <h2 className="text-3xl font-bebas text-white uppercase tracking-wider">
                     {user.username}
                   </h2>
-                  <Badge className="bg-[#5865F2] text-white font-rajdhani">
+                  <Badge className="bg-black text-neon-yellow border border-neon-yellow/50 font-rajdhani">
                     <SiDiscord className="w-3 h-3 mr-1" />
                     Discord
                   </Badge>
@@ -278,7 +278,7 @@ export default function Orders() {
           </h2>
 
           {orders.length === 0 ? (
-            <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 rounded-3xl">
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 rounded-3xl">
               <CardContent className="p-12 text-center">
                 <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400 font-rajdhani text-lg">

@@ -18,7 +18,7 @@ interface FAQSectionProps {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   return (
-    <section id="faq" className="min-h-screen bg-[#0a1628] flex items-center py-20">
+    <section id="faq" className="min-h-screen bg-[#000000] flex items-center py-20">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
@@ -42,7 +42,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-[#0d1d35] border border-white/10 rounded-2xl px-6 data-[state=open]:border-neon-yellow/50 transition-all"
+              className="bg-[#000000] border border-white/10 rounded-2xl px-6 data-[state=open]:border-neon-yellow/50 transition-all"
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger

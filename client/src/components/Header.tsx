@@ -53,7 +53,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#0a1628]/95 backdrop-blur-lg border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#000000]/95 backdrop-blur-lg border-b border-white/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div
@@ -142,7 +142,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-56 bg-[#0d1d35] border-white/10"
+                  className="w-56 bg-[#000000] border-white/10"
                 >
                   <DropdownMenuLabel className="font-rajdhani text-white">
                     My Account
@@ -209,7 +209,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
               <Button
                 onClick={() => login()}
                 disabled={isLoading}
-                className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full flex items-center gap-2"
+                className="bg-black hover:bg-zinc-900 text-neon-yellow border-2 border-neon-yellow/50 hover:border-neon-yellow font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full flex items-center gap-2"
                 data-testid="button-login-discord"
               >
                 <SiDiscord className="w-5 h-5" />

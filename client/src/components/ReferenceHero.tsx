@@ -120,7 +120,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   };
 
   return (
-    <section className="relative h-[calc(100vh-4rem)] mt-16 bg-gradient-to-br from-[#0a1628] via-[#0d1d35] to-[#0a1628] overflow-hidden flex items-center">
+    <section className="relative h-[calc(100vh-4rem)] mt-16 bg-gradient-to-br from-[#000000] via-[#000000] to-[#000000] overflow-hidden flex items-center">
       {/* Animated Background */}
       <div className="absolute inset-0 opacity-30">
         <div 

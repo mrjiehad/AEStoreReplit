@@ -8,7 +8,7 @@ interface PackagesSectionProps {
 
 export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps) {
   return (
-    <section id="packages" className="min-h-screen bg-[#0d1d35] flex items-center py-20">
+    <section id="packages" className="min-h-screen bg-[#000000] flex items-center py-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">

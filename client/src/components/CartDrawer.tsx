@@ -64,7 +64,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <SheetContent className="w-full sm:max-w-lg bg-[#0a1628] border-l border-white/10">
+      <SheetContent className="w-full sm:max-w-lg bg-[#000000] border-l border-white/10">
         <SheetHeader>
           <SheetTitle className="text-2xl font-bebas text-white uppercase tracking-wider flex items-center gap-2">
             <ShoppingBag className="w-6 h-6 text-neon-yellow" />
@@ -97,7 +97,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-[#1a2942]/50 border border-white/10 rounded-2xl p-4"
+                    className="bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4"
                     data-testid={`cart-item-${item.id}`}
                   >
                     <div className="flex gap-4">
@@ -124,7 +124,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
                           <Trash2 className="w-4 h-4" />
                         </Button>
 
-                        <div className="flex items-center gap-2 bg-[#0d1d35] rounded-full p-1">
+                        <div className="flex items-center gap-2 bg-[#000000] rounded-full p-1">
                           <Button
                             variant="ghost"
                             size="icon"

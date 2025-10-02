@@ -64,7 +64,7 @@ export function StatsCounter() {
   // If reduced motion, render without animations
   if (shouldReduceMotion) {
     return (
-      <section className="py-16 bg-gradient-to-b from-[#0d1d35] to-[#0a1628]">
+      <section className="py-16 bg-gradient-to-b from-[#000000] to-[#000000]">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
@@ -92,7 +92,7 @@ export function StatsCounter() {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-[#0d1d35] to-[#0a1628]">
+    <section className="py-16 bg-gradient-to-b from-[#000000] to-[#000000]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

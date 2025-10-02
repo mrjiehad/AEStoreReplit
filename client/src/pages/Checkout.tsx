@@ -302,16 +302,16 @@ export default function Checkout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a1628] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-neon-yellow animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a1628] pb-12">
+    <div className="min-h-screen bg-[#000000] pb-12">
       {/* Header */}
-      <div className="bg-[#0d1d35] border-b border-white/10 py-6">
+      <div className="bg-[#000000] border-b border-white/10 py-6">
         <div className="container mx-auto px-4">
           <Button
             variant="ghost"
@@ -333,7 +333,7 @@ export default function Checkout() {
           {/* Left Column - Payment Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Payment Method */}
-            <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-white/10 rounded-3xl">
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 rounded-3xl">
               <CardHeader>
                 <CardTitle className="text-2xl font-bebas text-white uppercase tracking-wider">
                   Payment Method
@@ -381,7 +381,7 @@ export default function Checkout() {
             </Card>
 
             {/* Payment Form */}
-            <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-neon-yellow/30 rounded-3xl">
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-neon-yellow/30 rounded-3xl">
               <CardHeader>
                 <CardTitle className="text-2xl font-bebas text-white uppercase tracking-wider">
                   Payment Details
@@ -437,7 +437,7 @@ export default function Checkout() {
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="bg-gradient-to-br from-[#1a2942] to-[#0d1d35] border-2 border-neon-yellow/30 rounded-3xl sticky top-4">
+            <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-neon-yellow/30 rounded-3xl sticky top-4">
               <CardHeader>
                 <CardTitle className="text-2xl font-bebas text-white uppercase tracking-wider">
                   Order Summary
@@ -449,7 +449,7 @@ export default function Checkout() {
                   {cartItems.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-3 p-3 bg-[#0a1628]/50 rounded-xl border border-white/5"
+                      className="flex items-center gap-3 p-3 bg-[#000000]/50 rounded-xl border border-white/5"
                       data-testid={`checkout-item-${item.id}`}
                     >
                       <div className="flex-1">
@@ -503,7 +503,7 @@ export default function Checkout() {
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         placeholder="Enter code"
-                        className="bg-[#0a1628] border-white/10 text-white rounded-xl"
+                        className="bg-[#000000] border-white/10 text-white rounded-xl"
                         data-testid="input-coupon-code"
                       />
                       <Button

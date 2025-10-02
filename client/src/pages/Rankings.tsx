@@ -42,7 +42,7 @@ export default function Rankings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a1628]">
+    <div className="min-h-screen bg-[#000000]">
       <Header cartItemCount={0} onCartClick={() => {}} />
       
       {/* Hero Section with Background */}
@@ -54,7 +54,7 @@ export default function Rankings() {
             alt="GTA City Background"
             className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/80 via-[#0a1628]/90 to-[#0a1628]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/80 via-[#000000]/90 to-[#000000]" />
         </div>
 
         <div className="container mx-auto px-4 py-20 relative z-10">
@@ -102,7 +102,7 @@ export default function Rankings() {
                           className={`${orderClass} relative group`}
                           data-testid={`podium-${player.rank}`}
                         >
-                          <div className={`relative ${heightClass} bg-gradient-to-br from-[#1a2942] via-[#0d1d35] to-black border-4 ${
+                          <div className={`relative ${heightClass} bg-gradient-to-br from-[#1a1a1a] via-[#000000] to-black border-4 ${
                             isWinner ? 'border-neon-yellow' : 'border-white/20'
                           } rounded-3xl overflow-hidden transition-all duration-500 hover:scale-105 hover:border-neon-yellow`}
                           style={isWinner ? { 
@@ -187,7 +187,7 @@ export default function Rankings() {
 
               {/* Rankings Table */}
               <div className="max-w-6xl mx-auto">
-                <div className="bg-gradient-to-br from-[#1a2942]/80 to-[#0d1d35]/80 backdrop-blur-sm border-2 border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+                <div className="bg-gradient-to-br from-[#1a1a1a]/80 to-[#000000]/80 backdrop-blur-sm border-2 border-white/10 rounded-3xl overflow-hidden shadow-2xl">
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
