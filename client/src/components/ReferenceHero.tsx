@@ -24,6 +24,24 @@ function TypingText({ text, speed = 100 }: { text: string; speed?: number }) {
   return <>{displayedText}<span className="animate-pulse">|</span></>;
 }
 
+function CyclingTypingText({ phrases, speed = 80, pauseDuration = 2000 }: { phrases: string[]; speed?: number; pauseDuration?: number }) {
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const currentPhrase = phrases[currentPhraseIndex];
+    const typingDuration = currentPhrase.length * speed;
+    const totalDuration = typingDuration + pauseDuration;
+
+    const timer = setTimeout(() => {
+      setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+    }, totalDuration);
+
+    return () => clearTimeout(timer);
+  }, [currentPhraseIndex, phrases, speed, pauseDuration]);
+
+  return <TypingText text={phrases[currentPhraseIndex]} speed={speed} />;
+}
+
 import gta1 from "@assets/gta1_1759551121573.png";
 import trailerThumb from "@assets/hqdefault_1759551446234.jpg";
 
@@ -34,6 +52,13 @@ interface ReferenceHeroProps {
 }
 
 export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }: ReferenceHeroProps) {
+  const subtitlePhrases = [
+    "MODERN CURRENCY",
+    "GTA 5 GAMES",
+    "PREMIUM REWARDS",
+    "INSTANT DELIVERY"
+  ];
+
   return (
     <section className="relative h-screen bg-[#000000] overflow-hidden">
       {/* Full Background Image */}
@@ -59,7 +84,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
               <div className="mb-2">AECOIN</div>
               <div className="text-3xl sm:text-4xl md:text-5xl font-rajdhani font-bold tracking-wider">
-                <TypingText text="MODERN CURRENCY" speed={80} />
+                <CyclingTypingText phrases={subtitlePhrases} speed={80} pauseDuration={2000} />
               </div>
             </h1>
 
