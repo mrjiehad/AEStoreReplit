@@ -233,15 +233,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             {currentSlideData.stats.comments}
           </span>
         </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-full bg-white hover:bg-gray-200 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
-            <Bookmark className="w-6 h-6 text-black" />
-          </div>
-          <span className="text-white font-bebas text-xl">
-            {currentSlideData.stats.saves}
-          </span>
-        </div>
       </div>
 
       <style>{`
