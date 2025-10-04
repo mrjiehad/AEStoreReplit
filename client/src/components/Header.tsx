@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ShoppingCart, LogOut, User, Package, Shield } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,17 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   const { user, login, logout, isLoading } = useAuth();
   const { toast } = useToast();
   const [location, navigate] = useLocation();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsVisible(scrollPosition > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   
   const scrollToSection = (id: string) => {
     // If we're not on the home page, navigate there first
@@ -53,7 +65,11 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#000000]/95 backdrop-blur-lg border-b border-white/10">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-[100] bg-[#000000]/95 backdrop-blur-lg border-b border-white/10 transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div

@@ -108,7 +108,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
   const currentSlideData = slides[currentSlide];
 
   return (
-    <section className="relative h-screen mt-16 bg-[#000000] overflow-hidden">
+    <section className="relative h-screen bg-[#000000] overflow-hidden">
       {/* Full Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-all duration-700"
