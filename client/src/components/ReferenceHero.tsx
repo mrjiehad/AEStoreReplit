@@ -126,7 +126,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
         <div className="grid lg:grid-cols-2 gap-16 h-full items-center">
           {/* Left Content */}
           <div 
-            className="space-y-4 max-w-2xl -mt-12"
+            className="space-y-4 max-w-2xl pt-16"
             key={`content-${currentSlide}`}
             style={{ animation: "slideInLeft 0.6s ease-out" }}
           >
@@ -134,7 +134,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
               <div className="mb-2">{currentSlideData.logo}</div>
               <div className="text-3xl sm:text-4xl md:text-5xl font-rajdhani font-bold tracking-wider">
-                {currentSlideData.subtitle}
+                <TypingText text={currentSlideData.subtitle} speed={80} />
               </div>
             </h1>
 
