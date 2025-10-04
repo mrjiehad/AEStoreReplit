@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Zap, Shield, Headphones } from "lucide-react";
+import { Play, Heart, MessageCircle, Bookmark } from "lucide-react";
 
 function TypingText({ text, speed = 100 }: { text: string; speed?: number }) {
   const [displayedText, setDisplayedText] = useState("");
@@ -40,68 +40,46 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   const slides = [
     {
       image: char1,
-      badge: "GTA",
-      subtitle: "PREMIUM AECOIN CURRENCY",
-      title: "DOMINATE SANTOS",
-      description: "Build your criminal empire with instant AECOIN delivery. From luxury penthouses to military-grade vehicles.",
-      cta1: "START EARNING",
-      cta2: "VIEW PACKAGES",
-      theme: "red",
+      logo: "AECOIN",
+      subtitle: "MODERN CURRENCY",
+      title: "DOMINATE LOS SANTOS",
+      description: "AECOIN is a premium virtual currency system designed specifically for GTA Online. Starting with instant delivery in 2025, it revolutionized in-game purchases. The most efficient way to acquire luxury vehicles, high-end properties, and exclusive items in Los Santos.",
+      videoThumb: char1,
+      stats: { likes: 142, comments: 28, saves: 15 }
     },
     {
       image: char2,
-      badge: "HEIST",
-      subtitle: "UNLIMITED POSSIBILITIES",
+      logo: "HEIST",
+      subtitle: "ULTIMATE ARSENAL",
       title: "EXECUTE THE PERFECT HEIST",
-      description: "Get the gear you need for the biggest scores. Premium weapons, getaway vehicles, and high-tech equipment.",
-      cta1: "GEAR UP NOW",
-      cta2: "EXPLORE ARSENAL",
-      theme: "green",
+      description: "Gear up for the biggest scores in GTA Online history. With AECOIN packages, you gain instant access to military-grade weapons, armored vehicles, and cutting-edge technology. Build your criminal empire with the resources needed to pull off legendary heists.",
+      videoThumb: char2,
+      stats: { likes: 198, comments: 42, saves: 31 }
     },
     {
       image: char3,
-      badge: "CREW",
-      subtitle: "STRENGTH IN NUMBERS",
-      title: "BUILD YOUR EMPIRE",
-      description: "Team up or go solo. With our AECOIN packages, you'll have the resources to rule Los Santos your way.",
-      cta1: "JOIN THE ELITE",
-      cta2: "VIEW DEALS",
-      theme: "blue",
+      logo: "EMPIRE",
+      subtitle: "BUILD YOUR LEGACY",
+      title: "RULE THE STREETS",
+      description: "From street corners to penthouse suites - transform your GTA experience with unlimited purchasing power. AECOIN packages provide the financial foundation to establish your criminal organization, recruit crew members, and dominate every business venture in Los Santos.",
+      videoThumb: char3,
+      stats: { likes: 256, comments: 67, saves: 48 }
     },
     {
       image: char4,
-      badge: "BOSS",
-      subtitle: "LUXURY LIFESTYLE",
+      logo: "LUXURY",
+      subtitle: "PREMIUM LIFESTYLE",
       title: "LIVE LIKE ROYALTY",
-      description: "From street corners to penthouse suites. Transform your GTA experience with unlimited purchasing power.",
-      cta1: "CLAIM YOUR THRONE",
-      cta2: "SEE PACKAGES",
-      theme: "purple",
-    },
-  ];
-
-  const features = [
-    {
-      icon: Zap,
-      title: "INSTANT DELIVERY",
-      description: "Codes delivered in seconds",
-    },
-    {
-      icon: Shield,
-      title: "100% SECURE",
-      description: "Bank-level encryption",
-    },
-    {
-      icon: Headphones,
-      title: "24/7 SUPPORT",
-      description: "Always here to help",
+      description: "Experience the pinnacle of luxury in GTA Online. With AECOIN, unlock exclusive penthouses, rare supercars, and VIP memberships. Join the elite class of Los Santos and showcase your wealth through premium properties, designer vehicles, and high-end customization options.",
+      videoThumb: char4,
+      stats: { likes: 321, comments: 89, saves: 72 }
     },
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 7000);
     return () => clearInterval(timer);
   }, [currentSlide]);
 
@@ -131,126 +109,96 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
 
   const currentSlideData = slides[currentSlide];
 
-  const getThemeGlow = (theme: string) => {
-    switch(theme) {
-      case "red": return "rgba(255, 59, 48, 0.4)";
-      case "green": return "rgba(52, 199, 89, 0.4)";
-      case "blue": return "rgba(0, 122, 255, 0.4)";
-      case "purple": return "rgba(175, 82, 222, 0.4)";
-      default: return "rgba(255, 215, 0, 0.4)";
-    }
-  };
-
   return (
-    <section className="relative h-[calc(100vh-4rem)] mt-16 bg-gradient-to-br from-[#000000] via-[#000000] to-[#000000] overflow-hidden flex items-center">
-      {/* Animated Background */}
-      <div className="absolute inset-0 opacity-30">
-        <div 
-          className="absolute top-1/4 -left-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-1000"
-          style={{ 
-            background: `radial-gradient(circle, ${getThemeGlow(currentSlideData.theme)} 0%, transparent 70%)`
-          }}
-        />
-        <div 
-          className="absolute bottom-1/4 -right-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-1000"
-          style={{ 
-            background: `radial-gradient(circle, ${getThemeGlow(currentSlideData.theme)} 0%, transparent 70%)`
-          }}
-        />
+    <section className="relative h-screen mt-16 bg-[#000000] overflow-hidden">
+      {/* Full Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+        style={{ 
+          backgroundImage: `url(${currentSlideData.image})`,
+          backgroundPosition: 'center center',
+        }}
+        key={`bg-${currentSlide}`}
+      >
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-8 h-full relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 h-full items-center">
           {/* Left Content */}
           <div 
-            className="space-y-8"
+            className="space-y-6 max-w-2xl"
             key={`content-${currentSlide}`}
             style={{ animation: "slideInLeft 0.6s ease-out" }}
           >
-            <div className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
-              {currentSlideData.subtitle}
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <div className="text-white font-bebas text-2xl tracking-widest uppercase">
+                CALL OF DUTY
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bebas text-white leading-none tracking-wide uppercase whitespace-nowrap min-h-[1.2em]">
-              <TypingText text={currentSlideData.title} speed={80} />
+            {/* Main Title */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
+              <div className="mb-2">{currentSlideData.logo}</div>
+              <div className="text-3xl sm:text-4xl md:text-5xl font-rajdhani font-bold tracking-wider">
+                {currentSlideData.subtitle}
+              </div>
             </h1>
 
-            <p className="text-gray-300 text-lg md:text-xl font-rajdhani max-w-xl leading-relaxed">
-              {currentSlideData.description}
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-              <Button
-                onClick={onShopClick}
-                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-8 h-12 uppercase rounded-full font-rajdhani tracking-wide shadow-lg"
-                data-testid="button-start-earning"
-              >
-                {currentSlideData.cta1}
-              </Button>
-              <Button
-                onClick={onPackagesClick}
-                variant="outline"
-                className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-bold text-sm px-8 h-12 uppercase rounded-full font-rajdhani tracking-wide"
-                data-testid="button-view-packages"
-              >
-                {currentSlideData.cta2}
-              </Button>
+            {/* About Section */}
+            <div className="space-y-4 pt-4">
+              <h2 className="text-white font-bebas text-2xl tracking-widest uppercase">
+                ABOUT THE GAME
+              </h2>
+              <p className="text-gray-300 text-base md:text-lg font-rajdhani leading-relaxed">
+                {currentSlideData.description}
+              </p>
             </div>
 
-            {/* Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
-              {features.map((feature, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-start gap-3"
-                  style={{ animation: `fadeInUp 0.6s ease-out ${0.2 + index * 0.1}s both` }}
-                >
-                  <div className="w-12 h-12 rounded-xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-6 h-6 text-neon-yellow" />
-                  </div>
-                  <div>
-                    <div className="text-white font-rajdhani font-bold text-sm uppercase">
-                      {feature.title}
-                    </div>
-                    <div className="text-gray-400 text-xs font-rajdhani">
-                      {feature.description}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {/* CTA Button */}
+            <div className="pt-2">
+              <Button
+                onClick={onShopClick}
+                className="bg-white hover:bg-gray-200 text-black font-bold text-sm px-10 h-14 uppercase font-rajdhani tracking-widest shadow-2xl"
+                data-testid="button-preorder-now"
+              >
+                PREORDER NOW
+              </Button>
             </div>
           </div>
 
-          {/* Right Character */}
-          <div className="relative">
-            <div 
-              className="relative"
-              key={`character-${currentSlide}`}
-              style={{ animation: "slideInRight 0.6s ease-out" }}
-            >
-              <img
-                src={currentSlideData.image}
-                alt={`GTA Character ${currentSlide + 1}`}
-                className="w-full max-w-md mx-auto lg:max-w-lg xl:max-w-xl relative z-10 drop-shadow-2xl"
-                style={{ filter: `drop-shadow(0 0 60px ${getThemeGlow(currentSlideData.theme)})` }}
-                data-testid="img-hero-character"
-              />
-              
-              <div 
-                className="absolute top-8 right-8 w-20 h-20 rounded-full bg-neon-yellow flex items-center justify-center shadow-lg"
-                style={{ animation: "scaleIn 0.4s ease-out 0.3s both" }}
-              >
-                <span className="text-black font-bebas text-2xl tracking-wider">
-                  {currentSlideData.badge}
-                </span>
+          {/* Right Content - Video Section */}
+          <div 
+            className="flex items-center justify-end"
+            key={`video-${currentSlide}`}
+            style={{ animation: "fadeIn 0.8s ease-out 0.3s both" }}
+          >
+            <div className="space-y-4">
+              <h3 className="text-white font-bebas text-xl tracking-widest uppercase text-right">
+                RELEASE TRAILER
+              </h3>
+              <div className="relative w-80 h-52 rounded-lg overflow-hidden group cursor-pointer shadow-2xl border-2 border-white/20">
+                <img 
+                  src={currentSlideData.videoThumb} 
+                  alt="Video Thumbnail"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-white/90 group-hover:bg-neon-yellow transition-all duration-300 flex items-center justify-center shadow-xl">
+                    <Play className="w-7 h-7 text-black ml-1" fill="currentColor" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      {/* Left Side Navigation Dots */}
+      <div className="absolute left-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -258,18 +206,42 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             disabled={isAnimating}
             className={`transition-all duration-300 rounded-full ${
               currentSlide === index 
-                ? "bg-neon-yellow w-10 h-3" 
-                : "bg-white/30 w-3 h-3 hover:bg-white/50"
+                ? "bg-white w-3 h-12" 
+                : "bg-white/40 w-3 h-3 hover:bg-white/60"
             }`}
             data-testid={`indicator-${index}`}
           />
         ))}
       </div>
 
-      <div className="absolute bottom-8 right-8 z-20 font-bebas text-white/50 text-lg">
-        <span className="text-neon-yellow text-2xl">{String(currentSlide + 1).padStart(2, '0')}</span>
-        {' / '}
-        {String(slides.length).padStart(2, '0')}
+      {/* Right Side Social Stats */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-8 z-20">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
+            <Heart className="w-6 h-6 text-white" fill="currentColor" />
+          </div>
+          <span className="text-white font-bebas text-xl">
+            {currentSlideData.stats.likes}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-white hover:bg-gray-200 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
+            <MessageCircle className="w-6 h-6 text-black" />
+          </div>
+          <span className="text-white font-bebas text-xl">
+            {currentSlideData.stats.comments}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-white hover:bg-gray-200 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
+            <Bookmark className="w-6 h-6 text-black" />
+          </div>
+          <span className="text-white font-bebas text-xl">
+            {currentSlideData.stats.saves}
+          </span>
+        </div>
       </div>
 
       <style>{`
@@ -277,17 +249,9 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
           from { opacity: 0; transform: translateX(-50px); }
           to { opacity: 1; transform: translateX(0); }
         }
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(50px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.5) rotate(-180deg); }
-          to { opacity: 1; transform: scale(1) rotate(0deg); }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
       `}</style>
     </section>
