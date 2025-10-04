@@ -28,7 +28,6 @@ import gta2 from "@assets/gta2_1759551121574.png";
 import gta3 from "@assets/gta3_1759551121575.png";
 import gta4 from "@assets/gta4_1759551121575.png";
 import trailerThumb from "@assets/hqdefault_1759551446234.jpg";
-import heroVideo from "@assets/AE OFFICIAL_1759556099982.mp4";
 
 interface ReferenceHeroProps {
   onShopClick?: () => void;
@@ -110,23 +109,15 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
 
   return (
     <section className="relative h-screen bg-[#000000] overflow-hidden">
-      {/* Full Background Video */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src={heroVideo} type="video/mp4" />
-          {/* Fallback to image if video doesn't load */}
-          <img 
-            src={currentSlideData.image} 
-            alt="GTA Background"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </video>
+      {/* Full Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+        style={{ 
+          backgroundImage: `url(${currentSlideData.image})`,
+          backgroundPosition: 'center center',
+        }}
+        key={`bg-${currentSlide}`}
+      >
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
       </div>
