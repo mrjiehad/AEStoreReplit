@@ -23,24 +23,24 @@ import cashImage1 from "@assets/stock_images/money_cash_dollar_bi_d659bb42.jpg";
 import cashImage2 from "@assets/stock_images/money_cash_dollar_bi_b379e39e.jpg";
 import goldImage1 from "@assets/stock_images/treasure_gold_bars_v_9895e34c.jpg";
 import goldImage2 from "@assets/stock_images/treasure_gold_bars_v_0d8d4f59.jpg";
-import car1Image from "@assets/stock_images/gta_5_sports_car_mus_ecdea8c8.jpg";
-import car2Image from "@assets/stock_images/gta_5_sports_car_mus_07d7cbe9.jpg";
-import car3Image from "@assets/stock_images/gta_5_sports_car_mus_7250542e.jpg";
-import bike1Image from "@assets/stock_images/gta_5_motorcycle_bik_bfe4c529.jpg";
-import bike2Image from "@assets/stock_images/gta_5_motorcycle_bik_0e441d76.jpg";
-import char1Image from "@assets/stock_images/gta_5_character_gang_408947e4.jpg";
-import char2Image from "@assets/stock_images/gta_5_character_gang_e760f97e.jpg";
-import cityImage from "@assets/stock_images/gta_5_los_santos_cit_cb9a6b5e.jpg";
+import gta1 from "@assets/gta1_1759562666071.png";
+import gta2 from "@assets/gta2_1759562666072.png";
+import gta3 from "@assets/gta3_1759562666074.png";
+import gta4 from "@assets/gta4_1759562666075.png";
+import gta5 from "@assets/GTA-5-Characters-GTA-6_1759562666076.png";
+import gta6 from "@assets/gta6_1759562666077.png";
+import gta7 from "@assets/gta7_1759562666078.png";
+import gta8 from "@assets/gta8_1759562666079.png";
 
 const galleryImages = [
-  car1Image,
-  bike1Image,
-  char1Image,
-  cityImage,
-  car2Image,
-  bike2Image,
-  char2Image,
-  car3Image,
+  gta1,
+  gta2,
+  gta3,
+  gta4,
+  gta5,
+  gta6,
+  gta7,
+  gta8,
 ];
 
 // Map images to packages

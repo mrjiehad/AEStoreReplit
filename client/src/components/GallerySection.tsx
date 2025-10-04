@@ -44,7 +44,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
           className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-gallery-title"
         >
-          LOS SANTOS LIFESTYLE
+          GTA 5 LIFESTYLE
         </h2>
 
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-12 max-w-3xl mx-auto">
