@@ -84,7 +84,7 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
               <p className="text-sm text-gray-400 mb-6">Add some AECOIN packages to get started!</p>
               <Button
                 onClick={onClose}
-                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase rounded-full"
+                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase"
                 data-testid="button-close-empty-cart"
               >
                 Continue Shopping

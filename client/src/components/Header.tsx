@@ -209,7 +209,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
               <Button
                 onClick={() => login()}
                 disabled={isLoading}
-                className="bg-black hover:bg-zinc-900 text-neon-yellow border-2 border-neon-yellow/50 hover:border-neon-yellow font-rajdhani font-bold uppercase text-sm h-9 px-6 rounded-full flex items-center gap-2"
+                className="bg-black hover:bg-zinc-900 text-neon-yellow border-2 border-neon-yellow/50 hover:border-neon-yellow font-rajdhani font-bold uppercase text-sm h-9 px-6 flex items-center gap-2"
                 data-testid="button-login-discord"
               >
                 <SiDiscord className="w-5 h-5" />

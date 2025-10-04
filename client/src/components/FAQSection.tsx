@@ -66,13 +66,13 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             Our expert support team is available 24/7 to help you with any issues
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full">
+            <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-8 h-12">
               <MessageCircle className="w-5 h-5 mr-2" />
               LIVE CHAT SUPPORT
             </Button>
             <Button
               variant="outline"
-              className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-rajdhani font-bold uppercase text-sm px-8 h-12 rounded-full"
+              className="border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow/10 font-rajdhani font-bold uppercase text-sm px-8 h-12"
             >
               <Mail className="w-5 h-5 mr-2" />
               EMAIL SUPPORT

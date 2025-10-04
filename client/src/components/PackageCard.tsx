@@ -68,7 +68,7 @@ function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: 
 
       <CardFooter className="px-6 pb-6">
         <Button
-          className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-sm h-12 rounded-full font-rajdhani tracking-wide shadow-lg shadow-neon-yellow/20"
+          className="w-full bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold uppercase text-sm h-12 font-rajdhani tracking-wide shadow-lg shadow-neon-yellow/20"
           onClick={() => onAddToCart?.(pkg)}
           data-testid={`button-add-to-cart-${pkg.id}`}
         >
