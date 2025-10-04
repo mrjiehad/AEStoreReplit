@@ -66,12 +66,12 @@ export default function Rankings() {
               <h1 className="text-7xl md:text-9xl font-bebas text-neon-yellow mb-4" 
                   style={{ textShadow: "0 0 40px rgba(255, 215, 0, 0.6)" }}
                   data-testid="title-rankings">
-                SULTAN HALL OF TOP SULTAN
+                SULTAN
               </h1>
               <div className="h-1 w-64 mx-auto bg-gradient-to-r from-transparent via-neon-yellow to-transparent" />
             </div>
             <p className="text-gray-300 font-rajdhani text-2xl uppercase tracking-widest mt-4">
-              Hall of Champions
+              HALL OF TOP SULTAN
             </p>
           </div>
 
