@@ -23,10 +23,10 @@ function TypingText({ text, speed = 100 }: { text: string; speed?: number }) {
 
   return <>{displayedText}<span className="animate-pulse">|</span></>;
 }
-import char1 from "@assets/1_1759280228659.png";
-import char2 from "@assets/2_1759280228660.png";
-import char3 from "@assets/3_1759280228660.png";
-import char4 from "@assets/4_1759280228661.png";
+import gta1 from "@assets/gta1_1759551121573.png";
+import gta2 from "@assets/gta2_1759551121574.png";
+import gta3 from "@assets/gta3_1759551121575.png";
+import gta4 from "@assets/gta4_1759551121575.png";
 
 interface ReferenceHeroProps {
   onShopClick?: () => void;
@@ -39,40 +39,36 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
   
   const slides = [
     {
-      image: char1,
+      image: gta1,
       logo: "AECOIN",
       subtitle: "MODERN CURRENCY",
       title: "DOMINATE LOS SANTOS",
       description: "AECOIN is a premium virtual currency system designed specifically for GTA Online. Starting with instant delivery in 2025, it revolutionized in-game purchases. The most efficient way to acquire luxury vehicles, high-end properties, and exclusive items in Los Santos.",
-      videoThumb: char1,
-      stats: { likes: 142, comments: 28, saves: 15 }
+      videoThumb: gta1,
     },
     {
-      image: char2,
+      image: gta2,
       logo: "HEIST",
       subtitle: "ULTIMATE ARSENAL",
       title: "EXECUTE THE PERFECT HEIST",
       description: "Gear up for the biggest scores in GTA Online history. With AECOIN packages, you gain instant access to military-grade weapons, armored vehicles, and cutting-edge technology. Build your criminal empire with the resources needed to pull off legendary heists.",
-      videoThumb: char2,
-      stats: { likes: 198, comments: 42, saves: 31 }
+      videoThumb: gta2,
     },
     {
-      image: char3,
+      image: gta3,
       logo: "EMPIRE",
       subtitle: "BUILD YOUR LEGACY",
       title: "RULE THE STREETS",
       description: "From street corners to penthouse suites - transform your GTA experience with unlimited purchasing power. AECOIN packages provide the financial foundation to establish your criminal organization, recruit crew members, and dominate every business venture in Los Santos.",
-      videoThumb: char3,
-      stats: { likes: 256, comments: 67, saves: 48 }
+      videoThumb: gta3,
     },
     {
-      image: char4,
+      image: gta4,
       logo: "LUXURY",
       subtitle: "PREMIUM LIFESTYLE",
       title: "LIVE LIKE ROYALTY",
       description: "Experience the pinnacle of luxury in GTA Online. With AECOIN, unlock exclusive penthouses, rare supercars, and VIP memberships. Join the elite class of Los Santos and showcase your wealth through premium properties, designer vehicles, and high-end customization options.",
-      videoThumb: char4,
-      stats: { likes: 321, comments: 89, saves: 72 }
+      videoThumb: gta4,
     },
   ];
 
