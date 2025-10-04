@@ -28,6 +28,7 @@ import gta2 from "@assets/gta2_1759551121574.png";
 import gta3 from "@assets/gta3_1759551121575.png";
 import gta4 from "@assets/gta4_1759551121575.png";
 import trailerThumb from "@assets/hqdefault_1759551446234.jpg";
+import heroVideo from "@assets/AE OFFICIAL_1759556099982.mp4";
 
 interface ReferenceHeroProps {
   onShopClick?: () => void;
@@ -117,9 +118,8 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          key={`video-${currentSlide}`}
         >
-          <source src="/gta-background.mp4" type="video/mp4" />
+          <source src={heroVideo} type="video/mp4" />
           {/* Fallback to image if video doesn't load */}
           <img 
             src={currentSlideData.image} 
