@@ -32,9 +32,10 @@ import trailerThumb from "@assets/hqdefault_1759551446234.jpg";
 interface ReferenceHeroProps {
   onShopClick?: () => void;
   onPackagesClick?: () => void;
+  onRankingsClick?: () => void;
 }
 
-export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroProps) {
+export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }: ReferenceHeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   
@@ -147,14 +148,22 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
               </p>
             </div>
 
-            {/* CTA Button */}
-            <div className="pt-2">
+            {/* CTA Buttons */}
+            <div className="pt-2 flex flex-wrap gap-4">
               <Button
                 onClick={onShopClick}
                 className="bg-white hover:bg-gray-200 text-black font-bold text-sm px-10 h-14 uppercase font-rajdhani tracking-widest shadow-2xl"
-                data-testid="button-preorder-now"
+                data-testid="button-buy-coins"
               >
-                PREORDER NOW
+                BUY COINS
+              </Button>
+              <Button
+                onClick={onRankingsClick}
+                variant="outline"
+                className="border-2 border-white text-white hover:bg-white/10 font-bold text-sm px-10 h-14 uppercase font-rajdhani tracking-widest"
+                data-testid="button-explore-rankings"
+              >
+                EXPLORE RANKINGS
               </Button>
             </div>
           </div>

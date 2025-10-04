@@ -194,10 +194,14 @@ export default function Home() {
     }
   };
 
+  const goToRankings = () => {
+    navigate("/rankings");
+  };
+
   return (
     <div className="min-h-screen bg-[#000000]">
       <Header cartItemCount={cartItems.length} onCartClick={handleCartClick} />
-      <ReferenceHero onShopClick={scrollToPackages} onPackagesClick={scrollToPackages} />
+      <ReferenceHero onShopClick={scrollToPackages} onPackagesClick={scrollToPackages} onRankingsClick={goToRankings} />
       
       <ScrollFadeIn delay={0.1}>
         <PackagesSection packages={packages} onAddToCart={handleAddToCart} />
