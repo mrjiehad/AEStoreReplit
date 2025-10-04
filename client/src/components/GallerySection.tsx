@@ -56,7 +56,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-full font-rajdhani font-semibold text-sm uppercase tracking-wide transition-all ${
+              className={`px-6 py-2 font-rajdhani font-semibold text-sm uppercase tracking-wide transition-all ${
                 activeCategory === category
                   ? "bg-neon-yellow text-black"
                   : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
@@ -74,7 +74,7 @@ export function GallerySection({ images, onCtaClick }: GallerySectionProps) {
             return (
               <div
                 key={index}
-                className="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
+                className="relative aspect-[4/3] overflow-hidden group cursor-pointer"
                 data-testid={`img-gallery-${index}`}
               >
                 <img

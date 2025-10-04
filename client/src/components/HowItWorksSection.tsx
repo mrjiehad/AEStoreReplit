@@ -56,7 +56,7 @@ export function HowItWorksSection() {
                 {step.number}
               </div>
 
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-6 bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center">
                 <step.icon className="w-8 h-8 text-neon-yellow" />
               </div>
 
@@ -71,7 +71,7 @@ export function HowItWorksSection() {
           ))}
         </div>
 
-        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6">
+        <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 py-12 px-6">
           <h3 className="text-3xl md:text-4xl font-bebas text-white mb-3 uppercase">
             READY TO RULE LOS SANTOS?
           </h3>

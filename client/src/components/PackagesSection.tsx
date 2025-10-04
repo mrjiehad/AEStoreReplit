@@ -31,7 +31,7 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
         </p>
 
         <div
-          className="text-center mb-12 bg-neon-yellow/10 border border-neon-yellow/30 py-3 rounded-full mx-auto max-w-2xl"
+          className="text-center mb-12 bg-neon-yellow/10 border border-neon-yellow/30 py-3 mx-auto max-w-2xl"
           data-testid="banner-limited-offer"
         >
           <span className="text-neon-yellow font-rajdhani font-bold text-sm uppercase tracking-wide">

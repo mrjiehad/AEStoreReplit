@@ -42,7 +42,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-[#000000] border border-white/10 rounded-2xl px-6 data-[state=open]:border-neon-yellow/50 transition-all"
+              className="bg-[#000000] border border-white/10 px-6 data-[state=open]:border-neon-yellow/50 transition-all"
               data-testid={`faq-item-${index}`}
             >
               <AccordionTrigger
@@ -58,7 +58,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           ))}
         </Accordion>
 
-        <div className="bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 rounded-3xl py-12 px-6 text-center">
+        <div className="bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 py-12 px-6 text-center">
           <h3 className="text-2xl md:text-3xl font-bebas text-white mb-3 uppercase">
             Still Have Questions?
           </h3>
