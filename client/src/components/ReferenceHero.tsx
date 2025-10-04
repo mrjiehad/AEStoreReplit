@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Heart, MessageCircle, Bookmark } from "lucide-react";
+import { Play } from "lucide-react";
 
 function TypingText({ text, speed = 100 }: { text: string; speed?: number }) {
   const [displayedText, setDisplayedText] = useState("");
@@ -214,26 +214,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
         ))}
       </div>
 
-      {/* Right Side Social Stats */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-8 z-20">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
-            <Heart className="w-6 h-6 text-white" fill="currentColor" />
-          </div>
-          <span className="text-white font-bebas text-xl">
-            {currentSlideData.stats.likes}
-          </span>
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-full bg-white hover:bg-gray-200 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-lg">
-            <MessageCircle className="w-6 h-6 text-black" />
-          </div>
-          <span className="text-white font-bebas text-xl">
-            {currentSlideData.stats.comments}
-          </span>
-        </div>
-      </div>
 
       <style>{`
         @keyframes slideInLeft {
