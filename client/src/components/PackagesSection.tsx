@@ -7,6 +7,9 @@ interface PackagesSectionProps {
 }
 
 export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps) {
+  // Ensure packages is an array
+  const safePackages = Array.isArray(packages) ? packages : [];
+
   return (
     <section id="packages" className="min-h-screen bg-[#000000] flex items-center py-20">
       <div className="container mx-auto px-4">
@@ -37,7 +40,7 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
-          {packages.map((pkg) => (
+          {safePackages.map((pkg) => (
             <PackageCard key={pkg.id} package={pkg} onAddToCart={onAddToCart} />
           ))}
         </div>

@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import express from "express";
@@ -14,6 +20,9 @@ import crypto from "crypto";
 import Stripe from "stripe";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 // Initialize Stripe (from blueprint:javascript_stripe)
 if (!process.env.STRIPE_SECRET_KEY) {
