@@ -152,7 +152,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
             <div className="pt-2 flex flex-wrap gap-4">
               <Button
                 onClick={onShopClick}
-                className="bg-white hover:bg-gray-200 text-black font-bold text-sm px-10 h-14 uppercase font-rajdhani tracking-widest shadow-2xl"
+                className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-bold text-sm px-10 h-14 uppercase font-rajdhani tracking-widest shadow-2xl"
                 data-testid="button-buy-coins"
               >
                 BUY COINS
