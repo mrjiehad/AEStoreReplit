@@ -2,8 +2,6 @@
 
 This guide provides step-by-step instructions for deploying the AECOIN Store e-commerce website to production using Replit's deployment platform.
 
-**Note:** For Ubuntu VPS deployment, please refer to [DEPLOYMENT-README.md](file://c:\Users\jihadullahhamid\Desktop\PixelPalladin\AEStoreReplit\DEPLOYMENT-README.md) and [ubuntu-deployment-guide.md](file://c:\Users\jihadullahhamid\Desktop\PixelPalladin\AEStoreReplit\ubuntu-deployment-guide.md).
-
 ---
 
 ## Table of Contents
