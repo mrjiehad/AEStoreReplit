@@ -30,7 +30,7 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      setIsVisible(scrollPosition > 100);
+      setIsVisible(scrollPosition > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -66,8 +66,10 @@ export function Header({ cartItemCount = 0, onCartClick }: HeaderProps) {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-[100] bg-[#000000]/95 backdrop-blur-lg border-b border-white/10 transition-transform duration-300 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+        isVisible 
+          ? "bg-[#000000]/95 backdrop-blur-lg border-b border-white/10" 
+          : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
