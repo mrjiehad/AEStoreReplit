@@ -21,7 +21,7 @@ function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: 
   return (
     <>
       {/* Image Background */}
-      <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl">
+      <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={pkg.image}
           alt={`${pkg.amount} AECOIN`}
@@ -33,7 +33,7 @@ function PackageCardContent({ pkg, onAddToCart }: { pkg: Package; onAddToCart?: 
         {/* Badge */}
         {pkg.badge && (
           <div
-            className="absolute top-4 right-4 bg-neon-yellow text-black font-bold text-xs px-3 py-1 rounded-full uppercase"
+            className="absolute top-4 right-4 bg-neon-yellow text-black font-bold text-xs px-3 py-1 uppercase"
             data-testid={`badge-package-${pkg.id}`}
           >
             {pkg.badge}
@@ -141,7 +141,7 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
   if (shouldReduceMotion) {
     return (
       <Card
-        className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+        className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300"
         style={{
           boxShadow: isHovered
             ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"
@@ -158,7 +158,7 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
 
   // With 3D tilt effect
   return (
-    <div style={{ perspective: "800px" }} className="rounded-3xl">
+    <div style={{ perspective: "800px" }}>
       <motion.div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -171,10 +171,9 @@ export function PackageCard({ package: pkg, onAddToCart }: PackageCardProps) {
           willChange: "transform",
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="rounded-3xl"
       >
         <Card
-          className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300 rounded-3xl"
+          className="group relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#000000] border-2 border-white/10 hover:border-neon-yellow/50 transition-all duration-300"
           style={{
             boxShadow: isHovered
               ? "0 0 30px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5)"
