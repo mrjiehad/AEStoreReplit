@@ -147,7 +147,7 @@ export default function Home() {
     amount: pkg.aecoinAmount,
     price: Math.round(parseFloat(pkg.price)),
     originalPrice: pkg.originalPrice ? Math.round(parseFloat(pkg.originalPrice)) : Math.round(parseFloat(pkg.price)),
-    image: packageImages[index % packageImages.length],
+    image: pkg.imageUrl || packageImages[index % packageImages.length],
     badge: pkg.featured ? "FEATURED" : undefined,
   }));
 
