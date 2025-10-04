@@ -27,6 +27,7 @@ import gta1 from "@assets/gta1_1759551121573.png";
 import gta2 from "@assets/gta2_1759551121574.png";
 import gta3 from "@assets/gta3_1759551121575.png";
 import gta4 from "@assets/gta4_1759551121575.png";
+import trailerThumb from "@assets/hqdefault_1759551446234.jpg";
 
 interface ReferenceHeroProps {
   onShopClick?: () => void;
@@ -44,7 +45,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       subtitle: "MODERN CURRENCY",
       title: "DOMINATE LOS SANTOS",
       description: "AECOIN is a premium virtual currency system designed specifically for GTA Online. Starting with instant delivery in 2025, it revolutionized in-game purchases. The most efficient way to acquire luxury vehicles, high-end properties, and exclusive items in Los Santos.",
-      videoThumb: gta1,
+      videoThumb: trailerThumb,
     },
     {
       image: gta2,
@@ -52,7 +53,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       subtitle: "ULTIMATE ARSENAL",
       title: "EXECUTE THE PERFECT HEIST",
       description: "Gear up for the biggest scores in GTA Online history. With AECOIN packages, you gain instant access to military-grade weapons, armored vehicles, and cutting-edge technology. Build your criminal empire with the resources needed to pull off legendary heists.",
-      videoThumb: gta2,
+      videoThumb: trailerThumb,
     },
     {
       image: gta3,
@@ -60,7 +61,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       subtitle: "BUILD YOUR LEGACY",
       title: "RULE THE STREETS",
       description: "From street corners to penthouse suites - transform your GTA experience with unlimited purchasing power. AECOIN packages provide the financial foundation to establish your criminal organization, recruit crew members, and dominate every business venture in Los Santos.",
-      videoThumb: gta3,
+      videoThumb: trailerThumb,
     },
     {
       image: gta4,
@@ -68,7 +69,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
       subtitle: "PREMIUM LIFESTYLE",
       title: "LIVE LIKE ROYALTY",
       description: "Experience the pinnacle of luxury in GTA Online. With AECOIN, unlock exclusive penthouses, rare supercars, and VIP memberships. Join the elite class of Los Santos and showcase your wealth through premium properties, designer vehicles, and high-end customization options.",
-      videoThumb: gta4,
+      videoThumb: trailerThumb,
     },
   ];
 
@@ -128,13 +129,6 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             key={`content-${currentSlide}`}
             style={{ animation: "slideInLeft 0.6s ease-out" }}
           >
-            {/* Logo */}
-            <div className="flex items-center gap-4">
-              <div className="text-white font-bebas text-2xl tracking-widest uppercase">
-                CALL OF DUTY
-              </div>
-            </div>
-
             {/* Main Title */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bebas text-white leading-none tracking-wide uppercase">
               <div className="mb-2">{currentSlideData.logo}</div>
