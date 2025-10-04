@@ -12,7 +12,7 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
       <div className="container mx-auto px-4">
         <div className="text-center mb-3">
           <span className="text-neon-yellow font-rajdhani font-semibold text-sm tracking-widest uppercase">
-            PREMIUM CURRENCY
+            AE OFFICIAL
           </span>
         </div>
 
@@ -20,11 +20,11 @@ export function PackagesSection({ packages, onAddToCart }: PackagesSectionProps)
           className="text-4xl md:text-6xl lg:text-7xl font-bebas text-center mb-4 tracking-wider uppercase text-white"
           data-testid="text-section-title"
         >
-          CHOOSE YOUR POWER
+          CHOOSE YOUR COINS
         </h2>
 
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-8 max-w-3xl mx-auto">
-          Unlock the full potential of Los Santos with our instant AECOIN packages
+          Unlock the full potential of AE OFFICIAL with our instant AECOIN packages
         </p>
 
         <div

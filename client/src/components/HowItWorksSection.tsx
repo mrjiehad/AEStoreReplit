@@ -46,7 +46,7 @@ export function HowItWorksSection() {
         </h2>
 
         <p className="text-center text-gray-300 font-rajdhani text-lg mb-16 max-w-3xl mx-auto">
-          From purchase to playing – your journey to Los Santos dominance in four simple steps
+          From purchase to playing – your journey to AE OFFICIAL dominance in four simple steps
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">

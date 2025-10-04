@@ -22,7 +22,7 @@ export function Footer() {
               AECOIN<span className="text-neon-yellow">.STORE</span>
             </div>
             <p className="text-gray-400 font-rajdhani text-sm mb-6">
-              Your trusted source for GTA Online currency. Fast, secure, and reliable.
+              Your trusted source for AE OFFICIAL currency. Fast, secure, and reliable.
             </p>
             <div className="flex gap-3">
               <a
@@ -129,7 +129,7 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-8">
           <div className="text-center text-gray-500 font-rajdhani text-sm">
-            © {new Date().getFullYear()} AECOIN.STORE. All rights reserved.
+            © {new Date().getFullYear()} AE OFFICIAL All rights reserved.
           </div>
         </div>
       </div>
