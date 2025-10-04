@@ -175,7 +175,13 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
               <h3 className="text-white font-bebas text-xl tracking-widest uppercase text-right">
                 RELEASE TRAILER
               </h3>
-              <div className="relative w-80 h-52 rounded-lg overflow-hidden group cursor-pointer shadow-2xl border-2 border-white/20">
+              <a 
+                href="https://youtu.be/tV95N0TIltc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="relative w-80 h-52 rounded-lg overflow-hidden group cursor-pointer shadow-2xl border-2 border-white/20 block"
+                data-testid="link-release-trailer"
+              >
                 <img 
                   src={currentSlideData.videoThumb} 
                   alt="Video Thumbnail"
@@ -187,7 +193,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
                     <Play className="w-7 h-7 text-black ml-1" fill="currentColor" />
                   </div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
