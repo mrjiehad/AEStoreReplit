@@ -94,7 +94,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
                 ABOUT THE GAME
               </h2>
               <p className="text-gray-300 text-base md:text-lg font-rajdhani leading-relaxed">
-                AECOIN is a premium virtual currency system designed specifically for GTA Online. Starting with instant delivery in 2025, it revolutionized in-game purchases. The most efficient way to acquire luxury vehicles, high-end properties, and exclusive items in Los Santos.
+                AECOIN is a premium virtual currency system designed specifically for AE OFFICIAL. Starting with instant delivery in 2025, it revolutionized in-game purchases. The most efficient way to acquire luxury vehicles, high-end weapons skin, and exclusive items in AE OFFICIAL.
               </p>
             </div>
 

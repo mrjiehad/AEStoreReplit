@@ -76,11 +76,17 @@ export function HowItWorksSection() {
             READY TO RULE AE OFFICIAL?
           </h3>
           <p className="text-gray-300 font-rajdhani text-lg mb-6">
-            Join thousands of players who trust us for their AECOIN needs
+            Join our server with thousands of players who trust us
           </p>
-          <Button className="bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12">
-            START YOUR EMPIRE NOW
-          </Button>
+          <a 
+            href="https://cfx.re/join/5jkkqa" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block bg-neon-yellow hover:bg-neon-yellow/90 text-black font-rajdhani font-bold uppercase text-sm px-10 h-12 leading-[3rem] transition-colors"
+            data-testid="button-connect-server"
+          >
+            CONNECT TO AE SERVER
+          </a>
         </div>
       </div>
     </section>
