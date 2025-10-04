@@ -109,15 +109,24 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
 
   return (
     <section className="relative h-screen bg-[#000000] overflow-hidden">
-      {/* Full Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-        style={{ 
-          backgroundImage: `url(${currentSlideData.image})`,
-          backgroundPosition: 'center center',
-        }}
-        key={`bg-${currentSlide}`}
-      >
+      {/* Full Background Video */}
+      <div className="absolute inset-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          key={`video-${currentSlide}`}
+        >
+          <source src="/gta-background.mp4" type="video/mp4" />
+          {/* Fallback to image if video doesn't load */}
+          <img 
+            src={currentSlideData.image} 
+            alt="GTA Background"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </video>
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
       </div>
