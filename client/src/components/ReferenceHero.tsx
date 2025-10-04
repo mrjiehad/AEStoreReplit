@@ -125,7 +125,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
         <div className="grid lg:grid-cols-2 gap-16 h-full items-center">
           {/* Left Content */}
           <div 
-            className="space-y-6 max-w-2xl"
+            className="space-y-4 max-w-2xl -mt-12"
             key={`content-${currentSlide}`}
             style={{ animation: "slideInLeft 0.6s ease-out" }}
           >
@@ -138,7 +138,7 @@ export function ReferenceHero({ onShopClick, onPackagesClick }: ReferenceHeroPro
             </h1>
 
             {/* About Section */}
-            <div className="space-y-4 pt-4">
+            <div className="space-y-4 pt-2">
               <h2 className="text-white font-bebas text-2xl tracking-widest uppercase">
                 ABOUT THE GAME
               </h2>
