@@ -73,7 +73,7 @@ export function HowItWorksSection() {
 
         <div className="text-center bg-gradient-to-r from-neon-yellow/10 to-neon-yellow/5 border border-neon-yellow/30 py-12 px-6">
           <h3 className="text-3xl md:text-4xl font-bebas text-white mb-3 uppercase">
-            READY TO RULE LOS SANTOS?
+            READY TO RULE AE OFFICIAL?
           </h3>
           <p className="text-gray-300 font-rajdhani text-lg mb-6">
             Join thousands of players who trust us for their AECOIN needs

@@ -54,7 +54,7 @@ interface ReferenceHeroProps {
 export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }: ReferenceHeroProps) {
   const subtitlePhrases = [
     "MODERN CURRENCY",
-    "GTA 5 GAMES",
+    "AE OFFICIAL",
     "PREMIUM REWARDS",
     "INSTANT DELIVERY"
   ];
