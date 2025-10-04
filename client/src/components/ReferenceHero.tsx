@@ -76,10 +76,10 @@ export function ReferenceHero({ onShopClick, onPackagesClick, onRankingsClick }:
 
   useEffect(() => {
     const timer = setInterval(() => {
-      nextSlide();
-    }, 7000);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [currentSlide]);
+  }, []);
 
   const nextSlide = () => {
     if (!isAnimating) {
